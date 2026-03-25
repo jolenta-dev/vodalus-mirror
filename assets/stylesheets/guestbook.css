@@ -1,0 +1,187 @@
+table {
+    table-layout: fixed;
+    width: 90%;
+    margin: 10px auto;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.6em;
+    vertical-align: top;
+}
+
+/* date column */
+tr :nth-child(1) {
+    text-align: right;
+    width: 20%;
+}
+
+/* name column */
+tr :nth-child(2) {
+    text-align: left;
+    width: 15%;
+}
+
+/* website column */
+tr :nth-child(3) {
+    text-align: left;
+    width: 20%;
+}
+
+/* note column */
+tr :nth-child(4) {
+    text-align: left;
+    width: 45%;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #edebeb;
+}
+
+@media (max-width: 600px) {
+    .guestbook-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #name-table {
+        width: max-content;
+        min-width: 720px;
+        margin: 10px 0;
+    }
+
+    th,
+    td {
+        white-space: nowrap;
+    }
+}
+
+/* Softer table under site dim */
+html.site-dim--dim #name-table th,
+html.site-dim--dim #name-table td {
+    border: 1px solid #5c5c5c;
+    color: #eaeaea;
+}
+
+html.site-dim--dim #name-table thead th {
+    background: rgba(255, 255, 255, 0.07);
+    color: #f4f4f4;
+    font-weight: normal;
+}
+
+html.site-dim--dim #name-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
+html.site-dim--dim #name-table tbody tr:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Name column: same tag/gradient rules as chat (td, not ul li) */
+#name-table td.guestbook-name-cell {
+    line-height: 1.45;
+    white-space: normal;
+}
+
+/* Names sit inside .name-color (inline color from DB); never force #111 on .message-name or it overrides parent color */
+#name-table td.guestbook-name-cell .name-color .message-name {
+    color: inherit;
+    font-style: italic;
+}
+
+#name-table td.guestbook-name-cell .message-vip {
+    color: purple;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .name-color--vip .message-name {
+    color: inherit;
+    font-style: italic;
+}
+
+/* Admin display name: light blue, bold, not italic (beats .name-color--vip .message-name) */
+#name-table td.guestbook-name-cell .message-admin + .name-color .message-name,
+#name-table td.guestbook-name-cell .message-vip + .message-admin + .name-color .message-name {
+    color: #add8e6;
+    font-style: normal;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .name-color .message-journey-1,
+#name-table td.guestbook-name-cell .name-color .message-journey-2,
+#name-table td.guestbook-name-cell .name-color .message-journey-3,
+#name-table td.guestbook-name-cell .name-color .message-journey-4,
+#name-table td.guestbook-name-cell .name-color .message-journey-5-plus {
+    color: inherit;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .name-color .message-prestige-tag {
+    display: inline-block;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .message-master-gambler {
+    background-image: linear-gradient(to left, pink, red, yellow, orange);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .message-owner {
+    background-image: linear-gradient(to left, violet, indigo, pink, red);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+    color: lightpink;
+}
+
+#name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+    color: lightblue;
+}
+
+#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name::before {
+    content: "⏾";
+    color: gold;
+}
+
+#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name-tail {
+    color: lightpink;
+}
+
+#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name-tail-gold {
+    color: gold;
+}
+
+#name-table td.guestbook-name-cell .message-the-house {
+    background-image: linear-gradient(to left, orangered, red, maroon, red, orangered);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .message-admin {
+    color: blueviolet;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .message-vip + .name-color .message-name {
+    font-weight: bold;
+}
+
+/* Dim: keep roster colors from .name-color inline style (do not blanket .message-name) */
+
+html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+    color: lightpink;
+}
+
+html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+    color: #b8d8f0;
+}

@@ -1,0 +1,65 @@
+/* Center atrium page sections similar to journey layout */
+.main #entrance,
+.main #atrium,
+.main #corridors,
+.main #colors-decorations,
+.main #atrium-finished {
+    text-align: center;
+    max-width: 42rem;
+    margin: 1.25rem auto;
+}
+
+.main #atrium q {
+    display: inline-block;
+}
+
+/* Keep form controls large and centered */
+.main #atrium input,
+.main #corridors input,
+.main #colors-decorations input {
+    display: block;
+    width: min(100%, 24rem);
+    margin: 0.5rem auto;
+    box-sizing: border-box;
+    font-size: clamp(1rem, 2.2vw, 1.1rem);
+    padding: 0.5rem 0.65rem;
+}
+
+.main #enter-btn,
+.main #submit-btn,
+.main #prestige-btn,
+.main #submit-colors-decorations-btn {
+    display: inline-block;
+    font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+    line-height: 1.25;
+    padding: 0.6em 1.2em;
+    margin: 0.6rem auto 0;
+}
+
+#corridors-btn {
+    position: fixed;
+    left: calc(160px + 1rem);
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    z-index: 250;
+    font-size: clamp(1.15rem, 3vw, 1.45rem);
+    line-height: 1.25;
+    padding: 0.65em 1.25em;
+}
+
+@media screen and (max-width: 600px) {
+    .main #entrance,
+    .main #atrium,
+    .main #corridors,
+    .main #colors-decorations,
+    .main #atrium-finished {
+        margin: 0.9rem auto;
+        padding: 0 0.25rem;
+    }
+
+    #corridors-btn {
+        left: calc(150px + 0.75rem);
+        bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+        font-size: clamp(1.05rem, 4vw, 1.25rem);
+        padding: 0.6em 1.05em;
+    }
+}

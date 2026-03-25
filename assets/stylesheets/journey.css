@@ -1,0 +1,211 @@
+/* Split layout: journey beats above viewport midline; title + CTA below */
+.journey-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 6rem);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.journey-layout__above {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 1rem 1rem;
+    min-height: 0;
+}
+
+.journey-subtitle {
+    margin: 0;
+    align-self: center;
+    width: 90%;
+    max-width: 36rem;
+    text-align: center;
+    font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+    font-weight: normal;
+    flex-shrink: 0;
+}
+
+.journey-attempts-note {
+    margin: 0.35rem 0 0;
+    align-self: center;
+    width: 90%;
+    max-width: 36rem;
+    text-align: center;
+    font-size: clamp(0.85rem, 2.4vw, 1rem);
+    font-style: italic;
+    font-weight: normal;
+    color: inherit;
+    opacity: 0.9;
+    min-height: 0;
+}
+
+.journey-attempts-note:empty {
+    display: none;
+}
+
+#journey-list,
+#yesod-journey-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0.25rem 0.25rem;
+    width: 90%;
+    max-width: 36rem;
+    text-align: center;
+    /* Fill the upper panel and scroll when beats stack up (margin-top: auto broke flex shrink) */
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#journey-list li,
+#yesod-journey-list li {
+    margin: 0.35em 0;
+    flex-shrink: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.journey-layout__midline {
+    flex-shrink: 0;
+    height: 1px;
+    width: min(90%, 36rem);
+    margin: 0 auto;
+    background: currentColor;
+    opacity: 0.3;
+}
+
+.journey-layout__below {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1rem 2rem;
+    min-height: 0;
+    /* Shared scale: h1 = 100%, button = 70% */
+    font-size: clamp(1.35rem, 4.2vw, 2.1rem);
+}
+
+.journey-layout__below .journey-title {
+    margin: 0;
+    text-align: center;
+    font-size: 1em;
+    font-weight: inherit;
+    line-height: 1.25;
+}
+
+#journey-btn.journey-btn,
+#yesod-journey-btn.journey-btn {
+    display: block;
+    margin: 0;
+    font-size: 0.7em;
+    line-height: 1.3;
+    padding: 0.45em 1.15em;
+}
+
+html.site-dim--dim .journey-layout__midline {
+    opacity: 0.45;
+}
+
+/* Bottom tabs (same vocabulary as chat `.chat-tabs` / `.chat-tab`) */
+.journey-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    border: 1px solid #000;
+    background-color: #f1f1f1;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: min(90%, 36rem);
+    margin-top: 1rem;
+}
+
+.journey-tab {
+    flex: 1 1 auto;
+    margin: 0;
+    min-width: 0;
+    background-color: inherit;
+    border: none;
+    border-right: 1px solid #ccc;
+    cursor: pointer;
+    padding: 0.55rem 0.65rem;
+    transition: background-color 0.2s ease;
+    font: inherit;
+    font-size: clamp(0.7rem, 2.2vw, 0.95rem);
+    color: inherit;
+    text-align: center;
+}
+
+.journey-tab:last-child {
+    border-right: none;
+}
+
+.journey-tab:hover {
+    background-color: #ddd;
+}
+
+.journey-tab--active {
+    background-color: #ccc;
+    font-weight: bold;
+}
+
+.journey-tab:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: -2px;
+    z-index: 1;
+}
+
+.journey-gate-msg {
+    margin: 0;
+    max-width: min(90%, 36rem);
+    text-align: center;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    color: inherit;
+    opacity: 0.95;
+}
+
+.journey-gate-msg[hidden] {
+    display: none !important;
+}
+
+.journey-login-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: min(90%, 22rem);
+    margin: 0 auto;
+    padding: 0.5rem 0;
+}
+
+.journey-login-panel[hidden] {
+    display: none !important;
+}
+
+.journey-login-intro {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(0.8rem, 2.3vw, 0.95rem);
+}
+
+.journey-login-field {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    padding: 0.35rem 0.5rem;
+}
+
+.journey-btn--small {
+    font-size: 0.55em;
+    padding: 0.35em 1em;
+}

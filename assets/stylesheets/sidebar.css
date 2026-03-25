@@ -1,0 +1,292 @@
+/* Dim main chrome (toggle: #toggle-dim-btn + localStorage key siteDim) */
+:root {
+    --site-dim-chrome: #696969; /* dimgrey */
+    /* each RGB channel +10 vs dimgrey — chat panels sit slightly above page chrome */
+    --site-dim-chat-panel: #737373;
+}
+
+hr.rounded {
+  border: none;
+  border-top: 1px solid #4f4f4f;
+  border-radius: 1px;
+  width: 100%;
+  height: 0;
+  /* ~35% back from tight (0.2rem) toward typical UA hr (~0.5rem block margin) */
+  margin: calc(0.2rem + (0.5rem - 0.2rem) * 0.35) 0;
+  padding: 0;
+}
+
+html.site-dim--dim {
+    background-color: var(--site-dim-chrome);
+}
+html.site-dim--dim body {
+    background-color: transparent;
+}
+html.site-dim--dim .main {
+    background-color: var(--site-dim-chrome);
+    min-height: 100vh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+}
+
+/* Modals sit above dim chrome (chat, atrium, tzadkiel, etc.); !important beats inline <style> on some pages */
+html.site-dim--dim #password-modal-overlay,
+html.site-dim--dim #new-chat-modal-overlay,
+html.site-dim--dim #new-announcement-modal-overlay,
+html.site-dim--dim #chat-directory-modal-overlay {
+    background: rgba(22, 22, 22, 0.78) !important;
+}
+
+html.site-dim--dim #password-modal,
+html.site-dim--dim #new-chat-modal,
+html.site-dim--dim #new-announcement-modal,
+html.site-dim--dim #chat-directory-modal {
+    background: #8e8e8e !important;
+    border-color: #3d3d3d !important;
+    color: #141414 !important;
+}
+
+html.site-dim--dim #password-modal input[type="password"],
+html.site-dim--dim #password-modal input[type="text"],
+html.site-dim--dim #new-chat-modal input:not([type="checkbox"]),
+html.site-dim--dim #new-announcement-modal input,
+html.site-dim--dim #new-announcement-modal select {
+    background: #a8a8a8 !important;
+    border: 1px solid #4a4a4a !important;
+    color: #111 !important;
+}
+
+.sidenav {
+    height: 100vh;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+/*
+ * Sidebar with .sidenav-bottom-stack: flex column + in-flow footer.
+ * overflow-x: hidden makes a scrollport; absolute footers don’t grow scroll height.
+ */
+.sidenav:has(.sidenav-bottom-stack) {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    max-height: 100vh;
+    max-height: 100svh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.sidenav:has(.sidenav-bottom-stack) .sidenav-bottom-stack {
+    position: static;
+    margin-top: auto;
+    flex-shrink: 0;
+    align-self: stretch;
+    width: 100%;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.sidenav a {
+    /* ~35% from tight (2px) back toward original (6px) vertical padding */
+    padding: calc(2px + (6px - 2px) * 0.35) 8px calc(2px + (6px - 2px) * 0.35) 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: rgb(104, 104, 104);
+    display: block;
+    line-height: 1.2;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.main {
+    margin-left: 160px;
+    padding: 0px 160px;
+}
+
+@media screen and (max-width: 600px) {
+    /* Dim control stays in the sidebar column on small screens */
+    #toggle-dim-btn {
+        position: static;
+        z-index: auto;
+        padding: 4px;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .main { padding: 0 8px; }
+    .sidenav {
+        width: 150px;
+        height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 24px;
+        box-sizing: border-box;
+    }
+    .sidenav .nowplaying,
+    .sidenav .status {
+        position: static;
+        flex-shrink: 0;
+    }
+    .sidenav .status {
+        order: 1;
+        margin-top: auto;
+    }
+    .sidenav .nowplaying { order: 2; }
+    /* Chat: stack children must not use footer order/margin from the standalone .status / .nowplaying rules */
+    .sidenav .sidenav-bottom-stack .status,
+    .sidenav .sidenav-bottom-stack .nowplaying {
+        order: 0;
+        margin-top: 0;
+    }
+    .sidenav .sidenav-bottom-stack button {
+        order: 0;
+    }
+    .sidenav:has(.sidenav-bottom-stack) {
+        height: auto;
+        min-height: 100svh;
+        max-height: 100svh;
+    }
+    .sidenav:has(.sidenav-bottom-stack) .sidenav-bottom-stack {
+        padding-bottom: 0;
+        flex-shrink: 0;
+        margin-top: auto;
+    }
+    .main { margin-left: 150px; }
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+    .sidenav a {
+        font-size: 18px;
+    }
+}
+
+/* Chat: dim button, status, nowplaying — one column anchored to the bottom of the sidebar */
+.sidenav-bottom-stack {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0 8px 0 16px;
+    box-sizing: border-box;
+}
+
+.sidenav-bottom-stack button {
+    align-self: flex-start;
+}
+
+/* Dim toggle: one node in sidebar.html; desktop = fixed corner FAB, mobile = in-stack (see max-width rule). */
+#toggle-dim-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    margin: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+}
+
+#toggle-dim-btn img {
+    display: block;
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
+@media screen and (min-width: 601px) {
+    #toggle-dim-btn {
+        position: fixed;
+        bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+        right: max(1rem, env(safe-area-inset-right, 0px));
+        z-index: 200;
+        padding: 0.55rem;
+        background: rgba(17, 17, 17, 0.88);
+        border-radius: 999px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    }
+}
+
+.sidenav .nowplaying {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding: 0 8px 0 16px;
+    font-size: 9px;
+    color: #f1f1f1 !important;
+    line-height: 1.3;
+}
+
+.sidenav .status {
+    position: absolute;
+    bottom: 120px;
+    left: 0;
+    right: 0;
+    padding: 0 8px 0 16px;
+    font-size: 9px;
+    color: #f1f1f1 !important;
+    line-height: 1.3;
+}
+
+/* Must follow .sidenav .nowplaying / .status so stack children stay in the flex column (same specificity would lose to source order) */
+.sidenav .sidenav-bottom-stack .nowplaying,
+.sidenav .sidenav-bottom-stack .status {
+    position: static;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    padding: 0;
+}
+
+.sidenav .status,
+.sidenav .status p,
+.sidenav .status i {
+    color: #f1f1f1 !important;
+}
+
+.sidenav .status .status-announcement {
+    font-weight: bold;
+    color: pink
+}
+
+.sidenav .status .status-message {
+    font-style: italic;
+}
+
+.sidenav .nowplaying .trackart {
+    display: block;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    margin-bottom: 4px;
+    border-radius: 2px;
+}
+
+.sidenav .nowplaying,
+.sidenav .nowplaying .trackinfo,
+.sidenav .nowplaying #tracktitle,
+.sidenav .nowplaying #trackartist,
+.sidenav .nowplaying span {
+    color: #f1f1f1 !important;
+}

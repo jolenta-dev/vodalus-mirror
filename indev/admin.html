@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Dashboard</title>
+        <link rel="stylesheet" href="/assets/stylesheets/admin.css">
+    </head>
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <div class="main">
+        <body>
+            <h1>Admin Dashboard</h1>
+            <div id="admin-dashboard-container" class="admin-dashboard-container" style="display: none;">
+                <!---tab links-->
+                <div class="admin-dashboard-tabs">
+                    <button class="tablinks" onclick="openTab(event, 'Chat')">Chat</button>
+                    <button class="tablinks" onclick="openTab(event, 'Status')">Status</button>
+                    <button class="tablinks" onclick="openTab(event, 'SQL')">SQL DBs</button>
+                </div>
+                <!--tab content-->
+                <div id="Chat" class="tabcontent">
+                    <h3>Chat controls</h3>
+                    <!--put a bunch of chat API endpoints here-->
+                </div>
+                <div id="Status" class="tabcontent">
+                    <h3>Status</h3>
+                    <!--do a funny bit of having this set the status and do status monitoring-->
+                </div>
+                <div id="SQL" class="tabcontent">
+                    <h3>SQL DBs</h3>
+                    <!--Add endpoints for SQL functions
+                    Resetting PWs, changing deocrations and colors, levels, etc.-->
+                </div>
+                <script>
+                    function openTab(evt, tabName) {
+                        var i, tabcontent, tablinks
+                        tabcontent =  document.getElementsByClassName("tabcontent");
+                        for (i = 0; i < tabcontent.length; i++) {
+                            tabcontent[i].style.display = "none";
+                        }
+                        tablinks =  document.getElementsByClassName("tablinks");
+                        for (i = 0; i < tablinks.length; i++) {
+                            tablinks[i].className = tablinks[i].className.replace(" active", "");
+                        }
+                        document.getElementById(tabName).style.display = "block";
+                        evt.currentTarget.className += " active";
+                    }
+                </script>
+                <div class="box">
+                    <ul class="nobullets" id="controls"></ul>
+                </div>
+            </div>
+            <div id="password-modal-overlay" style="display: block;">
+                <div id="password-modal">
+                    <p id="password-modal-message"></p>
+                    <input id="password-modal-name-input" placeholder="name">
+                    <input type="password" id="password-modal-password-input" placeholder="password">
+                    <label><input type="checkbox" id="password-modal-reveal">reveal</label>
+                    <button id="password-modal-ok" type="button">ok</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const input = document.getElementById('password-modal-password-input');
+            const revealCheckbox = document.getElementById('password-modal-reveal');
+            input.type = 'password';
+            if (revealCheckbox) {
+                revealCheckbox.checked = false;
+                revealCheckbox.addEventListener('change', () => {
+                    input.type = revealCheckbox.checked ? 'text' : 'password';
+                });
+            }
+            document.getElementById('password-modal-password-input').addEventListener('keydown', (e) =>{ if (e.key === 'Enter' ) document.getElementById('password-modal-ok').click(); });
+            document.getElementById('password-modal-ok').addEventListener('click', () => {
+                const nameEl = document.getElementById('password-modal-name-input');
+                const passwordEl = document.getElementById('password-modal-password-input');
+                if (!nameEl || !passwordEl) return alert('an admin account name and password are required.');
+                const name = nameEl.value.trim();
+                const password = passwordEl.value;
+                if (!name || !password) return alert('an admin account name and password are required.');
+                fetch('/api/adminLogin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, password })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        return alert(data.error || 'Do not meddle in that which you do not understand...');
+                    }
+                    document.getElementById('password-modal-overlay').style.display = 'none';
+                    document.getElementById('admin-dashboard-container').style.display = 'block';
+                }).catch(err => {
+                    alert(err.message || 'Network/login error. Try refreshing.');
+                });
+            });
+            
+
+        </script>
+    </body>
+</html>
