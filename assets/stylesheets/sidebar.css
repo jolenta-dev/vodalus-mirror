@@ -111,7 +111,7 @@ html.site-dim--dim #new-announcement-modal select {
 
 .main {
     margin-left: 160px;
-    padding: 0px 160px;
+    padding: 0px 0px;
 }
 
 @media screen and (max-width: 600px) {
