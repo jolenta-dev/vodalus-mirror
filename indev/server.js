@@ -1336,7 +1336,6 @@ app.post('/api/adminLogin', async (req, res) => {
     if (!protected_name) {
         return res.status(404).json({ error: 'name not found' });
     }
-    // Check if password matches
     let passwordMatch = false;
     try {
         passwordMatch = await bcrypt.compare(password, protected_name.password);
@@ -1344,11 +1343,10 @@ app.post('/api/adminLogin', async (req, res) => {
         return res.status(500).json({ error: 'password check failed' });
     }
     if (!passwordMatch) {
-        return res.status(401).json({ error: 'wrong password for admin' });
+        return res.status(401).json({ error: 'wrong password' });
     }
-    // Only allow special names to log in as admin
     if (protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') {
-        return res.status(403).json({ error: 'an admin account and password are required' });
+        return res.status(403).json({ error: 'not authorized' });
     }
     res.cookie('chat_sid', protected_name.name, { httpOnly: true, signed: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
     res.json({ success: true });

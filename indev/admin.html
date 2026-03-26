@@ -140,51 +140,59 @@
                     </script>
                 </div>
             </div>
-            <div id="password-modal-overlay" style="display: block;">
-                <div id="password-modal">
-                    <p id="password-modal-message"></p>
-                    <input id="password-modal-name-input" placeholder="name">
-                    <input type="password" id="password-modal-password-input" placeholder="password">
-                    <label><input type="checkbox" id="password-modal-reveal">reveal</label>
-                    <button id="password-modal-ok" type="button">ok</button>
-                </div>
+            <div id="login-section">
+                <h2>Admin Login</h2>
+                <input id="login-name-input" placeholder="name">
+                <input type="password" id="login-password-input" placeholder="password">
+                <label><input type="checkbox" id="login-reveal">reveal password</label>
+                <button id="login-button" type="button">login</button>
             </div>
         </div>
         <script>
-            const input = document.getElementById('password-modal-password-input');
-            const revealCheckbox = document.getElementById('password-modal-reveal');
-            input.type = 'password';
-            if (revealCheckbox) {
-                revealCheckbox.checked = false;
-                revealCheckbox.addEventListener('change', () => {
-                    input.type = revealCheckbox.checked ? 'text' : 'password';
+            const loginInput = document.getElementById('login-password-input');
+            const loginReveal = document.getElementById('login-reveal');
+            loginInput.type = 'password';
+            if (loginReveal) {
+                loginReveal.checked = false;
+                loginReveal.addEventListener('change', () => {
+                    loginInput.type = loginReveal.checked ? 'text' : 'password';
                 });
             }
-            document.getElementById('password-modal-password-input').addEventListener('keydown', (e) =>{ if (e.key === 'Enter' ) document.getElementById('password-modal-ok').click(); });
-            document.getElementById('password-modal-ok').addEventListener('click', () => {
-                const nameEl = document.getElementById('password-modal-name-input');
-                const passwordEl = document.getElementById('password-modal-password-input');
-                if (!nameEl || !passwordEl) return alert('an admin account name and password are required.');
-                const name = nameEl.value.trim();
-                const password = passwordEl.value;
-                localStorage.setItem('admin-name', name);
-                localStorage.setItem('admin-password', password);
-                if (!name || !password) return alert('an admin account name and password are required.');
-                fetch('/api/adminLogin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, password })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        return alert(data.error || 'Do not meddle in that which you do not understand...');
+            document.getElementById('login-password-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') document.getElementById('login-button').click();
+            });
+            
+            document.getElementById('login-button').addEventListener('click', async () => {
+                const name = document.getElementById('login-name-input').value.trim();
+                const password = document.getElementById('login-password-input').value;
+                
+                if (!name || !password) {
+                    alert('Please enter both name and password');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/adminLogin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        alert(data.error);
+                        return;
                     }
-                    document.getElementById('password-modal-overlay').style.display = 'none';
+                    
+                    localStorage.setItem('admin-name', name);
+                    localStorage.setItem('admin-password', password);
+                    document.getElementById('login-section').style.display = 'none';
                     document.getElementById('admin-dashboard-container').style.display = 'block';
                     loadSqlTables();
-                }).catch(err => {
-                    alert(err.message || 'Network/login error. Try refreshing.');
-                });
+                } catch (err) {
+                    alert('Network error: ' + err.message);
+                }
             });
             
             function loadSqlTables() {
