@@ -8,6 +8,14 @@
     box-sizing: border-box;
 }
 
+#sql-db-input {
+    width: 80%;
+    padding: 0.5rem;
+    border: 1px solid #000000;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+}
+
 #admin-dashboard-tabs {
     width: 100%;
     margin: 0 0 0 0;
@@ -20,6 +28,7 @@
     border: 1px solid #000;
     background-color: #f1f1f1;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .admin-tab {
@@ -64,4 +73,15 @@
     outline: 2px solid #000;
     outline-offset: -2px;
     z-index: 1;
+}
+
+html.site-dim--dim .admin-tab {
+    background-color: #7a7a7a;
+    border-color: #4a4a4a;
+    color: #111;
+}
+
+html.site-dim--dim.admin-page .box {
+    background-color: #737373;
+    border-color: #4a4a4a;
 }

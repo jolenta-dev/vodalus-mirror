@@ -1396,6 +1396,41 @@ app.get('/api/gambling-leaderboard', (req, res) => {
     res.json(rows);
 });
 
+// api endpoints for admin dashboard
+app.get('/api/admin/sqlDbTables', (req,res) => {
+    const tables = chatdb.prepare('PRAGMA table_list;').all();
+    res.json({ tables: tables.map(t => ({ name: t.name })) });
+});
+
+app.post('/api/admin/sqlDbExecute', async (req,res) => {
+    const { table, command, name, password } = req.body;
+    if (!table || !command) return res.status(400).json({ error: 'table and command are required' });
+    try {
+        const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+        if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
+        if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
+        const result = chatdb.prepare(`${command};`).all();
+        const tableState = chatdb.prepare(`SELECT * FROM ${table};`).all();
+        res.json({ result, tableState });
+    } catch (e) {
+        return res.status(500).json({ error: 'SQL error' });
+    }
+});
+
+app.post('/api/admin/updateStatus', async (req,res) => {
+    const { status, name, password } = req.body;
+    if (!status) return res.status(400).json({ error: 'status is required' });
+    try {
+        const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+        if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
+        if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
+        FileSystem.writeFileSync('/var/www/vodalus.org/assets/html/jolentas_status.html', `<html><p><span class="status-announcement">Jolenta's current status:</span> <br> <span class="status-message">${status}</span> </p></html>`);
+        res.json({ success: true, message: 'status updated' });
+    } catch (e) {
+        return res.status(500).json({ error: 'status update failed' });
+    }
+});
+
 // guestbook endpoints
 const guestdb = new Database('/var/www/vodalus.org/pages/guestbook.db');
 guestdb.exec('CREATE TABLE IF NOT EXISTS names (id INTEGER PRIMARY KEY, name TEXT, website TEXT, note TEXT, date TEXT DEFAULT CURRENT_TIMESTAMP)');

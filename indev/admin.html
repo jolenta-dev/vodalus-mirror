@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="admin-page" lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,37 +19,88 @@
                     <button class="tablinks" onclick="openTab(event, 'Status')">Status</button>
                     <button class="tablinks" onclick="openTab(event, 'SQL')">SQL DBs</button>
                 </div>
-                <!--tab content-->
-                <div id="Chat" class="tabcontent">
-                    <h3>Chat controls</h3>
-                    <!--put a bunch of chat API endpoints here-->
-                </div>
-                <div id="Status" class="tabcontent">
-                    <h3>Status</h3>
-                    <!--do a funny bit of having this set the status and do status monitoring-->
-                </div>
-                <div id="SQL" class="tabcontent">
-                    <h3>SQL DBs</h3>
-                    <!--Add endpoints for SQL functions
-                    Resetting PWs, changing deocrations and colors, levels, etc.-->
-                </div>
-                <script>
-                    function openTab(evt, tabName) {
-                        var i, tabcontent, tablinks
-                        tabcontent =  document.getElementsByClassName("tabcontent");
-                        for (i = 0; i < tabcontent.length; i++) {
-                            tabcontent[i].style.display = "none";
-                        }
-                        tablinks =  document.getElementsByClassName("tablinks");
-                        for (i = 0; i < tablinks.length; i++) {
-                            tablinks[i].className = tablinks[i].className.replace(" active", "");
-                        }
-                        document.getElementById(tabName).style.display = "block";
-                        evt.currentTarget.className += " active";
-                    }
-                </script>
                 <div class="box">
-                    <ul class="nobullets" id="controls"></ul>
+                    <!--tab content-->
+                    <div id="Chat" class="tabcontent" style="display: block;">
+                        <h3>Katharine controls</h3>
+                        <!--put a bunch of chat API endpoints here-->
+                        
+                        <h3>Announcement controls</h3>
+                        <p>create a new announcement</p>
+                        <input type="text" id="new-announcement-input" placeholder="new announcement">
+                        <select id="new-announcement-scope-input">
+                            <option value="global">global</option>
+                            <option value="public">public</option>
+                            <option value="here">here</option>
+                        </select>
+                        <button id="new-announcement-button" type="button">create announcement</button>
+                        <br>
+                        <h3>New chat controls</h3>
+                        <p>create a new chat</p>
+                        <input type="text" id="new-chat-input" placeholder="new chat name">
+                        <input type="text" id="new-chat-members-input" placeholder="new chat members (comma separated)">
+                        <label for="new-chat-public-input"><input type="checkbox" id="new-chat-public-input"> public</label>
+                        <button id="new-chat-button" type="button">create chat</button>
+                        <br>
+                        <h3>Edit chat controls</h3>
+                        <p>edit a chat</p>
+                        <input type="text" id="edit-chat-input" placeholder="chat name">
+                        <input type="text" id="edit-chat-members-input" placeholder="chat members (comma separated)">
+                        <label for="edit-chat-public-input"><input type="checkbox" id="edit-chat-public-input"> public</label>
+                        <button id="edit-chat-button" type="button">edit chat</button>
+                        <br>
+                        <h3>Delete chat controls</h3>
+                        <p>delete a chat</p>
+                        <input type="text" id="delete-chat-input" placeholder="chat name">
+                        <button id="delete-chat-button" type="button">delete chat</button>
+                    </div>
+                    <div id="Status" class="tabcontent" style="display: none;">
+                        <h3>Status</h3>
+                        <p>edit the status</p>
+                        <input type="text" id="status-input" placeholder="new status">
+                        <button id="status-button" type="button">set status</button>
+                        <p id="status-output"></p>
+                        <!--do a funny bit of having this set the status and do status monitoring-->
+                    </div>
+                    <div id="SQL" class="tabcontent" style="display: none;">
+                        <h3>SQL DBs</h3>
+                        <!--should i just PRAGMA table_list; instead?
+                        <input type="radio" id="sql-db-radio-protected-names" name="sql-db-radio" value="protected_names">
+                        <label for="sql-db-radio-protected-names">protected_names</label>
+                        <input type="radio" id="sql-db-radio-announcements" name="sql-db-radio" value="announcements">
+                        <label for="sql-db-radio-announcements">announcements</label>
+                        <input type="radio" id="sql-db-radio-journey_phrases" name="sql-db-radio" value="journey_phrases">
+                        <label for="sql-db-radio-journey_phrases">journey_phrases</label>
+                        <input type="radio" id="sql-db-radio-conversation_members" name="sql-db-radio" value="conversation_members">
+                        <label for="sql-db-radio-conversation_members">conversation_members</label>
+                        <input type="radio" id="sql-db-radio-conversation_read_state" name="sql-db-radio" value="conversation_read_state">
+                        <label for="sql-db-radio-conversation_read_state">conversation_read_state</label> -->
+                        <br><br>
+                        <input type="text" id="sql-db-input" placeholder="SQL cmd">
+                        <button id="sql-db-button" type="button">execute</button>
+                        <p id="sql-db-output"></p> <!--the api endpoint should return a SELECT * FROM table_name; for validation-->
+                        <p>common syntax: <br>
+                        <code>SELECT * FROM table_name;</code><br>
+                        <code>UPDATE table_name SET column_name = 'value' WHERE column_name = 'value';</code><br>
+                        <code>INSERT INTO table_name (column_name, column_name) VALUES ('value', 'value');</code><br>
+                        <code>DELETE FROM table_name WHERE column_name - 'value';</code>
+                    </p>
+                    </div>
+                    <script>
+                        function openTab(evt, tabName) {
+                            var i, tabcontent, tablinks
+                            tabcontent =  document.getElementsByClassName("tabcontent");
+                            for (i = 0; i < tabcontent.length; i++) {
+                                tabcontent[i].style.display = "none";
+                            }
+                            tablinks =  document.getElementsByClassName("tablinks");
+                            for (i = 0; i < tablinks.length; i++) {
+                                tablinks[i].className = tablinks[i].className.replace(" active", "");
+                            }
+                            document.getElementById(tabName).style.display = "block";
+                            evt.currentTarget.className += " active";
+                        }
+                    </script>
                 </div>
             </div>
             <div id="password-modal-overlay" style="display: block;">
@@ -79,6 +130,8 @@
                 if (!nameEl || !passwordEl) return alert('an admin account name and password are required.');
                 const name = nameEl.value.trim();
                 const password = passwordEl.value;
+                localStorage.setItem('admin-name', name);
+                localStorage.setItem('admin-password', password);
                 if (!name || !password) return alert('an admin account name and password are required.');
                 fetch('/api/adminLogin', {
                     method: 'POST',
@@ -95,8 +148,48 @@
                     alert(err.message || 'Network/login error. Try refreshing.');
                 });
             });
-            
+            const sqlDbTables = fetch('/api/admin/sqlDbTables').then(r => r.json()).then(data => {
+                const sqlDbTables = data.tables;
+                sqlDbTables.forEach(table => {
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'sql-db-radio';
+                    radio.value = table.name;
+                    radio.id = `sql-db-radio-${table.name}`;
+                    radio.label = table.name;
+                    document.getElementById('SQL').appendChild(radio);
+                });
+            }).catch(err => {
+                alert(err.message || 'Network/SQL error. Try refreshing.');
+            });
 
+            document.getElementById('sql-db-button').addEventListener('click', () => {
+                const table = document.querySelector('input[name="sql-db-radio"]:checked').value;
+                const command = document.getElementById('sql-db-input').value;
+                fetch('/api/admin/sqlDbExecute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ table, command, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') }) // this cannot be smart, but idrc rn
+                }).then(r => r.json()).then(data => {
+                    document.getElementById('sql-db-output').innerHTML = 'SQL output: ' + JSON.stringify(data.result, null, 2) + '<br><br>Table state: ' + JSON.stringify(data.tableState, null, 2);
+                }).catch(err => {
+                    alert(err.message || 'Network/SQL error. Try refreshing.');
+                });
+            });
+            document.getElementById('sql-db-output').innerHTML = 'SQL output will appear here (usually blank) + a snapshot of the table state';
+
+            document.getElementById('status-button').addEventListener('click', () => {
+                const status = document.getElementById('status-input').value;
+                fetch('/api/admin/updateStatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
+                }).then(r => r.json()).then(data => {
+                    document.getElementById('status-output').innerHTML = data.message;
+                }).catch(err => {
+                    alert(err.message || 'Network/status error. Try refreshing.');
+                });
+            });
         </script>
     </body>
 </html>
