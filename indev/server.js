@@ -6,6 +6,7 @@ const http = require('http');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
+const fs = require('fs');
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'squi?mb!o';
 const cookie = require('cookie');
 const cookieSignature = require('cookie-signature');
@@ -141,7 +142,7 @@ const PRESTIGE_REDEEMED_MESSAGE = 'a torturer has returned to that old iron gate
 app.use(express.json());
 app.use(cookieParser(COOKIE_SECRET));
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
-app.use('/indev', express.static(path.join(__dirname)));
+app.use('/indev', express.static(__dirname));
 
 // tiny proxy endpoint for now playing widget
 app.get('/api/lastfm', (req, res) => {
@@ -1410,11 +1411,20 @@ app.post('/api/admin/sqlDbExecute', async (req,res) => {
         const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
         if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
         if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
-        const result = chatdb.prepare(`${command};`).all();
-        const tableState = chatdb.prepare(`SELECT * FROM ${table};`).all();
+        
+        const trimmedCommand = command.trim().replace(/;+$/, '');
+        let result;
+        if (trimmedCommand.toUpperCase().startsWith('SELECT')) {
+            result = chatdb.prepare(trimmedCommand).all();
+        } else {
+            const runResult = chatdb.prepare(trimmedCommand).run();
+            result = [{ changes: runResult.changes, lastInsertRowid: runResult.lastInsertRowid }];
+        }
+        
+        const tableState = chatdb.prepare(`SELECT * FROM ${table}`).all();
         res.json({ result, tableState });
     } catch (e) {
-        return res.status(500).json({ error: 'SQL error' });
+        return res.status(500).json({ error: `SQL error: ${e.message}` });
     }
 });
 
@@ -1425,10 +1435,10 @@ app.post('/api/admin/updateStatus', async (req,res) => {
         const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
         if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
         if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
-        FileSystem.writeFileSync('/var/www/vodalus.org/assets/html/jolentas_status.html', `<html><p><span class="status-announcement">Jolenta's current status:</span> <br> <span class="status-message">${status}</span> </p></html>`);
+        fs.writeFileSync('/var/www/vodalus.org/assets/html/jolentas_status.html', `<html><p><span class="status-announcement">Jolenta's current status:</span> <br> <span class="status-message">${status}</span> </p></html>`);
         res.json({ success: true, message: 'status updated' });
     } catch (e) {
-        return res.status(500).json({ error: 'status update failed' });
+        return res.status(500).json({ error: `status update failed: ${e.message}` });
     }
 });
 

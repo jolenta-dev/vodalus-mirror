@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Dashboard</title>
-        <link rel="stylesheet" href="/indev/admin.css">
+        <link rel="stylesheet" href="/assets/stylesheets/admin.css">
     </head>
     <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
@@ -65,16 +65,63 @@
                     <div id="SQL" class="tabcontent" style="display: none;">
                         <h3>SQL DBs</h3>
                         <div id="sql-table-radios"></div>
-                        <br><br>
-                        <input type="text" id="sql-db-input" placeholder="SQL cmd">
+                        <br>
+                        <div class="sql-builder">
+                            <label>Command:</label>
+                            <select id="sql-command-type">
+                                <option value="SELECT">SELECT</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="INSERT">INSERT INTO</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                            
+                            <div id="sql-select-builder" class="sql-command-builder">
+                                <input type="text" id="sql-select-columns" placeholder="columns (e.g., * or name, date)" style="width: 300px;">
+                                <span>FROM</span>
+                                <span id="sql-select-table" class="table-name-display"></span>
+                                <input type="text" id="sql-select-where" placeholder="WHERE clause (optional, e.g., id = 1)" style="width: 300px;">
+                            </div>
+                            
+                            <div id="sql-update-builder" class="sql-command-builder" style="display: none;">
+                                <span id="sql-update-table" class="table-name-display"></span>
+                                <span>SET</span>
+                                <input type="text" id="sql-update-set" placeholder="column = 'value', column2 = 'value2'" style="width: 300px;">
+                                <span>WHERE</span>
+                                <input type="text" id="sql-update-where" placeholder="id = 1" style="width: 200px;">
+                            </div>
+                            
+                            <div id="sql-insert-builder" class="sql-command-builder" style="display: none;">
+                                <span id="sql-insert-table" class="table-name-display"></span>
+                                <input type="text" id="sql-insert-columns" placeholder="(column1, column2)" style="width: 200px;">
+                                <span>VALUES</span>
+                                <input type="text" id="sql-insert-values" placeholder="('value1', 'value2')" style="width: 200px;">
+                            </div>
+                            
+                            <div id="sql-delete-builder" class="sql-command-builder" style="display: none;">
+                                <span>FROM</span>
+                                <span id="sql-delete-table" class="table-name-display"></span>
+                                <span>WHERE</span>
+                                <input type="text" id="sql-delete-where" placeholder="id = 1" style="width: 200px;">
+                            </div>
+                        </div>
+                        
+                        <div class="sql-preview">
+                            <label>Preview:</label>
+                            <code id="sql-preview-text">SELECT * FROM table_name</code>
+                        </div>
+                        
                         <button id="sql-db-button" type="button">execute</button>
                         <div id="sql-db-output"></div>
-                        <p>common syntax: <br>
-                        <code>SELECT * FROM table_name;</code><br>
-                        <code>UPDATE table_name SET column_name = 'value' WHERE column_name = 'value';</code><br>
-                        <code>INSERT INTO table_name (column_name, column_name) VALUES ('value', 'value');</code><br>
-                        <code>DELETE FROM table_name WHERE column_name = 'value';</code>
-                    </p>
+                        
+                        <details style="margin-top: 20px;">
+                            <summary style="cursor: pointer; font-weight: bold;">SQL Syntax Reference</summary>
+                            <p style="margin-top: 10px;">
+                            <code>SELECT * FROM table_name;</code><br>
+                            <code>UPDATE table_name SET column_name = 'value' WHERE column_name = 'value';</code><br>
+                            <code>INSERT INTO table_name (column_name, column_name) VALUES ('value', 'value');</code><br>
+                            <code>DELETE FROM table_name WHERE column_name = 'value';</code>
+                            </p>
+                        </details>
                     </div>
                     <script>
                         function openTab(evt, tabName) {
@@ -156,9 +203,76 @@
                     
                     container.appendChild(radio);
                     container.appendChild(label);
+                    
+                    radio.addEventListener('change', updateSqlBuilder);
                 });
+                
+                updateSqlBuilder();
             }).catch(err => {
                 alert(err.message || 'Network/SQL error. Try refreshing.');
+            });
+
+            function updateSqlBuilder() {
+                const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
+                if (!checkedRadio) return;
+                const tableName = checkedRadio.value;
+                
+                document.querySelectorAll('.table-name-display').forEach(el => {
+                    el.textContent = tableName;
+                });
+                
+                updateSqlPreview();
+            }
+
+            function updateSqlPreview() {
+                const commandType = document.getElementById('sql-command-type').value;
+                const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
+                if (!checkedRadio) return;
+                const tableName = checkedRadio.value;
+                
+                let sql = '';
+                
+                if (commandType === 'SELECT') {
+                    const columns = document.getElementById('sql-select-columns').value || '*';
+                    const where = document.getElementById('sql-select-where').value;
+                    sql = `SELECT ${columns} FROM ${tableName}`;
+                    if (where) sql += ` WHERE ${where}`;
+                } else if (commandType === 'UPDATE') {
+                    const set = document.getElementById('sql-update-set').value || 'column = value';
+                    const where = document.getElementById('sql-update-where').value || 'id = ?';
+                    sql = `UPDATE ${tableName} SET ${set} WHERE ${where}`;
+                } else if (commandType === 'INSERT') {
+                    const columns = document.getElementById('sql-insert-columns').value || '(column1, column2)';
+                    const values = document.getElementById('sql-insert-values').value || "('value1', 'value2')";
+                    sql = `INSERT INTO ${tableName} ${columns} VALUES ${values}`;
+                } else if (commandType === 'DELETE') {
+                    const where = document.getElementById('sql-delete-where').value || 'id = ?';
+                    sql = `DELETE FROM ${tableName} WHERE ${where}`;
+                }
+                
+                document.getElementById('sql-preview-text').textContent = sql;
+            }
+
+            document.getElementById('sql-command-type').addEventListener('change', () => {
+                const commandType = document.getElementById('sql-command-type').value;
+                
+                document.querySelectorAll('.sql-command-builder').forEach(el => el.style.display = 'none');
+                
+                if (commandType === 'SELECT') {
+                    document.getElementById('sql-select-builder').style.display = 'block';
+                } else if (commandType === 'UPDATE') {
+                    document.getElementById('sql-update-builder').style.display = 'block';
+                } else if (commandType === 'INSERT') {
+                    document.getElementById('sql-insert-builder').style.display = 'block';
+                } else if (commandType === 'DELETE') {
+                    document.getElementById('sql-delete-builder').style.display = 'block';
+                }
+                
+                updateSqlBuilder();
+            });
+
+            document.querySelectorAll('#sql-select-columns, #sql-select-where, #sql-update-set, #sql-update-where, #sql-insert-columns, #sql-insert-values, #sql-delete-where').forEach(input => {
+                input.addEventListener('input', updateSqlPreview);
             });
 
             function formatAsTable(data, title) {
@@ -188,8 +302,8 @@
                 const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
                 if (!checkedRadio) return alert('Please select a table first');
                 const table = checkedRadio.value;
-                const command = document.getElementById('sql-db-input').value;
-                if (!command) return alert('Please enter a SQL command');
+                const command = document.getElementById('sql-preview-text').textContent;
+                if (!command) return alert('Please build a SQL command');
                 
                 fetch('/api/admin/sqlDbExecute', {
                     method: 'POST',
