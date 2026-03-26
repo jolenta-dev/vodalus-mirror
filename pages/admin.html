@@ -263,7 +263,7 @@
 
             let conversationsData = [];
             function loadConversations() {
-                fetch('/api/conversations').then(r => r.json()).then(data => {
+                fetch('/api/conversations', { credentials: 'include' }).then(r => r.json()).then(data => {
                     conversationsData = data;
                     const announcementChatSelect = document.getElementById('new-announcement-chat-input');
                     const membersChatSelect = document.getElementById('chat-admin-members-select');
@@ -323,13 +323,13 @@
                 const label = conv ? (conv.label || conv.id) : convId;
                 document.getElementById('chat-admin-members-context').textContent = `Managing members for: ${label}`;
                 
-                fetch(`/api/conversation/${encodeURIComponent(convId)}/members`).then(r => r.json()).then(data => {
+                fetch(`/api/conversations/${encodeURIComponent(convId)}/members`, { credentials: 'include' }).then(r => r.json()).then(data => {
                     const membersList = document.getElementById('chat-admin-members-list');
                     membersList.innerHTML = '';
                     if (data.members && data.members.length > 0) {
                         data.members.forEach(member => {
                             const memberDiv = document.createElement('div');
-                            memberDiv.textContent = member;
+                            memberDiv.textContent = member.name;
                             memberDiv.style.padding = '4px 0';
                             membersList.appendChild(memberDiv);
                         });

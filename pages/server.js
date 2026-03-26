@@ -226,7 +226,7 @@ function canAccessConversation(conversationId, nickname) {
     const memberCountRow = chatdb.prepare('SELECT COUNT(*) AS count FROM conversation_members WHERE conversation_id = ?').get(conversationId);
     const memberCount = memberCountRow ? memberCountRow.count : 0;
     const lowerNickname = (nickname || '').toLowerCase();
-    if (lowerNickname === 'admin' && conversation.type === 'room') return true;
+    if (lowerNickname === 'admin') return true;
     if (lowerNickname === 'jolenta' && conversation.type === 'room' && memberCount > 2) return true;
     if (memberCount === 0) return true; // public room
     if (!nickname) return false;
@@ -431,12 +431,21 @@ app.get('/api/conversations', (req, res) => {
     const rooms = allRooms.filter((room) => canAccessConversation(room.id, nickname));
     let dms = [];
     if (nickname) {
-        dms = chatdb.prepare(`
-            SELECT DISTINCT c.id, COALESCE(c.label, c.id) AS label, c.type
-            FROM conversations c
-            JOIN conversation_members cm ON cm.conversation_id = c.id
-            WHERE c.type = 'dm' AND LOWER(cm.user_name) = LOWER(?)
-        `).all(nickname);
+        const lowerNickname = nickname.toLowerCase();
+        if (lowerNickname === 'admin') {
+            dms = chatdb.prepare(`
+                SELECT DISTINCT id, COALESCE(label, id) AS label, type
+                FROM conversations
+                WHERE type = 'dm'
+            `).all();
+        } else {
+            dms = chatdb.prepare(`
+                SELECT DISTINCT c.id, COALESCE(c.label, c.id) AS label, c.type
+                FROM conversations c
+                JOIN conversation_members cm ON cm.conversation_id = c.id
+                WHERE c.type = 'dm' AND LOWER(cm.user_name) = LOWER(?)
+            `).all(nickname);
+        }
     }
     const map = new Map();
     rooms.concat(dms).forEach((c) => map.set(c.id, c));
