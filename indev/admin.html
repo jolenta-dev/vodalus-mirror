@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Dashboard</title>
-        <link rel="stylesheet" href="/assets/stylesheets/admin.css">
+        <link rel="stylesheet" href="/indev/admin.css">
     </head>
     <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
@@ -64,26 +64,16 @@
                     </div>
                     <div id="SQL" class="tabcontent" style="display: none;">
                         <h3>SQL DBs</h3>
-                        <!--should i just PRAGMA table_list; instead?
-                        <input type="radio" id="sql-db-radio-protected-names" name="sql-db-radio" value="protected_names">
-                        <label for="sql-db-radio-protected-names">protected_names</label>
-                        <input type="radio" id="sql-db-radio-announcements" name="sql-db-radio" value="announcements">
-                        <label for="sql-db-radio-announcements">announcements</label>
-                        <input type="radio" id="sql-db-radio-journey_phrases" name="sql-db-radio" value="journey_phrases">
-                        <label for="sql-db-radio-journey_phrases">journey_phrases</label>
-                        <input type="radio" id="sql-db-radio-conversation_members" name="sql-db-radio" value="conversation_members">
-                        <label for="sql-db-radio-conversation_members">conversation_members</label>
-                        <input type="radio" id="sql-db-radio-conversation_read_state" name="sql-db-radio" value="conversation_read_state">
-                        <label for="sql-db-radio-conversation_read_state">conversation_read_state</label> -->
+                        <div id="sql-table-radios"></div>
                         <br><br>
                         <input type="text" id="sql-db-input" placeholder="SQL cmd">
                         <button id="sql-db-button" type="button">execute</button>
-                        <p id="sql-db-output"></p> <!--the api endpoint should return a SELECT * FROM table_name; for validation-->
+                        <div id="sql-db-output"></div>
                         <p>common syntax: <br>
                         <code>SELECT * FROM table_name;</code><br>
                         <code>UPDATE table_name SET column_name = 'value' WHERE column_name = 'value';</code><br>
                         <code>INSERT INTO table_name (column_name, column_name) VALUES ('value', 'value');</code><br>
-                        <code>DELETE FROM table_name WHERE column_name - 'value';</code>
+                        <code>DELETE FROM table_name WHERE column_name = 'value';</code>
                     </p>
                     </div>
                     <script>
@@ -150,42 +140,102 @@
             });
             const sqlDbTables = fetch('/api/admin/sqlDbTables').then(r => r.json()).then(data => {
                 const sqlDbTables = data.tables;
-                sqlDbTables.forEach(table => {
+                const container = document.getElementById('sql-table-radios');
+                sqlDbTables.forEach((table, index) => {
                     const radio = document.createElement('input');
                     radio.type = 'radio';
                     radio.name = 'sql-db-radio';
                     radio.value = table.name;
                     radio.id = `sql-db-radio-${table.name}`;
-                    radio.label = table.name;
-                    document.getElementById('SQL').appendChild(radio);
+                    if (index === 0) radio.checked = true;
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `sql-db-radio-${table.name}`;
+                    label.textContent = table.name;
+                    label.style.marginRight = '15px';
+                    
+                    container.appendChild(radio);
+                    container.appendChild(label);
                 });
             }).catch(err => {
                 alert(err.message || 'Network/SQL error. Try refreshing.');
             });
 
+            function formatAsTable(data, title) {
+                if (!data || data.length === 0) return `<h4>${title}</h4><p>No results</p>`;
+                
+                const keys = Object.keys(data[0]);
+                let html = `<h4>${title}</h4><table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; margin: 10px 0;">`;
+                html += '<thead><tr>';
+                keys.forEach(key => {
+                    html += `<th style="background: #333; color: white; padding: 8px;">${key}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                
+                data.forEach(row => {
+                    html += '<tr>';
+                    keys.forEach(key => {
+                        html += `<td style="padding: 8px; border: 1px solid #ddd;">${row[key] !== null ? row[key] : '<em>null</em>'}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table>';
+                return html;
+            }
+
             document.getElementById('sql-db-button').addEventListener('click', () => {
-                const table = document.querySelector('input[name="sql-db-radio"]:checked').value;
+                const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
+                if (!checkedRadio) return alert('Please select a table first');
+                const table = checkedRadio.value;
                 const command = document.getElementById('sql-db-input').value;
+                if (!command) return alert('Please enter a SQL command');
+                
                 fetch('/api/admin/sqlDbExecute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ table, command, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') }) // this cannot be smart, but idrc rn
-                }).then(r => r.json()).then(data => {
-                    document.getElementById('sql-db-output').innerHTML = 'SQL output: ' + JSON.stringify(data.result, null, 2) + '<br><br>Table state: ' + JSON.stringify(data.tableState, null, 2);
+                    body: JSON.stringify({ table, command, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'SQL execution failed');
+                    }
+                    return r.json();
+                }).then(data => {
+                    let output = '';
+                    if (data.result && data.result.length > 0) {
+                        output += formatAsTable(data.result, 'SQL Command Result');
+                    } else {
+                        output += '<h4>SQL Command Result</h4><p>Command executed successfully (no rows returned)</p>';
+                    }
+                    if (data.tableState && data.tableState.length > 0) {
+                        output += formatAsTable(data.tableState, `Current Table State: ${table}`);
+                    } else {
+                        output += `<h4>Current Table State: ${table}</h4><p>Table is empty</p>`;
+                    }
+                    document.getElementById('sql-db-output').innerHTML = output;
                 }).catch(err => {
                     alert(err.message || 'Network/SQL error. Try refreshing.');
                 });
             });
-            document.getElementById('sql-db-output').innerHTML = 'SQL output will appear here (usually blank) + a snapshot of the table state';
+            document.getElementById('sql-db-output').innerHTML = '<p style="color: #666;">SQL output will appear here after executing a command</p>';
 
             document.getElementById('status-button').addEventListener('click', () => {
                 const status = document.getElementById('status-input').value;
+                if (!status) return alert('Please enter a status');
+                
                 fetch('/api/admin/updateStatus', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
-                }).then(r => r.json()).then(data => {
-                    document.getElementById('status-output').innerHTML = data.message;
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'Status update failed');
+                    }
+                    return r.json();
+                }).then(data => {
+                    document.getElementById('status-output').innerHTML = `<span style="color: green;">${data.message || 'Status updated successfully'}</span>`;
                 }).catch(err => {
                     alert(err.message || 'Network/status error. Try refreshing.');
                 });

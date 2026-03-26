@@ -141,6 +141,7 @@ const PRESTIGE_REDEEMED_MESSAGE = 'a torturer has returned to that old iron gate
 app.use(express.json());
 app.use(cookieParser(COOKIE_SECRET));
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
+app.use('/indev', express.static(path.join(__dirname)));
 
 // tiny proxy endpoint for now playing widget
 app.get('/api/lastfm', (req, res) => {
