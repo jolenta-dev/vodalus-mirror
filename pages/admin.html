@@ -264,14 +264,14 @@
             let conversationsData = [];
             function loadConversations() {
                 fetch('/api/conversations', { credentials: 'include' }).then(r => r.json()).then(data => {
-                    conversationsData = data;
+                    conversationsData = data.conversations || [];
                     const announcementChatSelect = document.getElementById('new-announcement-chat-input');
                     const membersChatSelect = document.getElementById('chat-admin-members-select');
                     
                     announcementChatSelect.innerHTML = '<option value="">Select a chat...</option>';
                     membersChatSelect.innerHTML = '<option value="">Select a chat...</option>';
                     
-                    data.forEach(conv => {
+                    conversationsData.forEach(conv => {
                         const label = conv.label || conv.id;
                         const opt1 = document.createElement('option');
                         opt1.value = conv.id;
