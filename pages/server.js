@@ -875,7 +875,7 @@ app.post('/api/decrement-journey-level', (req, res) => {
     const decrementBy = Number.isInteger(parsedDecrementBy) && parsedDecrementBy > 0 ? parsedDecrementBy : 1;
     const nextLevel = Math.max(0, level - decrementBy);
     if (nextLevel === level) {
-        return res.json({ success: true, journey_level: nextLevel });
+        return res.json({ success: true, journey_level: nextLevel, name: row.name });
     }
     if (!isJolenta && !hasPrestiged && nextLevel === 0) {
         chatdb.prepare(
@@ -889,7 +889,7 @@ app.post('/api/decrement-journey-level', (req, res) => {
     } else {
         chatdb.prepare('UPDATE protected_names SET journey_level = ? WHERE LOWER(name) = LOWER(?)').run(nextLevel, row.name);
     }
-    res.json({ success: true, journey_level: nextLevel });
+    res.json({ success: true, journey_level: nextLevel, name: row.name });
 });
 
 app.post('/api/colors_decoration', async (req, res) => {
@@ -949,17 +949,55 @@ app.post('/api/announcements', (req, res) => {
 
 // system announcements endpoint (used by atrium events)
 app.post('/api/announcements/system', (req, res) => {
-    const { event, name } = req.body || {};
+    const { event, name, message: customMessage, scope, conversationId } = req.body || {};
     if (!event) return res.status(400).json({ error: 'event is required' });
     const date = new Date().toLocaleString();
     const insertAnnouncement = chatdb.prepare('INSERT INTO announcements (author, message, date, scope, conversation_id) VALUES (?, ?, ?, ?, ?)');
     let message = null;
-    if (event === 'journey_level_decremented') {
+    
+    if (event === 'manual_announcement') {
+        // Admin console manual announcements
+        const nickname = (req.signedCookies.chat_sid || '').toLowerCase();
+        if (nickname !== 'admin' && nickname !== 'jolenta') {
+            return res.status(403).json({ error: 'not authorized' });
+        }
+        if (!customMessage || !String(customMessage).trim()) {
+            return res.status(400).json({ error: 'message is required' });
+        }
+        const normalizedScope = (scope === 'public' || scope === 'here') ? scope : 'global';
+        const scopeConversationId = normalizedScope === 'here' ? (conversationId || 'general') : null;
+        const author = req.signedCookies.chat_sid || 'system';
+        insertAnnouncement.run(author, String(customMessage).trim(), date, normalizedScope, scopeConversationId);
+        const outbound = { name: author, message: String(customMessage).trim(), date, vip: false, color: '#000000', decoration: '', journey_level: 0, kind: 'announcement', scope: normalizedScope };
+        wss.clients.forEach((client) => {
+            if (client.readyState !== 1) return;
+            if (normalizedScope === 'global') {
+                client.send(JSON.stringify({ type: 'message', data: outbound }));
+                return;
+            }
+            if (normalizedScope === 'public') {
+                if (isPublicAnnouncementTarget(client.conversationId)) {
+                    client.send(JSON.stringify({ type: 'message', data: outbound }));
+                }
+                return;
+            }
+            if (normalizedScope === 'here' && client.conversationId === scopeConversationId) {
+                client.send(JSON.stringify({ type: 'message', data: outbound }));
+            }
+        });
+        return res.json({ success: true });
+    } else if (event === 'journey_level_decremented') {
         const lookupName = name || req.signedCookies.chat_sid;
-        if (!lookupName) return res.status(400).json({ error: 'name is required for this event' });
-        const row = chatdb.prepare('SELECT name FROM protected_names WHERE LOWER(name) = LOWER(?)').get(lookupName);
-        if (!row) return res.status(404).json({ error: 'name not found' });
-        message = `${row.name} has lost their title and been demoted`;
+        if (lookupName) {
+            const row = chatdb.prepare('SELECT name FROM protected_names WHERE LOWER(name) = LOWER(?)').get(lookupName);
+            if (row) {
+                message = `${row.name} has lost their title and been demoted`;
+            } else {
+                message = 'Someone has lost their title and been demoted';
+            }
+        } else {
+            message = 'Someone has lost their title and been demoted';
+        }
     } else {
         if (!name) return res.status(400).json({ error: 'name is required for this event' });
         const row = chatdb.prepare('SELECT name, vip, journey_level FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);

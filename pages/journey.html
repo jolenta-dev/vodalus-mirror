@@ -492,19 +492,32 @@
                 credentials: 'same-origin',
                 body: JSON.stringify({ decrementBy: 1 })
               })
-                .then(function (response) { return response.json(); })
+                .then(function (response) { 
+                  if (!response.ok) throw new Error('Not logged in');
+                  return response.json(); 
+                })
                 .then(function (data) {
                   if (data.success) {
                     addLine(id, 'Your level has been decremented.', false);
                     sessionLevel = data.journey_level != null ? data.journey_level : 0;
+                    // Post announcement with user's name
+                    fetch('/api/announcements/system', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'same-origin',
+                      body: JSON.stringify({ event: 'journey_level_decremented', name: data.name })
+                    });
                   }
+                })
+                .catch(function(err) {
+                  // User not logged in - post announcement without name
+                  fetch('/api/announcements/system', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ event: 'journey_level_decremented' })
+                  });
                 });
-              fetch('/api/announcements/system', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin',
-                body: JSON.stringify({ event: 'journey_level_decremented' })
-              });
             }
             btn.textContent = 'Begin your journey.';
             st.stage = 0;

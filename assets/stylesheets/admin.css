@@ -23,62 +23,54 @@
 
 .admin-dashboard-tabs {
     display: flex;
-    flex-wrap: wrap;
-    overflow: hidden;
-    border: 1px solid #000;
-    background-color: #f1f1f1;
-    box-sizing: border-box;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
     width: 100%;
 }
 
-.admin-tab {
-    flex: 0 1 auto;
-    margin: 0;
-    background-color: inherit;
-    border: none;
-    border-right: 1px solid #ccc;
+.tablinks {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid #000;
+    background: #f0f0f0;
     cursor: pointer;
-    padding: 0.5rem 0.55rem 0.5rem 1rem;
-    transition: background-color 0.2s ease;
     font: inherit;
     font-size: 1rem;
-    color: inherit;
-    text-align: center;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    max-width: 100%;
+    transition: background-color 0.1s ease;
 }
 
-.admin-tab__label {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.tablinks:hover {
+    background: #e0e0e0;
 }
 
-.admin-tab:last-child {
-    border-right: none;
-}
-
-.admin-tab:hover {
-    background-color: #ddd;
-}
-
-.admin-tab--active {
-    background-color: #ccc;
+.tablinks.active {
+    background: #fff;
     font-weight: bold;
 }
 
-.admin-tab:focus-visible {
+.tablinks:focus-visible {
     outline: 2px solid #000;
     outline-offset: -2px;
     z-index: 1;
 }
 
-html.site-dim--dim .admin-tab {
-    background-color: #7a7a7a;
-    border-color: #4a4a4a;
-    color: #111;
+.tabcontent {
+    display: none;
+}
+
+html.site-dim--dim .tablinks {
+    background: #5a5a5a;
+    border-color: #333;
+    color: #000000;
+}
+
+html.site-dim--dim .tablinks:hover {
+    background: #6a6a6a;
+}
+
+html.site-dim--dim .tablinks.active {
+    background: #737373;
+    font-weight: bold;
 }
 
 html.site-dim--dim.admin-page .box {

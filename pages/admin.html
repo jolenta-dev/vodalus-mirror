@@ -23,8 +23,6 @@
                     <!--tab content-->
                     <div id="Chat" class="tabcontent" style="display: block;">
                         <h3>Katharine controls</h3>
-                        <!--put a bunch of chat API endpoints here-->
-                        
                         <h3>Announcement controls</h3>
                         <p>create a new announcement</p>
                         <input type="text" id="new-announcement-input" placeholder="new announcement">
@@ -436,26 +434,26 @@
             });
 
             document.getElementById('new-announcement-button').addEventListener('click', () => {
-                const announcement = document.getElementById('new-announcement-input').value.trim();
+                const message = document.getElementById('new-announcement-input').value.trim();
                 const scope = document.getElementById('new-announcement-scope-input').value;
-                
-                if (!announcement) return alert('Please enter an announcement');
-                
+
+                if (!message) return alert('Please enter an announcement');
+
                 let conversationId = null;
                 if (scope === 'here') {
                     conversationId = document.getElementById('new-announcement-chat-input').value;
                     if (!conversationId) return alert('Please select a chat for "here" scope');
                 }
-                
-                fetch('/api/announcement', {
+
+                fetch('/api/announcements/system', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({
-                        announcement,
+                        event: 'manual_announcement',
+                        message,
                         scope,
-                        conversationId,
-                        name: localStorage.getItem('admin-name'),
-                        password: localStorage.getItem('admin-password')
+                        conversationId
                     })
                 }).then(async r => {
                     if (!r.ok) {
@@ -464,7 +462,7 @@
                     }
                     return r.json();
                 }).then(data => {
-                    alert(data.message || 'Announcement created successfully');
+                    alert('Announcement created successfully');
                     document.getElementById('new-announcement-input').value = '';
                 }).catch(err => {
                     alert(err.message);
