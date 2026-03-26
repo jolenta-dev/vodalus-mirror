@@ -6,6 +6,7 @@ const http = require('http');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
+const fs = require('fs');
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'squi?mb!o';
 const cookie = require('cookie');
 const cookieSignature = require('cookie-signature');
@@ -141,6 +142,7 @@ const PRESTIGE_REDEEMED_MESSAGE = 'a torturer has returned to that old iron gate
 app.use(express.json());
 app.use(cookieParser(COOKIE_SECRET));
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
+app.use('/indev', express.static(__dirname));
 
 // tiny proxy endpoint for now playing widget
 app.get('/api/lastfm', (req, res) => {
@@ -835,20 +837,14 @@ app.post('/api/prestige_redeem', async (req, res) => {
     const prestigeLevel = Number.isFinite(parsedPrestigeLevel) ? parsedPrestigeLevel : 0;
     const nextPrestigeLevel = prestigeLevel + 1;
     const nextJourneyLevel = Math.max(0, journeyLevel - 5);
-    const isJolenta = String(row.name || '').trim().toLowerCase() === 'jolenta';
-    if (isJolenta) {
-        chatdb.prepare('UPDATE protected_names SET prestige_level = ?, journey_level = ? WHERE LOWER(name) = LOWER(?)')
-            .run(nextPrestigeLevel, nextJourneyLevel, row.name);
-    } else {
-        chatdb.prepare('UPDATE protected_names SET prestige_level = ?, journey_level = ?, decoration = ? WHERE LOWER(name) = LOWER(?)')
-            .run(nextPrestigeLevel, nextJourneyLevel, JOURNEY_DEFAULT_DECORATION, row.name);
-    }
+    chatdb.prepare('UPDATE protected_names SET prestige_level = ?, journey_level = ? WHERE LOWER(name) = LOWER(?)')
+        .run(nextPrestigeLevel, nextJourneyLevel, row.name);
     res.json({ success: true, prestige_level: nextPrestigeLevel, journey_level: nextJourneyLevel });
     broadcastPrestigeRedeemedAnnouncement(row.name, nextPrestigeLevel);
 });
 
 
-// Tier cosmetics for journey levels 1–3 (same as atrium phrase_redeem); 4+ is custom at Autarchy.
+// Tier cosmetics for journey levels 1–3 
 const JOURNEY_DEFAULT_COLOR = '#c71585';
 const JOURNEY_DEFAULT_DECORATION = '⋆˙⟡';
 const JOURNEY_TIER_COSMETICS = {
@@ -860,20 +856,23 @@ const JOURNEY_TIER_COSMETICS = {
 app.post('/api/decrement-journey-level', (req, res) => {
     const sid = req.signedCookies.chat_sid;
     if (!sid) return res.status(401).json({ error: 'not logged in' });
-    const row = chatdb.prepare('SELECT name, journey_level FROM protected_names WHERE LOWER(name) = LOWER(?)').get(sid);
+    const row = chatdb.prepare('SELECT name, journey_level, prestige_level FROM protected_names WHERE LOWER(name) = LOWER(?)').get(sid);
     if (!row) return res.status(404).json({ error: 'name not found' });
     const level = row.journey_level != null ? row.journey_level : 0;
+    const prestigeLevel = row.prestige_level != null ? Number(row.prestige_level) : 0;
+    const hasPrestiged = prestigeLevel > 0;
+    const isJolenta = String(row.name || '').trim().toLowerCase() === 'jolenta';
     const parsedDecrementBy = Number(req.body && req.body.decrementBy);
     const decrementBy = Number.isInteger(parsedDecrementBy) && parsedDecrementBy > 0 ? parsedDecrementBy : 1;
     const nextLevel = Math.max(0, level - decrementBy);
     if (nextLevel === level) {
         return res.json({ success: true, journey_level: nextLevel });
     }
-    if (nextLevel === 0) {
+    if (!isJolenta && !hasPrestiged && nextLevel === 0) {
         chatdb.prepare(
             'UPDATE protected_names SET journey_level = ?, color = ?, decoration = ? WHERE LOWER(name) = LOWER(?)'
         ).run(nextLevel, JOURNEY_DEFAULT_COLOR, JOURNEY_DEFAULT_DECORATION, row.name);
-    } else if (JOURNEY_TIER_COSMETICS[nextLevel]) {
+    } else if (!isJolenta && !hasPrestiged && JOURNEY_TIER_COSMETICS[nextLevel]) {
         const { color, decoration } = JOURNEY_TIER_COSMETICS[nextLevel];
         chatdb.prepare(
             'UPDATE protected_names SET journey_level = ?, color = ?, decoration = ? WHERE LOWER(name) = LOWER(?)'
@@ -1328,6 +1327,31 @@ app.post('/api/login', async (req, res) => {
 	res.json({ success: true });
 });
 
+app.post('/api/adminLogin', async (req, res) => {
+    const { name, password } = req.body;
+    if (!name || !password) {
+        return res.status(400).json({ error: 'name and password are required' });
+    }
+    const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+    if (!protected_name) {
+        return res.status(404).json({ error: 'name not found' });
+    }
+    let passwordMatch = false;
+    try {
+        passwordMatch = await bcrypt.compare(password, protected_name.password);
+    } catch (e) {
+        return res.status(500).json({ error: 'password check failed' });
+    }
+    if (!passwordMatch) {
+        return res.status(401).json({ error: 'wrong password' });
+    }
+    if (protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') {
+        return res.status(403).json({ error: 'not authorized' });
+    }
+    res.cookie('chat_sid', protected_name.name, { httpOnly: true, signed: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+    res.json({ success: true });
+});
+
 app.get('/api/me', (req, res) => {
     res.set('Cache-Control', 'private, no-store');
     const nickname = req.signedCookies.chat_sid;
@@ -1370,6 +1394,50 @@ app.get('/api/gambling-leaderboard', (req, res) => {
             decoration: r.decoration != null ? String(r.decoration) : ''
         }));
     res.json(rows);
+});
+
+// api endpoints for admin dashboard
+app.get('/api/admin/sqlDbTables', (req,res) => {
+    const tables = chatdb.prepare('PRAGMA table_list;').all();
+    res.json({ tables: tables.map(t => ({ name: t.name })) });
+});
+
+app.post('/api/admin/sqlDbExecute', async (req,res) => {
+    const { table, command, name, password } = req.body;
+    if (!table || !command) return res.status(400).json({ error: 'table and command are required' });
+    try {
+        const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+        if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
+        if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
+        
+        const trimmedCommand = command.trim().replace(/;+$/, '');
+        let result;
+        if (trimmedCommand.toUpperCase().startsWith('SELECT')) {
+            result = chatdb.prepare(trimmedCommand).all();
+        } else {
+            const runResult = chatdb.prepare(trimmedCommand).run();
+            result = [{ changes: runResult.changes, lastInsertRowid: runResult.lastInsertRowid }];
+        }
+        
+        const tableState = chatdb.prepare(`SELECT * FROM ${table}`).all();
+        res.json({ result, tableState });
+    } catch (e) {
+        return res.status(500).json({ error: `SQL error: ${e.message}` });
+    }
+});
+
+app.post('/api/admin/updateStatus', async (req,res) => {
+    const { status, name, password } = req.body;
+    if (!status) return res.status(400).json({ error: 'status is required' });
+    try {
+        const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+        if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
+        if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
+        fs.writeFileSync('/var/www/vodalus.org/assets/html/jolentas_status.html', `<html><p><span class="status-announcement">Jolenta's current status:</span> <br> <span class="status-message">${status}</span> </p></html>`);
+        res.json({ success: true, message: 'status updated' });
+    } catch (e) {
+        return res.status(500).json({ error: `status update failed: ${e.message}` });
+    }
 });
 
 // guestbook endpoints
