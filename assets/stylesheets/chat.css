@@ -15,6 +15,17 @@
     #input-message { width: auto; max-width: calc(100% - 70px); margin: 8px 0; }
 }
 
+#setup {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+     top: 50%;
+     -ms-transform: translateY(-100%);
+     transform: translateY(-100%)  translateX(200%);
+     font-size: 1rem;
+ }
+
+
 /* main column + members sidebar: chat column = 80% of row (same as pre-sidebar), members flush beside with small gap */
 .chat-with-sidebar {
     display: flex;
@@ -56,8 +67,32 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 0.75rem;
     margin: 0 0 0.5rem 0;
+}
+
+.chat-toolbar button {
+  background-color: #6a6a6a; /* Green background */
+  border: 1px solid #000; /* Green border */
+  color: black; /* White text */
+  padding: 10px 24px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}
+
+/* Clear floats (clearfix hack) */
+.chat-toolbar:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.chat-toolbar button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.chat-toolbar button:hover {
+  background-color: #8a8a8a;
 }
 
 #conversation-tabs {
@@ -737,7 +772,37 @@ html.site-dim--dim .chat-admin-members-empty {
 }
 
 html.site-dim--dim .chat-name-hover-box {
-    background: #5f5f5f;
+    background: #7a7a7a;
     border-color: #3e3e3e;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Modals sit above dim chrome; !important beats inline <style> on some pages */
+html.site-dim--dim #password-modal-overlay,
+html.site-dim--dim #new-chat-modal-overlay,
+html.site-dim--dim #new-announcement-modal-overlay,
+html.site-dim--dim #chat-directory-modal-overlay,
+html.site-dim--dim #chat-tag-modal-overlay {
+    background: rgba(22, 22, 22, 0.78) !important;
+}
+
+html.site-dim--dim #password-modal,
+html.site-dim--dim #new-chat-modal,
+html.site-dim--dim #new-announcement-modal,
+html.site-dim--dim #chat-directory-modal,
+html.site-dim--dim #chat-tag-modal {
+    background: #8e8e8e !important;
+    border-color: #3d3d3d !important;
+    color: #141414 !important;
+}
+
+html.site-dim--dim #password-modal input[type="password"],
+html.site-dim--dim #password-modal input[type="text"],
+html.site-dim--dim #new-chat-modal input:not([type="checkbox"]),
+html.site-dim--dim #new-announcement-modal input,
+html.site-dim--dim #new-announcement-modal select,
+html.site-dim--dim #chat-tag-modal input {
+    background: #a8a8a8 !important;
+    border: 1px solid #4a4a4a !important;
+    color: #111 !important;
 }

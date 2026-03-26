@@ -29,33 +29,6 @@ html.site-dim--dim .main {
     box-sizing: border-box;
 }
 
-/* Modals sit above dim chrome (chat, atrium, tzadkiel, etc.); !important beats inline <style> on some pages */
-html.site-dim--dim #password-modal-overlay,
-html.site-dim--dim #new-chat-modal-overlay,
-html.site-dim--dim #new-announcement-modal-overlay,
-html.site-dim--dim #chat-directory-modal-overlay {
-    background: rgba(22, 22, 22, 0.78) !important;
-}
-
-html.site-dim--dim #password-modal,
-html.site-dim--dim #new-chat-modal,
-html.site-dim--dim #new-announcement-modal,
-html.site-dim--dim #chat-directory-modal {
-    background: #8e8e8e !important;
-    border-color: #3d3d3d !important;
-    color: #141414 !important;
-}
-
-html.site-dim--dim #password-modal input[type="password"],
-html.site-dim--dim #password-modal input[type="text"],
-html.site-dim--dim #new-chat-modal input:not([type="checkbox"]),
-html.site-dim--dim #new-announcement-modal input,
-html.site-dim--dim #new-announcement-modal select {
-    background: #a8a8a8 !important;
-    border: 1px solid #4a4a4a !important;
-    color: #111 !important;
-}
-
 .sidenav {
     height: 100vh;
     width: 160px;

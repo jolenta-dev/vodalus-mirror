@@ -949,44 +949,12 @@ app.post('/api/announcements', (req, res) => {
 
 // system announcements endpoint (used by atrium events)
 app.post('/api/announcements/system', (req, res) => {
-    const { event, name, message: customMessage, scope, conversationId } = req.body || {};
+    const { event, name } = req.body || {};
     if (!event) return res.status(400).json({ error: 'event is required' });
     const date = new Date().toLocaleString();
     const insertAnnouncement = chatdb.prepare('INSERT INTO announcements (author, message, date, scope, conversation_id) VALUES (?, ?, ?, ?, ?)');
     let message = null;
-    
-    if (event === 'manual_announcement') {
-        // Admin console manual announcements
-        const nickname = (req.signedCookies.chat_sid || '').toLowerCase();
-        if (nickname !== 'admin' && nickname !== 'jolenta') {
-            return res.status(403).json({ error: 'not authorized' });
-        }
-        if (!customMessage || !String(customMessage).trim()) {
-            return res.status(400).json({ error: 'message is required' });
-        }
-        const normalizedScope = (scope === 'public' || scope === 'here') ? scope : 'global';
-        const scopeConversationId = normalizedScope === 'here' ? (conversationId || 'general') : null;
-        const author = req.signedCookies.chat_sid || 'system';
-        insertAnnouncement.run(author, String(customMessage).trim(), date, normalizedScope, scopeConversationId);
-        const outbound = { name: author, message: String(customMessage).trim(), date, vip: false, color: '#000000', decoration: '', journey_level: 0, kind: 'announcement', scope: normalizedScope };
-        wss.clients.forEach((client) => {
-            if (client.readyState !== 1) return;
-            if (normalizedScope === 'global') {
-                client.send(JSON.stringify({ type: 'message', data: outbound }));
-                return;
-            }
-            if (normalizedScope === 'public') {
-                if (isPublicAnnouncementTarget(client.conversationId)) {
-                    client.send(JSON.stringify({ type: 'message', data: outbound }));
-                }
-                return;
-            }
-            if (normalizedScope === 'here' && client.conversationId === scopeConversationId) {
-                client.send(JSON.stringify({ type: 'message', data: outbound }));
-            }
-        });
-        return res.json({ success: true });
-    } else if (event === 'journey_level_decremented') {
+    if (event === 'journey_level_decremented') {
         const lookupName = name || req.signedCookies.chat_sid;
         if (lookupName) {
             const row = chatdb.prepare('SELECT name FROM protected_names WHERE LOWER(name) = LOWER(?)').get(lookupName);

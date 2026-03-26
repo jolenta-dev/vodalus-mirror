@@ -445,12 +445,11 @@
                     if (!conversationId) return alert('Please select a chat for "here" scope');
                 }
 
-                fetch('/api/announcements/system', {
+                fetch('/api/announcements', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
                     body: JSON.stringify({
-                        event: 'manual_announcement',
                         message,
                         scope,
                         conversationId
