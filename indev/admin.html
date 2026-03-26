@@ -5,12 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Dashboard</title>
         <link rel="stylesheet" href="/assets/stylesheets/admin.css">
+        <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
     </head>
-    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
-    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
-    <script src="/assets/javascript/sidebar-footer.js"></script>
-    <div class="main">
-        <body>
+    <body>
+        <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+        <script src="/assets/javascript/sidebar-footer.js"></script>
+        <div class="main">
             <h1>Admin Dashboard</h1>
             <div id="admin-dashboard-container" class="admin-dashboard-container" style="display: none;">
                 <!---tab links-->
@@ -178,20 +178,25 @@
                         body: JSON.stringify({ name, password })
                     });
                     
-                    const data = await response.json();
-                    
                     if (!response.ok) {
-                        alert(data.error);
+                        const text = await response.text();
+                        try {
+                            const data = JSON.parse(text);
+                            alert(data.error || 'Login failed');
+                        } catch {
+                            alert('Server error: ' + response.status);
+                        }
                         return;
                     }
                     
+                    const data = await response.json();
                     localStorage.setItem('admin-name', name);
                     localStorage.setItem('admin-password', password);
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('admin-dashboard-container').style.display = 'block';
                     loadSqlTables();
                 } catch (err) {
-                    alert('Network error: ' + err.message);
+                    alert('Cannot reach server - is it running?');
                 }
             });
             
