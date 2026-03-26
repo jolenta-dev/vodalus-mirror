@@ -1440,6 +1440,33 @@ app.post('/api/admin/updateStatus', async (req,res) => {
     }
 });
 
+app.post('/api/admin/resetPassword', async (req, res) => {
+    const { username, newPassword, name, password } = req.body;
+    if (!username || !newPassword) return res.status(400).json({ error: 'username and newPassword are required' });
+    
+    try {
+        const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+        if (!protected_name || (protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta')) {
+            return res.status(404).json({ error: 'admin access required' });
+        }
+        if (!password || !(await bcrypt.compare(password, protected_name.password))) {
+            return res.status(401).json({ error: 'wrong password for admin' });
+        }
+        
+        const targetUser = chatdb.prepare('SELECT name FROM protected_names WHERE LOWER(name) = LOWER(?)').get(username);
+        if (!targetUser) {
+            return res.status(404).json({ error: `user '${username}' not found` });
+        }
+        
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        chatdb.prepare('UPDATE protected_names SET password = ? WHERE LOWER(name) = LOWER(?)').run(hashedPassword, username);
+        
+        res.json({ success: true, message: `Password for '${targetUser.name}' reset successfully` });
+    } catch (e) {
+        return res.status(500).json({ error: `password reset failed: ${e.message}` });
+    }
+});
+
 // guestbook endpoints
 const guestdb = new Database('/var/www/vodalus.org/pages/guestbook.db');
 guestdb.exec('CREATE TABLE IF NOT EXISTS names (id INTEGER PRIMARY KEY, name TEXT, website TEXT, note TEXT, date TEXT DEFAULT CURRENT_TIMESTAMP)');

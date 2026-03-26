@@ -189,80 +189,8 @@ button[type="button"]:hover {
     background: #555;
 }
 
-input[type="text"], input[type="password"], select {
-    padding: 8px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
 #status-output {
     margin-top: 10px;
     padding: 10px;
     font-weight: bold;
-}
-
-.sql-builder {
-    background: #f9f9f9;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin: 10px 0;
-}
-
-.sql-builder label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.sql-builder select, .sql-builder input[type="text"] {
-    margin: 5px;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
-.sql-command-builder {
-    margin-top: 15px;
-    padding: 10px;
-    background: white;
-    border-radius: 3px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-}
-
-.sql-command-builder span {
-    font-weight: bold;
-    color: #333;
-}
-
-.table-name-display {
-    color: #0066cc;
-    background: #e6f2ff;
-    padding: 4px 8px;
-    border-radius: 3px;
-}
-
-.sql-preview {
-    background: #2d2d2d;
-    padding: 12px;
-    margin: 15px 0;
-    border-radius: 5px;
-}
-
-.sql-preview label {
-    color: #aaa;
-    font-size: 0.9em;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.sql-preview code {
-    color: #00ff00;
-    font-family: 'Courier New', monospace;
-    font-size: 1em;
-    display: block;
 }

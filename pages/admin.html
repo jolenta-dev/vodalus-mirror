@@ -32,27 +32,34 @@
                             <option value="global">global</option>
                             <option value="public">public</option>
                             <option value="here">here</option>
+                            <!-- need to be able to pick a chat for here scope-->
                         </select>
                         <button id="new-announcement-button" type="button">create announcement</button>
                         <br>
                         <h3>New chat controls</h3>
                         <p>create a new chat</p>
-                        <input type="text" id="new-chat-input" placeholder="new chat name">
-                        <input type="text" id="new-chat-members-input" placeholder="new chat members (comma separated)">
-                        <label for="new-chat-public-input"><input type="checkbox" id="new-chat-public-input"> public</label>
-                        <button id="new-chat-button" type="button">create chat</button>
+                            <input type="text" id="new-chat-input" placeholder="new chat name">
+                            <input type="text" id="new-chat-members-input" placeholder="new chat members (comma separated)">
+                            <label for="new-chat-public-input"><input type="checkbox" id="new-chat-public-input"> public</label>
+                            <button id="new-chat-button" type="button">create chat</button>
                         <br>
                         <h3>Edit chat controls</h3>
                         <p>edit a chat</p>
-                        <input type="text" id="edit-chat-input" placeholder="chat name">
-                        <input type="text" id="edit-chat-members-input" placeholder="chat members (comma separated)">
-                        <label for="edit-chat-public-input"><input type="checkbox" id="edit-chat-public-input"> public</label>
-                        <button id="edit-chat-button" type="button">edit chat</button>
+                            <input type="text" id="edit-chat-input" placeholder="chat name">
+                            <input type="text" id="edit-chat-members-input" placeholder="chat members (comma separated)">
+                            <label for="edit-chat-public-input"><input type="checkbox" id="edit-chat-public-input"> public</label>
+                            <button id="edit-chat-button" type="button">edit chat</button>
                         <br>
                         <h3>Delete chat controls</h3>
                         <p>delete a chat</p>
-                        <input type="text" id="delete-chat-input" placeholder="chat name">
-                        <button id="delete-chat-button" type="button">delete chat</button>
+                            <input type="text" id="delete-chat-input" placeholder="chat name">
+                            <button id="delete-chat-button" type="button">delete chat</button>
+                        <br>
+                        <h3>Reset password controls</h3>
+                        <p>reset a user's password</p>
+                            <input type="text" id="reset-password-username-input" placeholder="username">
+                            <input type="text" id="reset-password-newpassword-input" placeholder="new password">
+                            <button id="reset-password-button" type="button">reset password</button>
                     </div>
                     <div id="Status" class="tabcontent" style="display: none;">
                         <h3>Status</h3>
@@ -204,7 +211,14 @@
                 fetch('/api/admin/sqlDbTables').then(r => r.json()).then(data => {
                     const sqlDbTables = data.tables;
                     const container = document.getElementById('sql-table-radios');
+                    const list = document.createElement('ul');
+                    list.style.listStyle = 'none';
+                    list.style.padding = '0';
+                    
                     sqlDbTables.forEach((table, index) => {
+                        const listItem = document.createElement('li');
+                        listItem.style.marginBottom = '8px';
+                        
                         const radio = document.createElement('input');
                         radio.type = 'radio';
                         radio.name = 'sql-db-radio';
@@ -215,14 +229,17 @@
                         const label = document.createElement('label');
                         label.htmlFor = `sql-db-radio-${table.name}`;
                         label.textContent = table.name;
-                        label.style.marginRight = '15px';
+                        label.style.cursor = 'pointer';
+                        label.style.marginLeft = '5px';
                         
-                        container.appendChild(radio);
-                        container.appendChild(label);
+                        listItem.appendChild(radio);
+                        listItem.appendChild(label);
+                        list.appendChild(listItem);
                         
                         radio.addEventListener('change', updateSqlBuilder);
                     });
                     
+                    container.appendChild(list);
                     updateSqlBuilder();
                 }).catch(err => {
                     alert(err.message || 'Network/SQL error. Try refreshing.');
@@ -349,7 +366,6 @@
                     alert(err.message || 'Network/SQL error. Try refreshing.');
                 });
             });
-            document.getElementById('sql-db-output').innerHTML = '<p style="color: #666;">SQL output will appear here after executing a command</p>';
 
             document.getElementById('status-button').addEventListener('click', () => {
                 const status = document.getElementById('status-input').value;
@@ -369,6 +385,36 @@
                     document.getElementById('status-output').innerHTML = `<span style="color: green;">${data.message || 'Status updated successfully'}</span>`;
                 }).catch(err => {
                     alert(err.message || 'Network/status error. Try refreshing.');
+                });
+            });
+
+            document.getElementById('reset-password-button').addEventListener('click', () => {
+                const username = document.getElementById('reset-password-username-input').value.trim();
+                const newPassword = document.getElementById('reset-password-newpassword-input').value;
+                
+                if (!username || !newPassword) return alert('Please enter both username and new password');
+                
+                fetch('/api/admin/resetPassword', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username, 
+                        newPassword,
+                        name: localStorage.getItem('admin-name'), 
+                        password: localStorage.getItem('admin-password') 
+                    })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'Password reset failed');
+                    }
+                    return r.json();
+                }).then(data => {
+                    alert(data.message || 'Password reset successfully');
+                    document.getElementById('reset-password-username-input').value = '';
+                    document.getElementById('reset-password-newpassword-input').value = '';
+                }).catch(err => {
+                    alert(err.message || 'Network/password reset error. Try refreshing.');
                 });
             });
         </script>
