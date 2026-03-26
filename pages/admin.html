@@ -32,29 +32,43 @@
                             <option value="global">global</option>
                             <option value="public">public</option>
                             <option value="here">here</option>
-                            <!-- need to be able to pick a chat for here scope-->
+                        </select>
+                        <select id="new-announcement-chat-input" style="display: none;">
+                            <option value="">Select a chat...</option>
                         </select>
                         <button id="new-announcement-button" type="button">create announcement</button>
                         <br>
-                        <h3>New chat controls</h3>
-                        <p>create a new chat</p>
-                            <input type="text" id="new-chat-input" placeholder="new chat name">
-                            <input type="text" id="new-chat-members-input" placeholder="new chat members (comma separated)">
-                            <label for="new-chat-public-input"><input type="checkbox" id="new-chat-public-input"> public</label>
-                            <button id="new-chat-button" type="button">create chat</button>
+                        
+                        <h3>Chat admin</h3>
+                        <div class="chat-admin-tabs" role="tablist" style="margin-bottom: 10px;">
+                            <button type="button" class="chat-admin-tab chat-admin-tab--active" id="chat-admin-tab-new">New chat</button>
+                            <button type="button" class="chat-admin-tab" id="chat-admin-tab-members">Members</button>
+                        </div>
+                        <div id="chat-admin-panel-new" class="chat-admin-panel">
+                            <input id="new-chat-modal-input" placeholder="new chat name (not needed for a 2-person DM)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                            <input id="new-chat-members-input" placeholder="other members (comma separated; registered only)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                            <label class="chat-admin-public-option" for="new-chat-modal-public"><input type="checkbox" id="new-chat-modal-public"> public</label>
+                            <br>
+                            <button id="new-chat-modal-ok" type="button">create</button>
+                        </div>
+                        <div id="chat-admin-panel-members" class="chat-admin-panel" style="display: none;">
+                            <p>Select a chat to manage:</p>
+                            <select id="chat-admin-members-select" style="width: 100%; margin-bottom: 10px;">
+                                <option value="">Select a chat...</option>
+                            </select>
+                            <p id="chat-admin-members-context" style="font-weight: bold;"></p>
+                            <p class="chat-admin-members-label">Current members</p>
+                            <div id="chat-admin-members-list" class="chat-admin-members-list" aria-live="polite" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 50px;"></div>
+                            <label class="chat-admin-field-label" for="chat-edit-members-input">Add</label>
+                            <input id="chat-edit-members-input" placeholder="registered users (comma separated)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                            <button id="chat-edit-members-ok" type="button">add members</button>
+                            <br>
+                            <label class="chat-admin-field-label" for="chat-remove-members-input">Remove</label>
+                            <input id="chat-remove-members-input" placeholder="names to remove (comma separated)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                            <button id="chat-remove-members-ok" type="button">remove members</button>
+                        </div>
                         <br>
-                        <h3>Edit chat controls</h3>
-                        <p>edit a chat</p>
-                            <input type="text" id="edit-chat-input" placeholder="chat name">
-                            <input type="text" id="edit-chat-members-input" placeholder="chat members (comma separated)">
-                            <label for="edit-chat-public-input"><input type="checkbox" id="edit-chat-public-input"> public</label>
-                            <button id="edit-chat-button" type="button">edit chat</button>
-                        <br>
-                        <h3>Delete chat controls</h3>
-                        <p>delete a chat</p>
-                            <input type="text" id="delete-chat-input" placeholder="chat name">
-                            <button id="delete-chat-button" type="button">delete chat</button>
-                        <br>
+                        
                         <h3>Reset password controls</h3>
                         <p>reset a user's password</p>
                             <input type="text" id="reset-password-username-input" placeholder="username">
@@ -189,7 +203,7 @@
                         const text = await response.text();
                         try {
                             const data = JSON.parse(text);
-                            alert(data.error || 'Login failed');
+                            alert(`${data.error}. Do not meddle in that which you do not understand.` || 'Login failed');
                         } catch {
                             alert('Server error: ' + response.status);
                         }
@@ -202,6 +216,7 @@
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('admin-dashboard-container').style.display = 'block';
                     loadSqlTables();
+                    loadConversations();
                 } catch (err) {
                     alert('Cannot reach server - is it running?');
                 }
@@ -245,6 +260,216 @@
                     alert(err.message || 'Network/SQL error. Try refreshing.');
                 });
             }
+
+            let conversationsData = [];
+            function loadConversations() {
+                fetch('/api/conversations').then(r => r.json()).then(data => {
+                    conversationsData = data;
+                    const announcementChatSelect = document.getElementById('new-announcement-chat-input');
+                    const membersChatSelect = document.getElementById('chat-admin-members-select');
+                    
+                    announcementChatSelect.innerHTML = '<option value="">Select a chat...</option>';
+                    membersChatSelect.innerHTML = '<option value="">Select a chat...</option>';
+                    
+                    data.forEach(conv => {
+                        const label = conv.label || conv.id;
+                        const opt1 = document.createElement('option');
+                        opt1.value = conv.id;
+                        opt1.textContent = label;
+                        announcementChatSelect.appendChild(opt1);
+                        
+                        const opt2 = document.createElement('option');
+                        opt2.value = conv.id;
+                        opt2.textContent = label;
+                        membersChatSelect.appendChild(opt2);
+                    });
+                }).catch(err => {
+                    console.error('Failed to load conversations:', err);
+                });
+            }
+
+            document.getElementById('new-announcement-scope-input').addEventListener('change', (e) => {
+                const chatSelect = document.getElementById('new-announcement-chat-input');
+                if (e.target.value === 'here') {
+                    chatSelect.style.display = 'inline-block';
+                } else {
+                    chatSelect.style.display = 'none';
+                }
+            });
+
+            document.getElementById('chat-admin-tab-new').addEventListener('click', () => {
+                document.getElementById('chat-admin-tab-new').classList.add('chat-admin-tab--active');
+                document.getElementById('chat-admin-tab-members').classList.remove('chat-admin-tab--active');
+                document.getElementById('chat-admin-panel-new').style.display = 'block';
+                document.getElementById('chat-admin-panel-members').style.display = 'none';
+            });
+
+            document.getElementById('chat-admin-tab-members').addEventListener('click', () => {
+                document.getElementById('chat-admin-tab-members').classList.add('chat-admin-tab--active');
+                document.getElementById('chat-admin-tab-new').classList.remove('chat-admin-tab--active');
+                document.getElementById('chat-admin-panel-members').style.display = 'block';
+                document.getElementById('chat-admin-panel-new').style.display = 'none';
+            });
+
+            document.getElementById('chat-admin-members-select').addEventListener('change', (e) => {
+                const convId = e.target.value;
+                if (!convId) {
+                    document.getElementById('chat-admin-members-context').textContent = '';
+                    document.getElementById('chat-admin-members-list').innerHTML = '';
+                    return;
+                }
+                
+                const conv = conversationsData.find(c => c.id === convId);
+                const label = conv ? (conv.label || conv.id) : convId;
+                document.getElementById('chat-admin-members-context').textContent = `Managing members for: ${label}`;
+                
+                fetch(`/api/conversation/${encodeURIComponent(convId)}/members`).then(r => r.json()).then(data => {
+                    const membersList = document.getElementById('chat-admin-members-list');
+                    membersList.innerHTML = '';
+                    if (data.members && data.members.length > 0) {
+                        data.members.forEach(member => {
+                            const memberDiv = document.createElement('div');
+                            memberDiv.textContent = member;
+                            memberDiv.style.padding = '4px 0';
+                            membersList.appendChild(memberDiv);
+                        });
+                    } else {
+                        membersList.innerHTML = '<p style="color: #666;">No members found</p>';
+                    }
+                }).catch(err => {
+                    alert('Failed to load members: ' + err.message);
+                });
+            });
+
+            document.getElementById('new-chat-modal-ok').addEventListener('click', () => {
+                const name = document.getElementById('new-chat-modal-input').value.trim();
+                const members = document.getElementById('new-chat-members-input').value.trim();
+                const isPublic = document.getElementById('new-chat-modal-public').checked;
+                
+                fetch('/api/createConversation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        members,
+                        public: isPublic,
+                        adminName: localStorage.getItem('admin-name'),
+                        password: localStorage.getItem('admin-password')
+                    })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'Failed to create chat');
+                    }
+                    return r.json();
+                }).then(data => {
+                    alert(data.message || 'Chat created successfully');
+                    document.getElementById('new-chat-modal-input').value = '';
+                    document.getElementById('new-chat-members-input').value = '';
+                    document.getElementById('new-chat-modal-public').checked = false;
+                    loadConversations();
+                }).catch(err => {
+                    alert(err.message);
+                });
+            });
+
+            document.getElementById('chat-edit-members-ok').addEventListener('click', () => {
+                const convId = document.getElementById('chat-admin-members-select').value;
+                if (!convId) return alert('Please select a chat first');
+                
+                const members = document.getElementById('chat-edit-members-input').value.trim();
+                if (!members) return alert('Please enter members to add');
+                
+                fetch('/api/conversation/addMembers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        conversationId: convId,
+                        members,
+                        name: localStorage.getItem('admin-name'),
+                        password: localStorage.getItem('admin-password')
+                    })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'Failed to add members');
+                    }
+                    return r.json();
+                }).then(data => {
+                    alert(data.message || 'Members added successfully');
+                    document.getElementById('chat-edit-members-input').value = '';
+                    document.getElementById('chat-admin-members-select').dispatchEvent(new Event('change'));
+                }).catch(err => {
+                    alert(err.message);
+                });
+            });
+
+            document.getElementById('chat-remove-members-ok').addEventListener('click', () => {
+                const convId = document.getElementById('chat-admin-members-select').value;
+                if (!convId) return alert('Please select a chat first');
+                
+                const members = document.getElementById('chat-remove-members-input').value.trim();
+                if (!members) return alert('Please enter members to remove');
+                
+                fetch('/api/conversation/removeMembers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        conversationId: convId,
+                        members,
+                        name: localStorage.getItem('admin-name'),
+                        password: localStorage.getItem('admin-password')
+                    })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'Failed to remove members');
+                    }
+                    return r.json();
+                }).then(data => {
+                    alert(data.message || 'Members removed successfully');
+                    document.getElementById('chat-remove-members-input').value = '';
+                    document.getElementById('chat-admin-members-select').dispatchEvent(new Event('change'));
+                }).catch(err => {
+                    alert(err.message);
+                });
+            });
+
+            document.getElementById('new-announcement-button').addEventListener('click', () => {
+                const announcement = document.getElementById('new-announcement-input').value.trim();
+                const scope = document.getElementById('new-announcement-scope-input').value;
+                
+                if (!announcement) return alert('Please enter an announcement');
+                
+                let conversationId = null;
+                if (scope === 'here') {
+                    conversationId = document.getElementById('new-announcement-chat-input').value;
+                    if (!conversationId) return alert('Please select a chat for "here" scope');
+                }
+                
+                fetch('/api/announcement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        announcement,
+                        scope,
+                        conversationId,
+                        name: localStorage.getItem('admin-name'),
+                        password: localStorage.getItem('admin-password')
+                    })
+                }).then(async r => {
+                    if (!r.ok) {
+                        const data = await r.json().catch(() => ({}));
+                        throw new Error(data.error || 'Failed to create announcement');
+                    }
+                    return r.json();
+                }).then(data => {
+                    alert(data.message || 'Announcement created successfully');
+                    document.getElementById('new-announcement-input').value = '';
+                }).catch(err => {
+                    alert(err.message);
+                });
+            });
 
             function updateSqlBuilder() {
                 const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
