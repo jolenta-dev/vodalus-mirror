@@ -1,6 +1,7 @@
 /* mobile portrait settings. narrow sidebar and redraw the chat window in a way that isn't awful */
 @media (max-width: 600px) {
-    .chat-page .main { margin-left: 150px; }
+    /* Must match sidebar drawer layout; .chat-page .main beats .main so this overrides sidebar.css */
+    .chat-page .main { margin-left: 0; }
     #chat { display: flex; flex-direction: column; }
     .chat-with-sidebar { flex-direction: column; gap: 0.5rem; margin: 0 8px 8px 8px; width: auto; }
     .chat-primary { flex: none; width: 100%; max-width: 100%; }
@@ -24,6 +25,21 @@
      transform: translateY(-100%)  translateX(200%);
      font-size: 1rem;
  }
+
+/* Base #setup above must stay *before* this block: rules here override desktop transforms on small viewports. */
+@media (max-width: 600px) {
+    .chat-page #setup {
+        left: 50%;
+        top: 50%;
+        right: auto;
+        width: min(100% - 2rem, 22rem);
+        max-width: calc(100vw - 2rem);
+        box-sizing: border-box;
+        padding: 0 0.5rem;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+}
 
 
 /* main column + members sidebar: chat column = 80% of row (same as pre-sidebar), members flush beside with small gap */
