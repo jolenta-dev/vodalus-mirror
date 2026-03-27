@@ -1,0 +1,22 @@
+.main {
+    padding: 3.5rem;
+    margin-right: 15rem;
+  }
+  
+  .about-title {
+    font-size: 65px;
+  }
+  
+  .about-subtitle {
+    font-size: 30px;
+  }
+  
+  #jolenta-img {
+    padding: 0px;
+    transform: translateX(200%);
+  }
+  
+  #haku-img {
+    padding: 0px;
+    transform: translateX(200%);
+  }

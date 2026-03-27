@@ -6,15 +6,16 @@
         <title>About</title>
     </head>
     <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+    <link rel="stylesheet" href="/assets/stylesheets/about.css">
 
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
     <script src="/assets/javascript/sidebar-footer.js"></script>
     <div class="main">
         <body>
-            <h1>About</h1>
-            <h2>What is this?</h2>
+            <h1 class="about-title">About</h1>
+            <h2 class="about-subtitle">What is this?</h2>
             <p>This is vodalus.org.</p>
-            <h2>What is that?</h2>
+            <h2 class="about-subtitle">What is that?</h2>
             <p>Vodalus is my stab at trying to revive an internet I don't remember 
                 <br>
                 I started Vodalus just to have a place to screw around with stuff I wanted to try and to have a place to hang out that wasn't hellish or riddle with enshittification AI-slop.
@@ -22,36 +23,64 @@
                 Vodalus is also a tribute to its namesake. Vodalus is the rebellious optimate fighting the Autarch in Gene Wolfe's Book of the New Sun.
                 Book of the New Sun is a big deal to me (obviously) and its very seldom mentioned online, so I wanted to give a home to some of the ideas and share them with the world to get more people looking at one of my favorite pieces of art.
             </p>
-            <h2>So who are you?</h2>
-            <img id="jolenta-img" src="/assets/images/jolenta.png" alt="jolenta">
+            <h2 class="about-subtitle">So who are you?</h2>
+            <img align="right" id="jolenta-img" src="/assets/images/jolenta.png" alt="jolenta">
             <p>I'm the site's admin. You'll often see me here as jolenta (or the admin account), but my real name's Chloe.
+                <br>
                 I'm Vodalus's sole developer right now (this will likely never change).
-                I work full time doing development for a financial company, so this is a side project for me that I do as a 5-9 after my 8-5.
+                <br>
+                I work full time doing IT & development for a financial company, so this is a side project for me that I do as a 5-9 after my 8-5.
             </p>
-            <h2>Anything else to know about you?</h2>
-            <img id="haku-img" src="/assets/images/haku.png" alt="haku!">
-            <p>Not really.
+            <h2 class="about-subtitle">Anything else to know about you?</h2>
+            <img align="right" id="haku-img" src="/assets/images/haku.png" alt="haku!">
+            <p>Not really. 
+                <br>
                 If you care, I have a degree in Classics and in Religion from Reed College (which means I'm insufferable).
+                <br>
                 I have competent fluency in English, German, and (mainly Koine but also Attic) Greek.
+                <br>
                 I live in Portland, OR, USA (for now) with my girlfriend and our cat, but I'm originally from South Carolina (ew, I know).
+                <br>
+                I've been using Linux since 2018, and I've even built LFS (iykyk), that's how deep I am in this.
+                <br>
                 My letterboxd is Jolenta. I watch movies sometimes and post them there.
+                <br>
                 My last.fm (powering the nowplaying widget) is jolenta_. All my music is flacs on a Jellyfin server I scrobble with a plugin, so everything on there is what I actually listen to.
             </p>
-            <h2>I have even more questions now.</h2>
+            <h2 class="about-subtitle">I have even more questions now.</h2>
             <p>cool here's a FAQ:</p>
-            <h2>FAQ</h2>
-            <h3>Who made all this cool art?</h3>
+            <h2 class="about-title">FAQ</h2>
+            <h3 class="about-subtitle">Who made all this cool art?</h3>
             <p>Summers! You'll see them sometimes in the chat, but their work is awesome. Support them <a href=https://www.ko-fi.com/summerscaries>here</a></p>
-            <h3>How can I support Vodalus?</h3>
+            <h3 class="about-subtitle">How can I support Vodalus?</h3>
             <p>Right now, the biggest thing you can do is chat, gamble, and tell your friends. We don't have a lot of users period, let alone regulars. I'd like to have many more, but that's only possible if people share the site.</p>
-            <h3>What's the update theme for <\Month>?</h3>
+            <h3 class="about-subtitle">What is Vodalus running off of?</h3>
+            <p>
+                Currently (and I hate this), Vodalus runs off my main PC. It's essentially just a server at this point since it also runs my Jellyfin instance and a million other things and I only ever use it over SSH, really.
+                <br>
+                I have plans to migrate the webserver specifically to dedicated hardware at some point (but old, used, and junk hardware I get from work is mostly all broken and parts are a fortune right now).
+                <br>
+                So currently, the specs for my main PC (diuturna) are like this for those who care:
+                <ul style="list-style-type:disc">
+                    <li>CPU: Ryzen 5-5600G</li>
+                    <li>RAM: 32GB DDR4</li>
+                    <li>GPU: Nvidia 3070Ti</li>
+                    <li>OS: Archlinux (I cannot escape, though I hate systemd)</li>
+                    <li>DE: Hyprland (ofc)</li>
+                    <li>DM: Ly (I love Ly, use it, please)</li>
+                </ul>
+                <br>
+                I have a Cisco ISR-4431 (did I mention I love enterprise networking?) working as my main router, uplinked to two Cisco Catalyst 2960X switches that do distribution. There's a double NAT happening and a pretty involved list of ACLs (good luck) since I run this on my personal IP.
+                A Pi 4B 8GB runs DNS and a Tor bridge and some other light services, but most of it runs off diuturna.
+            </p>
+            <h3 class="about-subtitle">What's the update theme for <\Month>?</h3>
             <p>I reveal themes when the features are ready. VIPs usually get to know ahead of time what I'm planning, but sometimes even I don't know what's gonna hit prod and when.</p>
-            <h3>This chat seems really cool, can I use it for my site?</h3>
+            <h3 class="about-subtitle">This chat seems really cool, can I use it for my site?</h3>
             <p>The chat is an entire API (internally named Katharine). It's currently really a custom-built solution for Vodalus, but I'd like to open souce it in the future when it's more feature-complete and extensible (and not awful to work with)</p>
-            <h3>How do I contact you?</h3>
+            <h3 class="about-subtitle">How do I contact you?</h3>
             <p>DMs are really the main way as of now. I tried to set up SMTP for this domain and Comcast blocked me from sending/receiving emails and I refuse to pay for email hosting, so no email right now.</p>
-            <h3>I've heard of a bug bounty, how does that work?</h3>
-            <p>Since Vodalus's backend isn't totally public (since I don't trust people), this isn't a traditional find-the-code-and-fix-it kind of bounty
+            <h3 class="about-subtitle">I've heard of a bug bounty, how does that work?</h3>
+            <p>Since Vodalus's backend isn't totally public (since I don't trust people), this isn't a traditional find-the-code-and-fix-it kind of bounty.
                 It comes down mostly to a judgement call on my end so let me give you examples of what people have found that I've rewarded for:
                 <ul style="list-style-type:disc;">
                     <li>Major typos</li>
@@ -60,7 +89,7 @@
                 </ul>
                 For these I usually give out phrases (since they're the main economy currently), but if you want something else (within the realm of the site, no money they pay me like shit), we can probably work something out.
             </p>
-            <h3>What is Vodalus's stance on AI-generated code</h3>
+            <h3 class="about-subtitle">What is Vodalus's stance on AI-generated code?</h3>
             <p>It's complicated.
                 <br>
                 I am, by no stretch, good at Javascript, HTML, or CSS, and the AIs are.

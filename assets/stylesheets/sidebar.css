@@ -1,4 +1,4 @@
-/* Dim main chrome (toggle: #toggle-dim-btn + localStorage key siteDim) */
+/* these are the main dimming controls for the whole site. this should probably not be here. */
 :root {
     --site-dim-chrome: #696969; /* dimgrey */
     /* each RGB channel +10 vs dimgrey — chat panels sit slightly above page chrome */
