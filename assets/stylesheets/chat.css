@@ -71,20 +71,21 @@
 }
 
 .chat-toolbar button {
-  background-color: #6a6a6a; /* Green background */
-  border: 1px solid #000; /* Green border */
-  color: black; /* White text */
-  padding: 10px 24px; /* Some padding */
-  cursor: pointer; /* Pointer/hand icon */
-  float: left; /* Float the buttons side by side */
+    background-color: white;
+    border: 1px solid #000;
+    color: black;
+    padding: 10px 24px;
+    cursor: pointer;
 }
 
-/* Clear floats (clearfix hack) */
-.chat-toolbar:after {
-  content: "";
-  clear: both;
-  display: table;
+html.site-dim--dim .chat-toolbar button {
+  background-color: #6a6a6a; /* gray background */
+  border: 1px solid #000; /* black border */
+  color: black; /* black text */
+  padding: 10px 24px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
 }
+
 
 .chat-toolbar button:not(:last-child) {
   border-right: none; /* Prevent double borders */
@@ -92,7 +93,21 @@
 
 /* Add a background color on hover */
 .chat-toolbar button:hover {
+    background-color: lightgray;
+}
+
+html.site-dim--dim .chat-toolbar button:hover {
   background-color: #8a8a8a;
+}
+
+@media (max-width: 640px) {
+    .chat-toolbar button {
+        flex: 1 1 50%;
+    }
+
+    .chat-toolbar button:not(:last-child) {
+        border-right: 1px solid #000;
+    }
 }
 
 #conversation-tabs {

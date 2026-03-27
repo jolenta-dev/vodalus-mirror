@@ -39,7 +39,9 @@ html.site-dim--dim .main {
     background-color: #111;
     overflow-x: hidden;
     padding-top: 20px;
+    transition: transform 0.3s ease;
 }
+
 
 /*
  * Sidebar with .sidenav-bottom-stack: flex column + in-flow footer.
@@ -87,6 +89,10 @@ html.site-dim--dim .main {
     padding: 0px 0px;
 }
 
+#sidebar-toggle {
+    display: none;
+}
+
 @media screen and (max-width: 600px) {
     /* Dim control stays in the sidebar column on small screens */
     #toggle-dim-btn {
@@ -100,7 +106,7 @@ html.site-dim--dim .main {
 
     .main { padding: 0 8px; }
     .sidenav {
-        width: 150px;
+        width: min(78vw, 280px);
         height: 100svh;
         overflow-y: auto;
         overflow-x: hidden;
@@ -108,7 +114,10 @@ html.site-dim--dim .main {
         flex-direction: column;
         padding-bottom: 24px;
         box-sizing: border-box;
+        z-index: 1200;
+        transform: translateX(-100%);
     }
+    .sidenav.is-open { transform: translateX(0); }
     .sidenav .nowplaying,
     .sidenav .status {
         position: static;
@@ -138,7 +147,18 @@ html.site-dim--dim .main {
         flex-shrink: 0;
         margin-top: auto;
     }
-    .main { margin-left: 150px; }
+    .main { margin-left: 0; }
+
+    #sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: block;
+    }
 }
 
 @media screen and (max-height: 450px) {

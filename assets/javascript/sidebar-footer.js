@@ -1,4 +1,46 @@
 (function () {
+    function setupMobileSidebarToggle() {
+        var toggle = document.getElementById("sidebar-toggle");
+        var sidebar = document.querySelector(".sidenav");
+        if (!toggle || !sidebar) return;
+
+        var mobileQuery = window.matchMedia("(max-width: 600px)");
+
+        function syncState() {
+            if (!mobileQuery.matches) {
+                sidebar.classList.remove("is-open");
+                document.body.classList.remove("sidebar-open");
+            }
+            toggle.setAttribute(
+                "aria-expanded",
+                sidebar.classList.contains("is-open") ? "true" : "false"
+            );
+        }
+
+        toggle.addEventListener("click", function () {
+            if (!mobileQuery.matches) return;
+            var open = sidebar.classList.toggle("is-open");
+            document.body.classList.toggle("sidebar-open", open);
+            toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        sidebar.addEventListener("click", function (e) {
+            var link = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+            if (!link || !mobileQuery.matches) return;
+            sidebar.classList.remove("is-open");
+            document.body.classList.remove("sidebar-open");
+            toggle.setAttribute("aria-expanded", "false");
+        });
+
+        if (mobileQuery.addEventListener) {
+            mobileQuery.addEventListener("change", syncState);
+        } else if (mobileQuery.addListener) {
+            mobileQuery.addListener(syncState);
+        }
+
+        syncState();
+    }
+
     function loadNowPlaying() {
         var s = document.createElement("script");
         s.src = "/assets/javascript/nowplaying.js";
@@ -59,15 +101,18 @@
             .then(function (r) { return r.text(); })
             .then(function (html) {
                 mount.outerHTML = html;
+                setupMobileSidebarToggle();
                 loadNowPlaying();
                 runFooter();
             })
             .catch(function () {
+                setupMobileSidebarToggle();
                 runFooter();
             });
         return;
     }
 
+    setupMobileSidebarToggle();
     loadNowPlaying();
     runFooter();
 })();
