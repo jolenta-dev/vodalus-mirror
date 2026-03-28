@@ -10,6 +10,7 @@
     <body>
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
     <script src="/assets/javascript/sidebar-footer.js"></script>
+    <script src="/assets/javascript/journey-typed-line.js"></script>
     <div class="main">
         <div class="journey-layout">
             <div class="journey-layout__above">
@@ -265,10 +266,7 @@
         var st = ensureState(id);
         st.lines.push({ text: text, useHtml: !!useHtml });
         if (activeJourneyId !== id) return;
-        var li = document.createElement('li');
-        if (useHtml) li.innerHTML = text;
-        else li.textContent = text;
-        document.getElementById('journey-list').appendChild(li);
+        appendJourneyListLine(document.getElementById('journey-list'), text, !!useHtml, COOLDOWN_MS);
       }
 
       function renderListFromState(id) {

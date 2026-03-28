@@ -23,6 +23,17 @@
                 padding: 1.25rem;
                 min-width: 280px;
             }
+            html.site-dim--dim #password-modal {
+                background: #8e8e8e !important;
+                border-color: #3d3d3d !important;
+                color: #141414 !important;
+            }
+            html.site-dim--dim #password-modal input[type="password"],
+            html.site-dim--dim #password-modal input[type="text"] {
+                background: #a8a8a8 !important;
+                border: 1px solid #4a4a4a !important;
+                color: #111 !important;
+            }
         </style>
     </head>
 <body>
@@ -30,6 +41,7 @@
 
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
     <script src="/assets/javascript/sidebar-footer.js"></script>
+    <script src="/assets/javascript/journey-typed-line.js"></script>
     <div class="main">
         <div id="board-ship">
             <h1>Tzadkiel's Ship has arrived at the House Absolute, Lictor.</h1>
@@ -186,17 +198,15 @@
                     if (!arr || !arr.length) return null;
                     return arr[randomInt(0, arr.length - 1)];
                 }
+                var yesodJourneyStage = 0;
+                var onCooldown = false;
+                var COOLDOWN_MS = 3000;
                 function addYesodJourneyItem(text) {
-                    var li = document.createElement('li');
-                    li.textContent = text;
-                    document.getElementById('yesod-journey-list').appendChild(li);
+                    appendJourneyListLine(document.getElementById('yesod-journey-list'), text, false, COOLDOWN_MS);
                 }
                 function clearYesodJourneyList() {
                     document.getElementById('yesod-journey-list').innerHTML = '';
                 }
-                var yesodJourneyStage = 0;
-                var onCooldown = false;
-                var COOLDOWN_MS = 3000;
                 var events1 = [
                     "You get a bad vibe and choose not to board the ship. Urth soon freezes over.",
                     "This Zak guy is too weird for you and you fling yourself into the void.",
