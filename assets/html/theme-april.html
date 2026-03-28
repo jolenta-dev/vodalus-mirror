@@ -1,0 +1,129 @@
+<style>
+    .typing-container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     width: 100%;
+     min-height: 2.5rem;
+   }
+
+  .typing-indicator {
+    width: 60px;
+    height: 30px;
+    position: relative;
+    z-index: 4;
+  }
+
+  .typing-circle {
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    border-radius: 50%;
+    background-color: #000;
+    left: 15%;
+    transform-origin: 50%;
+    animation: typing-circle7124 0.5s alternate infinite ease;
+  }
+
+  @keyframes typing-circle7124 {
+    0% {
+      top: 20px;
+      height: 5px;
+      border-radius: 50px 50px 25px 25px;
+      transform: scaleX(1.7);
+    }
+    40% {
+      height: 8px;
+      border-radius: 50%;
+      transform: scaleX(1);
+    }
+    100% {
+      top: 0%;
+    }
+  }
+
+  .typing-circle:nth-child(2) {
+    left: 45%;
+    animation-delay: 0.2s;
+  }
+
+  .typing-circle:nth-child(3) {
+    left: auto;
+    right: 15%;
+    animation-delay: 0.3s;
+  }
+
+  .theme-april-typed {
+    margin: 0;
+    line-height: 1.2;
+    display: none;
+  }
+
+  .theme-april-typed.is-visible {
+    display: block;
+  }
+</style>
+<div class="typing-container">
+    <div class="typing-indicator" id="theme-april-dots" aria-hidden="true">
+      <div class="typing-circle"></div>
+      <div class="typing-circle"></div>
+      <div class="typing-circle"></div>
+    </div>
+    <h1 id="theme-april-typed" class="theme-april-typed" aria-live="polite"></h1>
+  </div>
+<script>
+(function () {
+  var dotsEl = document.getElementById('theme-april-dots');
+  var textEl = document.getElementById('theme-april-typed');
+  if (!dotsEl || !textEl) return;
+
+  function wait(ms) {
+    return new Promise(function (resolve) {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  function typeOut(el, text, durationMs) {
+    return new Promise(function (resolve) {
+      var plain = text == null ? '' : String(text);
+      var n = plain.length;
+      if (!n || !durationMs) {
+        el.textContent = plain;
+        resolve();
+        return;
+      }
+      el.textContent = '';
+      var start = performance.now();
+      var dpc = durationMs / n;
+      function frame(now) {
+        var elapsed = now - start;
+        var k = Math.min(n, Math.floor(elapsed / dpc) + 1);
+        el.textContent = plain.slice(0, k);
+        if (k < n) {
+          requestAnimationFrame(frame);
+        } else {
+          el.textContent = plain;
+          resolve();
+        }
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  async function cycle() {
+    while (true) {
+      dotsEl.style.display = '';
+      textEl.textContent = '';
+      textEl.classList.remove('is-visible');
+      await wait(5000);
+
+      dotsEl.style.display = 'none';
+      textEl.classList.add('is-visible');
+      await typeOut(textEl, 'chatting ^.^', 1000);
+      await wait(5000);
+    }
+  }
+
+  cycle();
+})();
+</script>

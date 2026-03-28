@@ -215,7 +215,12 @@
 					const selectedTagHtml = (chosenTag && !(n === 'jolenta' && chosenTag.toUpperCase() === 'OWNER'))
 						? tagToSpanHtml(chosenTag, prestigeLevel)
 						: '';
-					const roleTag = alwaysOwnerTag + selectedTagHtml;
+					/* VIP and ADMIN must stay the immediate previous sibling of .name-color (see chat.css + .name-color).
+					   Journey/prestige/autarch tags must live inside .name-color so color: inherit applies. */
+					const selUpper = chosenTag ? String(chosenTag).trim().toUpperCase() : '';
+					const selectedTagOutsideNameColor = selUpper === 'VIP' || selUpper === 'ADMIN';
+					const roleTag = alwaysOwnerTag + (selectedTagOutsideNameColor ? selectedTagHtml : '');
+					const tagInsideNameColor = selectedTagOutsideNameColor ? '' : selectedTagHtml;
 					const nameText = n === 'jolenta' ? ('⋆.˚' + escapeHtml(name)) : escapeHtml(name);
 					const tooltipHtml = tags.length
 						? tags.map((t) => tagToSpanHtml(t, prestigeLevel)).join('')
@@ -236,7 +241,7 @@
 						: mirrorDecorationSuffix(safeDecoration);
 					const showVipChrome = isVip && n !== 'jolenta';
 					const nameColorClass = 'name-color' + (showVipChrome ? ' name-color--vip' : '');
-					return roleTag + '<span class="' + nameColorClass + '" style="color: ' + safeColor + ';">' + safeDecoration + '<span class="chat-name-hover">' + displayName + '<span class="chat-name-hover-box">' + tooltipHtml + '</span></span>' + decorationAfter + '</span>';
+					return roleTag + '<span class="' + nameColorClass + '" style="color: ' + safeColor + ';">' + tagInsideNameColor + safeDecoration + '<span class="chat-name-hover">' + displayName + '<span class="chat-name-hover-box">' + tooltipHtml + '</span></span>' + decorationAfter + '</span>';
 				}
 
 				function normalizeMemberRosterEntry(m) {

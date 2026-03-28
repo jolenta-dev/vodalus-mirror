@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/assets/stylesheets/home.css">
+</head>
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <div class="main">
+	<body>
+	    <h1>"I sent my men to fetch the headsman, I perceive they succeeded."</h1>
+	    <h2> This month's theme: </h2><div w3-include-html="/assets/html/theme-april.html"></div>
+        <div class="gambling-leaderboard">
+            <h1 style="text-align: center;">Gambling Leaderboard</h1>
+            <div class="gambling-leaderboard-table-wrap">
+                <table id="gambling-leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Level</th>
+                            <th scope="col">Prestige</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gambling-leaderboard-body"></tbody>
+                </table>
+            </div>
+            <script src="/assets/javascript/roster-name.js"></script>
+            <script>
+                fetch('/api/gambling-leaderboard')
+                    .then((r) => (r.ok ? r.json() : Promise.reject()))
+                    .then((data) => {
+                        const tbody = document.getElementById('gambling-leaderboard-body');
+                        function appendRow(item, levelLabel, prestigeLabel) {
+                            const tr = document.createElement('tr');
+                            const tdName = document.createElement('td');
+                            tdName.className = 'guestbook-name-cell';
+                            tdName.innerHTML = rosterNameHtml(
+                                item.name,
+                                !!item.vip,
+                                item.journey_level != null ? item.journey_level : 0,
+                                item.color,
+                                item.decoration,
+                                item.prestige_level != null ? item.prestige_level : 0
+                            );
+                            const tdLevel = document.createElement('td');
+                            const tdPrestige = document.createElement('td');
+                            tdPrestige.className = 'leaderboard-prestige-level';
+                            if (levelLabel != null || prestigeLabel != null) {
+                                tdLevel.className = 'leaderboard-house-level';
+                                tdLevel.innerHTML =
+                                    '<span class="message-the-house">' + (levelLabel != null ? levelLabel : '-') + '</span>';
+                                tdPrestige.innerHTML =
+                                    '<span class="message-the-house">' + (prestigeLabel != null ? prestigeLabel : '-') + '</span>';
+                            } else {
+                                tdLevel.textContent = String(item.journey_level);
+                                tdPrestige.textContent = String(
+                                    item.prestige_level != null ? item.prestige_level : 0
+                                );
+                            }
+                            tr.appendChild(tdName);
+                            tr.appendChild(tdLevel);
+                            tr.appendChild(tdPrestige);
+                            tbody.appendChild(tr);
+                        }
+                        appendRow(
+                            (data || []).find((item) => (item.name || '').toLowerCase() === 'jolenta') || {
+                                name: 'jolenta',
+                                vip: false,
+                                journey_level: 0,
+                                prestige_level: 0,
+                                color: '#c71585',
+                                decoration: ''
+                            },
+                            'THE HOUSE',
+                            'THE <br>HOUSE' // dunno why this displays differently than the above one but it does
+                        );
+                        data
+                            .filter((item) => (item.name || '').toLowerCase() !== 'jolenta')
+                            .forEach((item) => appendRow(item));
+                    })
+                    .catch(() => {});
+            </script>
+        </div>
+        <h2>03/27/2026 Vodalus 0.0.9.5</h2>
+        <p>This one's kinda lame, but it needed to be done</p>
+        <ul>
+            <li>Added a sidebar toggle on mobile. So now you can stop complaining this site looks awful (it still will)</li>
+            <li>Added an about page, as though y'all don't already know too much about me</li>
+            <li>Polished up some styling for the chat mainly and a few other things</li>
+            <li>Built better remote admin tools into the site so I can fix minor issues without having to SSH into the box on my phone</li>
+            <li>I'm now using Gitlab for source control instead of randomly sorting files in my mind (supposedly this is better)</li>
+            <li>many other small tweaks you'll never notice</li>
+        </ul>
+        <p>I've gotten mostly everything I wanted for March, and after a special update next week I should be moving this Vodalus 0.1.0 (woo!!!), when we'll be adding our site to some places and maybe some webrings?
+            But that's all for now. I have a lot of work to do before April.... <br> <br>
+            <b>- </b><span id="signature" style="color: lightpink;"><i>jolenta</i></span></p>
+        </p>
+        <h2>03/23/2026 Vodalus 0.0.9.4</h2>
+        <p> hello girlypops. you guys went kind of feral on gambling... so here's more</p>
+        <ul>
+            <li>5 full adventures. Each a little easier than the last, until you leave Urth...</li>
+            <li>Prestige! Finish the story too quickly? Want to dominate the leaderboard? Want something cooler than MASTER GAMBLER? Try and unlock the whole rainbow</li>
+            <li>Added a place to prestige in the corridors (in the back of the atrium)</li>
+            <li>Role tags are collapsed in chat to make it easier to read. You can pick one to display in chat, and the rest you'll see on hover</li>
+            <li>Revamped the UI on many pages so it's less ugly. Journeys are so much nicer</li>
+            <li>Added motivation to gambling</li>
+        </ul>
+        <p>This is most of what was planned for March and then some. Most of my effort now will be prepping for April's event, but you may get a little more gambling here and there in the meantime.</p>
+        <b>- mwah </b><span id="signature" style="color: lightpink;"><i>jolenta</i></span></p>
+        <h2>03/21/2026 Vodalus 0.0.9.2</h2>
+        <p>This would probably be the 0.1 release, but I need to review a LOT of the code. <br> <br>
+        I'm prepping stuff for April's event (can you guess the theme based on the changes?) and it's led to a lot of changes and new bugs. I'm hoping to slow down here and take a while to review it all and clean things up. <br> <br>
+        anyways what you actually want: </p>
+        <ul>
+            <li>Dark mode. Toggle it in the bottom right</li>
+            <li>new handling of users to enable things like colors in the guestbook and a member list in the chat</li>
+            <li>slowly rolling out some Katharine features to prod. DMs/chat creation still aren't here for users yet, but coming soon TM</li>
+            <li>There're some UX/UI changes for clarity around no one will ever notice but me</li>
+            <li>moving things in the backend to be cleaner and reduce code redundancy</li>
+            <li>there's now the marquee on the home page, enjoy that</li>
+        </ul>
+        <p>that's all for now. things may slow or i may stay on this weird grind i'm on. too much of this codebase is unaudited now, though, and I see a lot of days cleaning it ahead <br>
+        <b>- </b><span id="signature" style="color: lightpink;"><i>jolenta</i></span></p>
+        <h2> 03/20/2026 Vodalus 0.0.9</h2>
+        <p>A LOT has been added and changed. Let's go through it all:</p>
+        <ul>
+            <li>Gambling levels are here! Levels 1-3 have unique colors and decorations, and level 4 lets you set your own</li>
+            <li>A secret to be discovered: Tzadkiel's Ship has arrived at the House Absolute, though it is being very specific about who boards. Perhaps it grants a special tag?</li>
+            <li>Katharine API: holy moly the amount of bugs and security vulnerabilities changed could fill a post. Cursor did most of the work here (I am dumb and wrote the buggy code)</li>
+            <li>Katharine is no longer just <i>a</i> chat. It's got multiple chats. VIPs will notice the VIP chat. DMs are supported but not finished yet (sorry!), and only I can make chats for now</li>
+            <li>More Katharine changes: Announcing.... announcements! Journey's and phrases you redeem send announcements to chat(s) for all to see! Also useful for me</li>
+            <li>a million small backend and admin changes you'll never see</li>
+        </ul>
+        <h3>What's still left to come in March?</h3>
+        <ul>
+            <li>the one thing left for me is finish Tzadkiel's Ship</li>
+            <li>I'd like to maybe add scaling to journeys, though it seems rather complicated</li>
+            <li>I think it might be also cool to add 3 new journeys for the various levels, though this is also hard to implement</li>
+        </ul>
+        <b>- xoxo </b><span id="signature" style="color: lightpink;"><i>jolenta</i></span></p>
+        <h2>updates! 03/19/2026</h2>
+        <p>Welcome to the March 2026 event! I'm in the process of finishing things up in the atrium, but I'm happy to announce that gambling is here!</p>
+        <h3>What's new?</h3>
+        <ul>
+            <li>Introducing Journeys: a way to struggle through Severian's story and earn a special surprise!</li>
+            <li>Gambling levels: there are now 4 levels of gambling, tracked by the numbers of completed journeys you've made! </li>
+            <li>VIP for the rest of us: by winning at gambling, you will be able to redeem a prise for VIP!</li>
+            <li>Customizable name colors/sparkles: if you attain gambling level 4, you will be able to set a custom color and sparkle for your name in the chat!</li>
+            <li>The Atrium of Time: a curious place where Valeria may aid you on your quest...</li>
+        </ul>
+        <h3>What's to come?</h3>
+        <ul>
+            by the end of March I'd like to be finished with this update, so here's what's left to do:
+            <li>finish the CSS styling for the gambling levels, with each level having it's own name color and sparkle and a tag in chat</li>
+            <li>Katharine change: Announcements have the power to be really cool for the chat (soon to be chats...). I want to add the ability to do announcements to the API, and make it so gambling winning and redeeming triggers it</li>
+            <li>Maybe add a secret 5th journey for the (MASTER GAMBLER) tag...</li>
+        </ul>
+	</body>
+     <script>
+        function includeHTML() {
+        var z, i, elmnt, file, xhttp;
+        /* Loop through a collection of all HTML elements: */
+        z = document.getElementsByTagName("*");
+        for (i = 0; i < z.length; i++) {
+            elmnt = z[i];
+            /*search for elements with a certain atrribute:*/
+            file = elmnt.getAttribute("w3-include-html");
+            if (file) {
+            /* Make an HTTP request using the attribute value as the file name: */
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                if (this.status == 200) {
+                    elmnt.innerHTML = this.responseText;
+                    var scripts = elmnt.getElementsByTagName('script');
+                    var scriptList = [];
+                    for (var si = 0; si < scripts.length; si++) scriptList.push(scripts[si]);
+                    for (var sj = 0; sj < scriptList.length; sj++) {
+                        var oldScript = scriptList[sj];
+                        var newScript = document.createElement('script');
+                        var attrs = oldScript.attributes;
+                        for (var ak = 0; ak < attrs.length; ak++) {
+                            newScript.setAttribute(attrs[ak].name, attrs[ak].value);
+                        }
+                        newScript.textContent = oldScript.textContent;
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    }
+                }
+                if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+                /* Remove the attribute, and call this function once more: */
+                elmnt.removeAttribute("w3-include-html");
+                includeHTML();
+                }
+            }
+            xhttp.open("GET", file, true);
+            xhttp.send();
+            /* Exit the function: */
+            return;
+            }
+        }
+        }
+        includeHTML();
+        </script> 
+    </div>
+</html>
