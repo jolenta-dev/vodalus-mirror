@@ -104,20 +104,45 @@ html.site-dim--dim .main {
         box-shadow: none;
     }
 
-    .main { padding: 0 8px; }
-    .sidenav {
+    .main { padding: 0 8px 0 calc(8vw + 8px); }
+
+    .sidebar-container {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1200;
         width: min(78vw, 280px);
         height: 100svh;
+        transform: translateX(calc(-100% + 8vw));
+        transition: transform 0.3s ease;
+    }
+    .sidebar-container.is-open {
+        transform: translateX(0);
+    }
+
+    .sidenav {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
         display: flex;
         flex-direction: column;
         padding-bottom: 24px;
         box-sizing: border-box;
-        z-index: 1200;
-        transform: translateX(-100%);
+        z-index: auto;
+        transform: none;
     }
-    .sidenav.is-open { transform: translateX(0); }
+
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(0, 0, 0, 0.35);
+    }
+    .sidebar-open .sidebar-backdrop { display: block; }
     .sidenav .nowplaying,
     .sidenav .status {
         position: static;
@@ -138,9 +163,9 @@ html.site-dim--dim .main {
         order: 0;
     }
     .sidenav:has(.sidenav-bottom-stack) {
-        height: auto;
-        min-height: 100svh;
-        max-height: 100svh;
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
     }
     .sidenav:has(.sidenav-bottom-stack) .sidenav-bottom-stack {
         padding-bottom: 0;
@@ -150,14 +175,23 @@ html.site-dim--dim .main {
     .main { margin-left: 0; }
 
     #sidebar-toggle {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1000;
-        background: none;
-        border: none;
-        cursor: pointer;
         display: block;
+        position: absolute;
+        bottom: 20px;
+        right: 0;
+        transform: translateX(100%);
+        z-index: 1;
+        width: 28px;
+        height: 48px;
+        padding: 0;
+        background: #111;
+        border: none;
+        border-radius: 0 6px 6px 0;
+        color: #888;
+        font-size: 16px;
+        line-height: 48px;
+        text-align: center;
+        cursor: pointer;
     }
 }
 

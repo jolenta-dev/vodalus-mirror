@@ -1,36 +1,48 @@
 (function () {
     function setupMobileSidebarToggle() {
         var toggle = document.getElementById("sidebar-toggle");
-        var sidebar = document.querySelector(".sidenav");
-        if (!toggle || !sidebar) return;
+        var container = document.querySelector(".sidebar-container");
+        var sidenav = document.querySelector(".sidenav");
+        if (!toggle || !container) return;
 
         var mobileQuery = window.matchMedia("(max-width: 600px)");
 
+        var backdrop = document.createElement("div");
+        backdrop.className = "sidebar-backdrop";
+        document.body.appendChild(backdrop);
+
+        function closeSidebar() {
+            container.classList.remove("is-open");
+            document.body.classList.remove("sidebar-open");
+            toggle.setAttribute("aria-expanded", "false");
+        }
+
         function syncState() {
             if (!mobileQuery.matches) {
-                sidebar.classList.remove("is-open");
-                document.body.classList.remove("sidebar-open");
+                closeSidebar();
             }
             toggle.setAttribute(
                 "aria-expanded",
-                sidebar.classList.contains("is-open") ? "true" : "false"
+                container.classList.contains("is-open") ? "true" : "false"
             );
         }
 
         toggle.addEventListener("click", function () {
             if (!mobileQuery.matches) return;
-            var open = sidebar.classList.toggle("is-open");
+            var open = container.classList.toggle("is-open");
             document.body.classList.toggle("sidebar-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
         });
 
-        sidebar.addEventListener("click", function (e) {
-            var link = e.target && e.target.closest ? e.target.closest("a[href]") : null;
-            if (!link || !mobileQuery.matches) return;
-            sidebar.classList.remove("is-open");
-            document.body.classList.remove("sidebar-open");
-            toggle.setAttribute("aria-expanded", "false");
-        });
+        backdrop.addEventListener("click", closeSidebar);
+
+        if (sidenav) {
+            sidenav.addEventListener("click", function (e) {
+                var link = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+                if (!link || !mobileQuery.matches) return;
+                closeSidebar();
+            });
+        }
 
         if (mobileQuery.addEventListener) {
             mobileQuery.addEventListener("change", syncState);

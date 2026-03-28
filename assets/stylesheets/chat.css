@@ -21,8 +21,8 @@
     margin: 0;
     position: absolute;
      top: 50%;
-     -ms-transform: translateY(-100%);
-     transform: translateY(-100%)  translateX(200%);
+     -ms-transform: translateY(-50%);
+     transform: translateY(-50%)  translateX(50%);
      font-size: 1rem;
  }
 
@@ -92,6 +92,7 @@
     color: black;
     padding: 10px 24px;
     cursor: pointer;
+    align-self: stretch;
 }
 
 html.site-dim--dim .chat-toolbar button {
