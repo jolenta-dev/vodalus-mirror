@@ -1,4 +1,38 @@
 (function () {
+    var unreadRefreshInFlight = false;
+    var unreadWatchersBound = false;
+
+    function setConveneMarker(hasUnread) {
+        var link = document.querySelector('.sidenav a[href="/chat"]');
+        if (!link) return;
+        link.textContent = "convene" + (hasUnread ? " (*)" : "");
+    }
+
+    function refreshConveneUnreadMarker() {
+        if (unreadRefreshInFlight) return;
+        unreadRefreshInFlight = true;
+        fetch("/api/conversations", { credentials: "include", cache: "no-store" })
+            .then(function (r) {
+                if (!r.ok) return null;
+                return r.json();
+            })
+            .then(function (data) {
+                var conversations = data && Array.isArray(data.conversations) ? data.conversations : [];
+                var hasUnread = conversations.some(function (c) {
+                    return Number(c && c.unreadChatCount) > 0;
+                });
+                setConveneMarker(hasUnread);
+            })
+            .catch(function () {
+                setConveneMarker(false);
+            })
+            .finally(function () {
+                unreadRefreshInFlight = false;
+            });
+    }
+
+    window.vodalusApplyConveneNavUnreadMarker = refreshConveneUnreadMarker;
+
     function setupMobileSidebarToggle() {
         var toggle = document.getElementById("sidebar-toggle");
         var container = document.querySelector(".sidebar-container");
@@ -61,15 +95,16 @@
 
     function runFooter() {
         var el = document.querySelector(".status[data-src]");
-        if (el) {
+        function refreshStatusSnippet() {
+            if (!el) return;
             var src = el.getAttribute("data-src");
-            if (src) {
-                fetch(src)
-                    .then(function (r) { return r.text(); })
-                    .then(function (html) { el.innerHTML = html; })
-                    .catch(function () {});
-            }
+            if (!src) return;
+            fetch(src, { cache: "no-store" })
+                .then(function (r) { return r.text(); })
+                .then(function (html) { el.innerHTML = html; })
+                .catch(function () {});
         }
+        refreshStatusSnippet();
 
         var DIM_CLASS = "site-dim--dim";
         var STORAGE_KEY = "siteDim";
@@ -104,12 +139,22 @@
                 } catch (e2) {}
             });
         }
+
+        refreshConveneUnreadMarker();
+        if (!unreadWatchersBound) {
+            unreadWatchersBound = true;
+            window.addEventListener("focus", refreshConveneUnreadMarker);
+            document.addEventListener("visibilitychange", function () {
+                if (document.visibilityState === "visible") refreshConveneUnreadMarker();
+            });
+            window.setInterval(refreshConveneUnreadMarker, 3000);
+        }
     }
 
     var mount = document.getElementById("site-sidebar-mount");
     var src = mount && mount.getAttribute("data-src");
     if (mount && src) {
-        fetch(src)
+        fetch(src, { cache: "no-store" })
             .then(function (r) { return r.text(); })
             .then(function (html) {
                 mount.outerHTML = html;
@@ -127,4 +172,5 @@
     setupMobileSidebarToggle();
     loadNowPlaying();
     runFooter();
+
 })();

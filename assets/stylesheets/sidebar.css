@@ -31,7 +31,7 @@ html.site-dim--dim .main {
 
 .sidenav {
     height: 100vh;
-    width: 160px;
+    width: 180px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -85,7 +85,7 @@ html.site-dim--dim .main {
 }
 
 .main {
-    margin-left: 160px;
+    margin-left: 180px;
     padding: 0px 0px;
 }
 
