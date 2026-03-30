@@ -6,6 +6,51 @@
     <title>Home</title>
     <link rel="stylesheet" href="/assets/stylesheets/home.css">
 </head>
+    <style>
+        .orbitingElement {
+            animation-name: orbitElementAnim;
+            animation-duration: 8.5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        @keyframes orbitElementAnim {
+            from {
+                left: -25px;
+                top: -12px;
+                z-index: 1;
+                transform: scale(0.75);
+            }
+            25% {
+                transform: scale(1.0);
+            }
+            50% {
+                left: 64px;
+                top: 32px;
+                z-index: 1;
+                transform: scale(0.75);
+            }
+            55% {
+                z-index: -1;
+            }
+            75% {
+                transform: scale(0.5);
+            }
+            90% {
+                z-index: -1;
+            }
+            to {
+                left: -25px;
+                top: -12px;
+                z-index: 1;
+                transform: scale(0.75);
+            }
+        }
+    </style>
+    <div style="position: relative; transform: translateX(50%);">
+        <img style="position: relative;" id="planet" src="/assets/images/motivation.jpg">
+      <!--  <img class="orbitingElement" style="position: absolute; top: -12px; left: -25px;" id="moon" src="/assets/images/motivation.jpg"> -->
+    </div>
     <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
     <script src="/assets/javascript/sidebar-footer.js"></script>
