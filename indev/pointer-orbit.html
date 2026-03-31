@@ -1,0 +1,149 @@
+<style>
+    .orbitingElement {
+        animation-name: orbitElementAnim;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes orbitElementAnim {
+        from {
+            left: -12.5px;
+            top: -6px;
+            z-index: 1;
+            transform: scale(0.75);
+        }
+
+        25% {
+            transform: scale(1.0);
+        }
+
+        50% {
+            left: 32px;
+            top: 16px;
+            z-index: 1;
+            transform: scale(0.75);
+        }
+
+        55% {
+            z-index: -1;
+        }
+
+        75% {
+            transform: scale(0.5);
+        }
+
+        90% {
+            z-index: -1;
+        }
+
+        to {
+            left: -12.5px;
+            top: -6px;
+            z-index: 1;
+            transform: scale(0.75);
+        }
+    }
+
+    .orbitingElement2 {
+        animation-name: orbitElementAnim2;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes orbitElementAnim2 {
+        from {
+            left: -32px;
+            top: 16px;
+            z-index: 1;
+            transform: scale(0.75);
+        }
+
+        5% {
+            z-index: -1;
+        }
+
+        25% {
+            transform: scale(0.5);
+        }
+
+        40% {
+            z-index: -1;
+        }
+
+        50% {
+            left: 12.5px;
+            top: -6px;
+            z-index: 1;
+            transform: scale(0.75);
+        }
+
+        75% {
+            transform: scale(1.0);
+        }
+
+        to {
+            left: -32px;
+            top: 16px;
+            z-index: 1;
+            transform: scale(0.75);
+        }
+    }
+</style>
+
+<body onload="move1(); move2();">
+    <div class="orbitingElement" style="position: absolute; top: -6px; left: -12.5px;" id="follower1">✧</div>
+    <div class="orbitingElement2" style="position: absolute; top: 6px; left: 12.5px;" id="follower2">✧</div>
+    <script>
+        var mouseX = 0;
+        var mouseY = 0;
+        document.onmousemove = function getMouseXY(abc) {
+            mouseX = abc.pageX;
+            mouseY = abc.pageY;
+        };
+
+        function move1() {
+            var element = document.getElementById("follower1");
+            var targetX = 0;
+            var targetY = 0;
+            var currentX = 0;
+            var currentY = 0;
+            var easing = 0.25;
+            var offset = 8;
+
+            function animateFollower() {
+                targetX = mouseX - offset;
+                targetY = mouseY - offset;
+                currentX += (targetX - currentX) * easing;
+                currentY += (targetY - currentY) * easing;
+                element.style.marginLeft = currentX + "px";
+                element.style.marginTop = currentY + "px";
+                requestAnimationFrame(animateFollower);
+            }
+
+            requestAnimationFrame(animateFollower);
+        }
+
+        function move2() {
+            var element = document.getElementById("follower2");
+            var targetX = 0;
+            var targetY = 0;
+            var currentX = 0;
+            var currentY = 0;
+            var easing = 0.25;
+            var offset = 8;
+
+            function animateFollower() {
+                targetX = mouseX - offset;
+                targetY = mouseY - offset;
+                currentX += (targetX - currentX) * easing;
+                currentY += (targetY - currentY) * easing;
+                element.style.marginLeft = currentX + "px";
+                element.style.marginTop = currentY + "px";
+                requestAnimationFrame(animateFollower);
+            }
+
+            requestAnimationFrame(animateFollower);
+        }
+    </script>

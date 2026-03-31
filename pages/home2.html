@@ -46,16 +46,112 @@
                 transform: scale(0.75);
             }
         }
+
+        .orbitingElement2 {
+            animation-name: orbitElementAnim2;
+            animation-duration: 8.5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        @keyframes orbitElementAnim2 {
+            from {
+                right: -25px;
+                bottom: -12px;
+                z-index: 1;
+                transform: scale(0.75);
+            }
+            25% {
+                transform: scale(1.0);
+            }
+            50% {
+                right: 64px;
+                bottom: 32px;
+                z-index: 1;
+                transform: scale(0.75);
+            }
+            55% {
+                z-index: -1;
+            }
+            75% {
+                transform: scale(0.5);
+            }
+            90% {
+                z-index: -1;
+            }
+            to {
+                right: -25px;
+                bottom: -12px;
+                z-index: 1;
+                transform: scale(0.75);
+            }
+        }
     </style>
-    <div style="position: relative; transform: translateX(50%);">
+    
+    <div style="position: relative;">
         <img style="position: relative;" id="planet" src="/assets/images/motivation.jpg">
-      <!--  <img class="orbitingElement" style="position: absolute; top: -12px; left: -25px;" id="moon" src="/assets/images/motivation.jpg"> -->
+        
     </div>
     <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
     <script src="/assets/javascript/sidebar-footer.js"></script>
     <div class="main">
-	<body>
+	<body onload="move1(); move2();">
+        <!--<div id="follower" style="background:000; padding:10px; width:150px;">mouse</div>-->
+        <div class="orbitingElement" style="position: absolute; top: -12px; left: -25px;" id="follower1">✧</div>
+        <div class="orbitingElement2" style="position: absolute; bottom: -12px; right: -25px;" id="follower2">✧</div>
+        <script>
+            var mouseX = 0;
+            var mouseY = 0;
+            document.onmousemove = function getMouseXY(abc) {
+                mouseX = abc.pageX;
+                mouseY = abc.pageY;
+            };
+
+            function move1() {
+                var element = document.getElementById("follower1");
+                var targetX = 0;
+                var targetY = 0;
+                var currentX = 0;
+                var currentY = 0;
+                var easing = 0.12;
+                var offset = 8;
+
+                function animateFollower() {
+                    targetX = mouseX - offset;
+                    targetY = mouseY - offset;
+                    currentX += (targetX - currentX) * easing;
+                    currentY += (targetY - currentY) * easing;
+                    element.style.marginLeft = currentX + "px";
+                    element.style.marginTop = currentY + "px";
+                    requestAnimationFrame(animateFollower);
+                }
+
+                requestAnimationFrame(animateFollower);
+            }
+
+            function move2() {
+                var element = document.getElementById("follower2");
+                var targetX = 0;
+                var targetY = 0;
+                var currentX = 0;
+                var currentY = 0;
+                var easing = 0.12;
+                var offset = 8;
+
+                function animateFollower() {
+                    targetX = mouseX - offset;
+                    targetY = mouseY - offset;
+                    currentX += (targetX - currentX) * easing;
+                    currentY += (targetY - currentY) * easing;
+                    element.style.marginRight = currentX + "px";
+                    element.style.marginBottom = currentY + "px";
+                    requestAnimationFrame(animateFollower);
+                }
+
+                requestAnimationFrame(animateFollower);
+            }
+        </script>
 	    <h1>"I sent my men to fetch the headsman, I perceive they succeeded."</h1>
 	    <h2> This month's theme: </h2><div w3-include-html="/assets/html/theme-april.html"></div>
         <div class="gambling-leaderboard">
