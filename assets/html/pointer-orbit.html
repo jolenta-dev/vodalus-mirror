@@ -4,6 +4,7 @@
         animation-duration: 4s;
         animation-iteration-count: infinite;
         animation-timing-function: ease-in-out;
+        cursor: pointer;
     }
 
     @keyframes orbitElementAnim {
@@ -50,6 +51,7 @@
         animation-duration: 4s;
         animation-iteration-count: infinite;
         animation-timing-function: ease-in-out;
+        cursor: pointer;
     }
 
     @keyframes orbitElementAnim2 {
@@ -90,6 +92,14 @@
             transform: scale(0.75);
         }
     }
+    .trail {
+        position: absolute;
+       /* height: 6px; width: 6px;
+        border-radius: 3px; */
+        color: gold;
+        cursor: default;
+        transform: rotate(-90deg);
+    }
 </style>
 <div class="pointer-orbit-root" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;">
     <div class="orbitingElement" style="position: absolute; top: -6px; left: -12.5px;" id="follower1">✧</div>
@@ -103,8 +113,8 @@
         mouseY = abc.pageY;
     };
 
-    function move1() {
-        var element = document.getElementById("follower1");
+    function move(elementID) {
+        var element = document.getElementById(elementID);
         if (!element) return;
         var targetX = 0;
         var targetY = 0;
@@ -126,29 +136,90 @@
         requestAnimationFrame(animateFollower);
     }
 
-    function move2() {
-        var element = document.getElementById("follower2");
-        if (!element) return;
-        var targetX = 0;
-        var targetY = 0;
-        var currentX = 0;
-        var currentY = 0;
-        var easing = 0.25;
-        var offset = 8;
+    move("follower1");
+    move("follower2");
 
-        function animateFollower() {
-            targetX = mouseX - offset;
-            targetY = mouseY - offset;
-            currentX += (targetX - currentX) * easing;
-            currentY += (targetY - currentY) * easing;
-            element.style.marginLeft = currentX + "px";
-            element.style.marginTop = currentY + "px";
-            requestAnimationFrame(animateFollower);
-        }
+    var trailLive = [];
 
-        requestAnimationFrame(animateFollower);
+    var trailAgeSpanMs = 1000;
+    var trailAgeMaxDashes = 50;
+
+    function trailDashCount(bornAt, now) {
+        return Math.min(trailAgeMaxDashes, Math.floor((now - bornAt) / (trailAgeSpanMs / trailAgeMaxDashes)));
     }
 
-    move1();
-    move2();
+    function refreshTrailAges() {
+        var now = Date.now();
+        for (var i = trailLive.length - 1; i >= 0; i--) {
+            var t = trailLive[i];
+            if (now - t.bornAt >= trailAgeSpanMs) {
+                t.el.remove();
+                trailLive.splice(i, 1);
+                continue;
+            }
+            var dashes = trailDashCount(t.bornAt, now);
+            t.el.textContent = "⋆" +`\u00A0`.repeat(dashes);
+        }
+    }
+
+    setInterval(refreshTrailAges, trailAgeSpanMs / trailAgeMaxDashes);
+
+    var trailEveryNthMove = 10;
+    var trailEventCounter = 0;
+
+    addEventListener("mousemove", function(event) {
+        trailEventCounter++;
+        if (trailEveryNthMove > 1 && trailEventCounter % trailEveryNthMove !== 0) return;
+
+        var el = document.createElement("div");
+        el.className = "trail";
+        el.textContent = "*";
+        el.style.left = (event.pageX - 3) + "px";
+        el.style.top = (event.pageY - 3) + "px";
+        document.body.appendChild(el);
+        trailLive.push({ el: el, bornAt: Date.now() });
+    });
+</script>
+
+
+<div id="falling">falls down</div>
+<script>
+    var falling = document.getElementById("falling");
+    falling.style.position = "fixed";
+    falling.style.top = "0px";
+    falling.style.left = "0px";
+    var timesBounced = 0;
+    var peakStartY = 0;
+
+    function fall(element, vectorY) {
+        if (!element.isConnected) return;
+        var floorY = window.innerHeight - element.offsetHeight;
+        var currentTop = parseInt(element.style.top, 10) || 0;
+        var nextTop = currentTop + vectorY;
+        if (timesBounced > 3) {
+            clearInterval(fallIntervalId);
+            element.remove();
+            return;
+        }
+        if (!element.bounced) {
+            if (nextTop > floorY) {
+                nextTop = floorY;
+                var fallDist = floorY - peakStartY;
+                element.bounceApex = floorY - fallDist / 2;
+                element.bounced = true;
+                timesBounced++;
+            }
+        } else {
+            if (nextTop <= element.bounceApex) {
+                nextTop = element.bounceApex;
+                peakStartY = element.bounceApex;
+                element.bounced = false;
+            }
+        }
+        element.style.top = nextTop + "px";
+    }
+    var fallIntervalId = setInterval(function() {
+        fall(falling, falling.bounced ? -10 : 10);
+    }, 10);
+
 </script>
