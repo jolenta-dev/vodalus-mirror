@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Guestbook</title>
-	</head>
-    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
-	<link rel="stylesheet" href="/assets/stylesheets/guestbook.css">
 
-    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
-	<script src="/assets/javascript/sidebar-footer.js"></script>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Guestbook</title>
+</head>
+<div w3-include-html="/assets/html/pointer-orbit.html"></div>
+<link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+<link rel="stylesheet" href="/assets/stylesheets/guestbook.css">
+
+<div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+<script src="/assets/javascript/sidebar-footer.js"></script>
 <div class="main">
+
 	<body>
 		<div id="Html">
 			<h1>Urth's many cacogens</h1>
-			<input id="input-name" placeholder="nickname"> <input id="input-website" placeholder="website"> <input id="input-note" placeholder="note">
+			<input id="input-name" placeholder="nickname"> <input id="input-website" placeholder="website"> <input
+				id="input-note" placeholder="note">
 			<button id="add-btn" type="button">
 				add your name
 			</button>
@@ -22,7 +26,14 @@
 		<script src="/assets/javascript/roster-name.js"></script>
 		<div class="guestbook-table-wrap">
 			<table id="name-table">
-				<thead><tr><th>Date</th><th>Name</th><th>Website</th><th>Note</th></tr></thead>
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Name</th>
+						<th>Website</th>
+						<th>Note</th>
+					</tr>
+				</thead>
 				<tbody id="name-table-body"></tbody>
 			</table>
 		</div>
@@ -55,7 +66,7 @@
 			document.getElementById('input-website').addEventListener('keydown', onGuestbookEnter);
 			document.getElementById('input-note').addEventListener('keydown', onGuestbookEnter);
 
-			function newName(){
+			function newName() {
 				const inputName = document.getElementById('input-name').value;
 				const inputWebsite = document.getElementById('input-website').value
 				const inputNote = document.getElementById('input-note').value
@@ -172,5 +183,7 @@
 			});
 		</script>
 	</body>
-    </div>
+</div>
+<script src="/assets/javascript/include-html.js"></script>
+
 </html>

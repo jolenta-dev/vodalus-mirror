@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tzadkiel's Ship</title>
-        <link rel="stylesheet" href="/assets/stylesheets/atrium.css">
-        <link rel="stylesheet" href="/assets/stylesheets/journey.css">
-        <style>
-            #password-modal-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 10000;
-                display: none;
-                align-items: center;
-                justify-content: center;
-            }
-            #password-modal {
-                background: #fff;
-                border: 1px solid #000;
-                border-radius: 8px;
-                padding: 1.25rem;
-                min-width: 280px;
-            }
-            html.site-dim--dim #password-modal {
-                background: #8e8e8e !important;
-                border-color: #3d3d3d !important;
-                color: #141414 !important;
-            }
-            html.site-dim--dim #password-modal input[type="password"],
-            html.site-dim--dim #password-modal input[type="text"] {
-                background: #a8a8a8 !important;
-                border: 1px solid #4a4a4a !important;
-                color: #111 !important;
-            }
-        </style>
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tzadkiel's Ship</title>
+    <link rel="stylesheet" href="/assets/stylesheets/atrium.css">
+    <link rel="stylesheet" href="/assets/stylesheets/journey.css">
+    <style>
+        #password-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #password-modal {
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 1.25rem;
+            min-width: 280px;
+        }
+
+        html.site-dim--dim #password-modal {
+            background: #8e8e8e !important;
+            border-color: #3d3d3d !important;
+            color: #141414 !important;
+        }
+
+        html.site-dim--dim #password-modal input[type="password"],
+        html.site-dim--dim #password-modal input[type="text"] {
+            background: #a8a8a8 !important;
+            border: 1px solid #4a4a4a !important;
+            color: #111 !important;
+        }
+    </style>
+</head>
+
 <body>
+    <div w3-include-html="/assets/html/pointer-orbit.html"></div>
     <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
 
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
@@ -66,7 +72,8 @@
                 </div>
                 <div class="journey-layout__midline" aria-hidden="true"></div>
                 <div class="journey-layout__below">
-                    <h1 class="journey-title">You board the ship, but the journey to Yesod is long and fraught with adversaries.</h1>
+                    <h1 class="journey-title">You board the ship, but the journey to Yesod is long and fraught with
+                        adversaries.</h1>
                     <button id="yesod-journey-btn" class="journey-btn" type="button">Begin your journey.</button>
                 </div>
             </div>
@@ -183,7 +190,7 @@
                         nameInputEl.value = data.nickname;
                         authedName = data.nickname;
                     })
-                    .catch(() => {});
+                    .catch(() => { });
 
                 var journeyAttempts = 0;
                 function incrementJourneyAttempts() {
@@ -230,8 +237,8 @@
                     "You are feminized after failing to convince the hierogrammates to grant you the New Sun."
                 ];
                 var yesodStageWinMessages = [
-                    "You successfully make peace with life aboard the ship and venture deeper into this universe, which is called Briah.", 
-                    "You survive the encounter with the strange creature aboard the ship and learn the true nature of the hierodules.", 
+                    "You successfully make peace with life aboard the ship and venture deeper into this universe, which is called Briah.",
+                    "You survive the encounter with the strange creature aboard the ship and learn the true nature of the hierodules.",
                     "You successfully reach Yesod and begin judgement by the hierogrammates."];
                 var yesodFinalWinMessages = [
                     "You successfully plead Urth's case to the hierogrammates and learn you've had the power of the New Sun all along. Return now to Urth with it in hand, traversing this universe, which is called Briah.",
@@ -276,11 +283,11 @@
 
                 document.getElementById('yesod-journey-btn').addEventListener('click', async () => {
                     if (yesodJourneyStage === 4) return;
-                    if (onCooldown) return; 
+                    if (onCooldown) return;
                     onCooldown = true;
                     var btn = document.getElementById('yesod-journey-btn');
                     btn.disabled = true;
-                    setTimeout(function() { onCooldown = false; btn.disabled = false; }, COOLDOWN_MS);
+                    setTimeout(function () { onCooldown = false; btn.disabled = false; }, COOLDOWN_MS);
                     var name = document.getElementById('name-input').value.trim();
                     if (!name || String(authedName || '').toLowerCase() !== name.toLowerCase()) {
                         addYesodJourneyItem('Your auth session does not match the current name. Re-board the ship.');
@@ -389,4 +396,6 @@
         </div>
     </div>
 </body>
+<script src="/assets/javascript/include-html.js"></script>
+
 </html>

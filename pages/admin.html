@@ -1,644 +1,662 @@
 <!DOCTYPE html>
 <html class="admin-page" lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Dashboard</title>
-        <link rel="stylesheet" href="/assets/stylesheets/admin.css">
-        <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
-    </head>
-    <body>
-        <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
-        <script src="/assets/javascript/sidebar-footer.js"></script>
-        <div class="main">
-            <h1>Admin Dashboard</h1>
-            <div id="admin-dashboard-container" class="admin-dashboard-container" style="display: none;">
-                <!---tab links-->
-                <div class="admin-dashboard-tabs">
-                    <button class="tablinks" onclick="openTab(event, 'Chat')">Chat</button>
-                    <button class="tablinks" onclick="openTab(event, 'Status')">Status</button>
-                    <button class="tablinks" onclick="openTab(event, 'SQL')">SQL DBs</button>
-                </div>
-                <div class="box">
-                    <!--tab content-->
-                    <div id="Chat" class="tabcontent" style="display: block;">
-                        <h3>Katharine controls</h3>
-                        <h3>Announcement controls</h3>
-                        <p>create a new announcement</p>
-                        <input type="text" id="new-announcement-input" placeholder="new announcement">
-                        <select id="new-announcement-scope-input">
-                            <option value="global">global</option>
-                            <option value="public">public</option>
-                            <option value="here">here</option>
-                        </select>
-                        <select id="new-announcement-chat-input" style="display: none;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/assets/stylesheets/admin.css">
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+</head>
+<div w3-include-html="/assets/html/pointer-orbit.html"></div>
+
+<body>
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <div class="main">
+        <h1>Admin Dashboard</h1>
+        <div id="admin-dashboard-container" class="admin-dashboard-container" style="display: none;">
+            <!---tab links-->
+            <div class="admin-dashboard-tabs">
+                <button class="tablinks" onclick="openTab(event, 'Chat')">Chat</button>
+                <button class="tablinks" onclick="openTab(event, 'Status')">Status</button>
+                <button class="tablinks" onclick="openTab(event, 'SQL')">SQL DBs</button>
+            </div>
+            <div class="box">
+                <!--tab content-->
+                <div id="Chat" class="tabcontent" style="display: block;">
+                    <h3>Katharine controls</h3>
+                    <h3>Announcement controls</h3>
+                    <p>create a new announcement</p>
+                    <input type="text" id="new-announcement-input" placeholder="new announcement">
+                    <select id="new-announcement-scope-input">
+                        <option value="global">global</option>
+                        <option value="public">public</option>
+                        <option value="here">here</option>
+                    </select>
+                    <select id="new-announcement-chat-input" style="display: none;">
+                        <option value="">Select a chat...</option>
+                    </select>
+                    <button id="new-announcement-button" type="button">create announcement</button>
+                    <br>
+
+                    <h3>Chat admin</h3>
+                    <div class="chat-admin-tabs" role="tablist" style="margin-bottom: 10px;">
+                        <button type="button" class="chat-admin-tab chat-admin-tab--active" id="chat-admin-tab-new">New
+                            chat</button>
+                        <button type="button" class="chat-admin-tab" id="chat-admin-tab-members">Members</button>
+                    </div>
+                    <div id="chat-admin-panel-new" class="chat-admin-panel">
+                        <input id="new-chat-modal-input" placeholder="new chat name (not needed for a 2-person DM)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <input id="new-chat-members-input"
+                            placeholder="other members (comma separated; registered only)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <label class="chat-admin-public-option" for="new-chat-modal-public"><input type="checkbox"
+                                id="new-chat-modal-public"> public</label>
+                        <br>
+                        <button id="new-chat-modal-ok" type="button">create</button>
+                    </div>
+                    <div id="chat-admin-panel-members" class="chat-admin-panel" style="display: none;">
+                        <p>Select a chat to manage:</p>
+                        <select id="chat-admin-members-select" style="width: 100%; margin-bottom: 10px;">
                             <option value="">Select a chat...</option>
                         </select>
-                        <button id="new-announcement-button" type="button">create announcement</button>
+                        <p id="chat-admin-members-context" style="font-weight: bold;"></p>
+                        <p class="chat-admin-members-label">Current members</p>
+                        <div id="chat-admin-members-list" class="chat-admin-members-list" aria-live="polite"
+                            style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 50px;"></div>
+                        <label class="chat-admin-field-label" for="chat-edit-members-input">Add</label>
+                        <input id="chat-edit-members-input" placeholder="registered users (comma separated)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <button id="chat-edit-members-ok" type="button">add members</button>
                         <br>
-                        
-                        <h3>Chat admin</h3>
-                        <div class="chat-admin-tabs" role="tablist" style="margin-bottom: 10px;">
-                            <button type="button" class="chat-admin-tab chat-admin-tab--active" id="chat-admin-tab-new">New chat</button>
-                            <button type="button" class="chat-admin-tab" id="chat-admin-tab-members">Members</button>
-                        </div>
-                        <div id="chat-admin-panel-new" class="chat-admin-panel">
-                            <input id="new-chat-modal-input" placeholder="new chat name (not needed for a 2-person DM)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
-                            <input id="new-chat-members-input" placeholder="other members (comma separated; registered only)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
-                            <label class="chat-admin-public-option" for="new-chat-modal-public"><input type="checkbox" id="new-chat-modal-public"> public</label>
-                            <br>
-                            <button id="new-chat-modal-ok" type="button">create</button>
-                        </div>
-                        <div id="chat-admin-panel-members" class="chat-admin-panel" style="display: none;">
-                            <p>Select a chat to manage:</p>
-                            <select id="chat-admin-members-select" style="width: 100%; margin-bottom: 10px;">
-                                <option value="">Select a chat...</option>
-                            </select>
-                            <p id="chat-admin-members-context" style="font-weight: bold;"></p>
-                            <p class="chat-admin-members-label">Current members</p>
-                            <div id="chat-admin-members-list" class="chat-admin-members-list" aria-live="polite" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 50px;"></div>
-                            <label class="chat-admin-field-label" for="chat-edit-members-input">Add</label>
-                            <input id="chat-edit-members-input" placeholder="registered users (comma separated)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
-                            <button id="chat-edit-members-ok" type="button">add members</button>
-                            <br>
-                            <label class="chat-admin-field-label" for="chat-remove-members-input">Remove</label>
-                            <input id="chat-remove-members-input" placeholder="names to remove (comma separated)" style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
-                            <button id="chat-remove-members-ok" type="button">remove members</button>
-                        </div>
-                        <br>
-                        
-                        <h3>Reset password controls</h3>
-                        <p>reset a user's password</p>
-                            <input type="text" id="reset-password-username-input" placeholder="username">
-                            <input type="text" id="reset-password-newpassword-input" placeholder="new password">
-                            <button id="reset-password-button" type="button">reset password</button>
+                        <label class="chat-admin-field-label" for="chat-remove-members-input">Remove</label>
+                        <input id="chat-remove-members-input" placeholder="names to remove (comma separated)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <button id="chat-remove-members-ok" type="button">remove members</button>
                     </div>
-                    <div id="Status" class="tabcontent" style="display: none;">
-                        <h3>Status</h3>
-                        <p>edit the status</p>
-                        <input type="text" id="status-input" placeholder="new status">
-                        <button id="status-button" type="button">set status</button>
-                        <p id="status-output"></p>
-                        <!--do a funny bit of having this set the status and do status monitoring-->
+                    <br>
+
+                    <h3>Reset password controls</h3>
+                    <p>reset a user's password</p>
+                    <input type="text" id="reset-password-username-input" placeholder="username">
+                    <input type="text" id="reset-password-newpassword-input" placeholder="new password">
+                    <button id="reset-password-button" type="button">reset password</button>
+                </div>
+                <div id="Status" class="tabcontent" style="display: none;">
+                    <h3>Status</h3>
+                    <p>edit the status</p>
+                    <input type="text" id="status-input" placeholder="new status">
+                    <button id="status-button" type="button">set status</button>
+                    <p id="status-output"></p>
+                    <!--do a funny bit of having this set the status and do status monitoring-->
+                </div>
+                <div id="SQL" class="tabcontent" style="display: none;">
+                    <h3>SQL DBs</h3>
+                    <div id="sql-table-radios"></div>
+                    <br>
+                    <div class="sql-builder">
+                        <label>Command:</label>
+                        <select id="sql-command-type">
+                            <option value="SELECT">SELECT</option>
+                            <option value="UPDATE">UPDATE</option>
+                            <option value="INSERT">INSERT INTO</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+
+                        <div id="sql-select-builder" class="sql-command-builder">
+                            <input type="text" id="sql-select-columns" placeholder="columns (e.g., * or name, date)"
+                                style="width: 300px;">
+                            <span>FROM</span>
+                            <span id="sql-select-table" class="table-name-display"></span>
+                            <input type="text" id="sql-select-where" placeholder="WHERE clause (optional, e.g., id = 1)"
+                                style="width: 300px;">
+                        </div>
+
+                        <div id="sql-update-builder" class="sql-command-builder" style="display: none;">
+                            <span id="sql-update-table" class="table-name-display"></span>
+                            <span>SET</span>
+                            <input type="text" id="sql-update-set" placeholder="column = 'value', column2 = 'value2'"
+                                style="width: 300px;">
+                            <span>WHERE</span>
+                            <input type="text" id="sql-update-where" placeholder="id = 1" style="width: 200px;">
+                        </div>
+
+                        <div id="sql-insert-builder" class="sql-command-builder" style="display: none;">
+                            <span id="sql-insert-table" class="table-name-display"></span>
+                            <input type="text" id="sql-insert-columns" placeholder="(column1, column2)"
+                                style="width: 200px;">
+                            <span>VALUES</span>
+                            <input type="text" id="sql-insert-values" placeholder="('value1', 'value2')"
+                                style="width: 200px;">
+                        </div>
+
+                        <div id="sql-delete-builder" class="sql-command-builder" style="display: none;">
+                            <span>FROM</span>
+                            <span id="sql-delete-table" class="table-name-display"></span>
+                            <span>WHERE</span>
+                            <input type="text" id="sql-delete-where" placeholder="id = 1" style="width: 200px;">
+                        </div>
                     </div>
-                    <div id="SQL" class="tabcontent" style="display: none;">
-                        <h3>SQL DBs</h3>
-                        <div id="sql-table-radios"></div>
-                        <br>
-                        <div class="sql-builder">
-                            <label>Command:</label>
-                            <select id="sql-command-type">
-                                <option value="SELECT">SELECT</option>
-                                <option value="UPDATE">UPDATE</option>
-                                <option value="INSERT">INSERT INTO</option>
-                                <option value="DELETE">DELETE</option>
-                            </select>
-                            
-                            <div id="sql-select-builder" class="sql-command-builder">
-                                <input type="text" id="sql-select-columns" placeholder="columns (e.g., * or name, date)" style="width: 300px;">
-                                <span>FROM</span>
-                                <span id="sql-select-table" class="table-name-display"></span>
-                                <input type="text" id="sql-select-where" placeholder="WHERE clause (optional, e.g., id = 1)" style="width: 300px;">
-                            </div>
-                            
-                            <div id="sql-update-builder" class="sql-command-builder" style="display: none;">
-                                <span id="sql-update-table" class="table-name-display"></span>
-                                <span>SET</span>
-                                <input type="text" id="sql-update-set" placeholder="column = 'value', column2 = 'value2'" style="width: 300px;">
-                                <span>WHERE</span>
-                                <input type="text" id="sql-update-where" placeholder="id = 1" style="width: 200px;">
-                            </div>
-                            
-                            <div id="sql-insert-builder" class="sql-command-builder" style="display: none;">
-                                <span id="sql-insert-table" class="table-name-display"></span>
-                                <input type="text" id="sql-insert-columns" placeholder="(column1, column2)" style="width: 200px;">
-                                <span>VALUES</span>
-                                <input type="text" id="sql-insert-values" placeholder="('value1', 'value2')" style="width: 200px;">
-                            </div>
-                            
-                            <div id="sql-delete-builder" class="sql-command-builder" style="display: none;">
-                                <span>FROM</span>
-                                <span id="sql-delete-table" class="table-name-display"></span>
-                                <span>WHERE</span>
-                                <input type="text" id="sql-delete-where" placeholder="id = 1" style="width: 200px;">
-                            </div>
-                        </div>
-                        
-                        <div class="sql-preview">
-                            <label>Preview:</label>
-                            <code id="sql-preview-text">SELECT * FROM table_name</code>
-                        </div>
-                        
-                        <button id="sql-db-button" type="button">execute</button>
-                        <div id="sql-db-output"></div>
-                        
-                        <details style="margin-top: 20px;">
-                            <summary style="cursor: pointer; font-weight: bold;">SQL Syntax Reference</summary>
-                            <p style="margin-top: 10px;">
+
+                    <div class="sql-preview">
+                        <label>Preview:</label>
+                        <code id="sql-preview-text">SELECT * FROM table_name</code>
+                    </div>
+
+                    <button id="sql-db-button" type="button">execute</button>
+                    <div id="sql-db-output"></div>
+
+                    <details style="margin-top: 20px;">
+                        <summary style="cursor: pointer; font-weight: bold;">SQL Syntax Reference</summary>
+                        <p style="margin-top: 10px;">
                             <code>SELECT * FROM table_name;</code><br>
                             <code>UPDATE table_name SET column_name = 'value' WHERE column_name = 'value';</code><br>
                             <code>INSERT INTO table_name (column_name, column_name) VALUES ('value', 'value');</code><br>
                             <code>DELETE FROM table_name WHERE column_name = 'value';</code>
-                            </p>
-                        </details>
-                    </div>
-                    <script>
-                        function openTab(evt, tabName) {
-                            var i, tabcontent, tablinks
-                            tabcontent =  document.getElementsByClassName("tabcontent");
-                            for (i = 0; i < tabcontent.length; i++) {
-                                tabcontent[i].style.display = "none";
-                            }
-                            tablinks =  document.getElementsByClassName("tablinks");
-                            for (i = 0; i < tablinks.length; i++) {
-                                tablinks[i].className = tablinks[i].className.replace(" active", "");
-                            }
-                            document.getElementById(tabName).style.display = "block";
-                            evt.currentTarget.className += " active";
-                        }
-                    </script>
+                        </p>
+                    </details>
                 </div>
-            </div>
-            <div id="login-section">
-                <h2>Admin Login</h2>
-                <input id="login-name-input" placeholder="name">
-                <input type="password" id="login-password-input" placeholder="password">
-                <label><input type="checkbox" id="login-reveal">reveal password</label>
-                <button id="login-button" type="button">login</button>
+                <script>
+                    function openTab(evt, tabName) {
+                        var i, tabcontent, tablinks
+                        tabcontent = document.getElementsByClassName("tabcontent");
+                        for (i = 0; i < tabcontent.length; i++) {
+                            tabcontent[i].style.display = "none";
+                        }
+                        tablinks = document.getElementsByClassName("tablinks");
+                        for (i = 0; i < tablinks.length; i++) {
+                            tablinks[i].className = tablinks[i].className.replace(" active", "");
+                        }
+                        document.getElementById(tabName).style.display = "block";
+                        evt.currentTarget.className += " active";
+                    }
+                </script>
             </div>
         </div>
-        <script>
-            const loginInput = document.getElementById('login-password-input');
-            const loginReveal = document.getElementById('login-reveal');
-            loginInput.type = 'password';
-            if (loginReveal) {
-                loginReveal.checked = false;
-                loginReveal.addEventListener('change', () => {
-                    loginInput.type = loginReveal.checked ? 'text' : 'password';
-                });
-            }
-            document.getElementById('login-password-input').addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') document.getElementById('login-button').click();
+        <div id="login-section">
+            <h2>Admin Login</h2>
+            <input id="login-name-input" placeholder="name">
+            <input type="password" id="login-password-input" placeholder="password">
+            <label><input type="checkbox" id="login-reveal">reveal password</label>
+            <button id="login-button" type="button">login</button>
+        </div>
+    </div>
+    <script>
+        const loginInput = document.getElementById('login-password-input');
+        const loginReveal = document.getElementById('login-reveal');
+        loginInput.type = 'password';
+        if (loginReveal) {
+            loginReveal.checked = false;
+            loginReveal.addEventListener('change', () => {
+                loginInput.type = loginReveal.checked ? 'text' : 'password';
             });
-            
-            document.getElementById('login-button').addEventListener('click', async () => {
-                const name = document.getElementById('login-name-input').value.trim();
-                const password = document.getElementById('login-password-input').value;
-                
-                if (!name || !password) {
-                    alert('Please enter both name and password');
+        }
+        document.getElementById('login-password-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('login-button').click();
+        });
+
+        document.getElementById('login-button').addEventListener('click', async () => {
+            const name = document.getElementById('login-name-input').value.trim();
+            const password = document.getElementById('login-password-input').value;
+
+            if (!name || !password) {
+                alert('Please enter both name and password');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/adminLogin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, password })
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    try {
+                        const data = JSON.parse(text);
+                        alert(`${data.error}. Do not meddle in that which you do not understand.` || 'Login failed');
+                    } catch {
+                        alert('Server error: ' + response.status);
+                    }
                     return;
                 }
-                
-                try {
-                    const response = await fetch('/api/adminLogin', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, password })
-                    });
-                    
-                    if (!response.ok) {
-                        const text = await response.text();
-                        try {
-                            const data = JSON.parse(text);
-                            alert(`${data.error}. Do not meddle in that which you do not understand.` || 'Login failed');
-                        } catch {
-                            alert('Server error: ' + response.status);
-                        }
-                        return;
-                    }
-                    
-                    const data = await response.json();
-                    localStorage.setItem('admin-name', name);
-                    localStorage.setItem('admin-password', password);
-                    document.getElementById('login-section').style.display = 'none';
-                    document.getElementById('admin-dashboard-container').style.display = 'block';
-                    loadSqlTables();
-                    loadConversations();
-                } catch (err) {
-                    alert('Cannot reach server - is it running?');
-                }
-            });
-            
-            function loadSqlTables() {
-                fetch('/api/admin/sqlDbTables').then(r => r.json()).then(data => {
-                    const sqlDbTables = data.tables;
-                    const container = document.getElementById('sql-table-radios');
-                    const list = document.createElement('ul');
-                    list.style.listStyle = 'none';
-                    list.style.padding = '0';
-                    
-                    sqlDbTables.forEach((table, index) => {
-                        const listItem = document.createElement('li');
-                        listItem.style.marginBottom = '8px';
-                        
-                        const radio = document.createElement('input');
-                        radio.type = 'radio';
-                        radio.name = 'sql-db-radio';
-                        radio.value = table.name;
-                        radio.id = `sql-db-radio-${table.name}`;
-                        if (index === 0) radio.checked = true;
-                        
-                        const label = document.createElement('label');
-                        label.htmlFor = `sql-db-radio-${table.name}`;
-                        label.textContent = table.name;
-                        label.style.cursor = 'pointer';
-                        label.style.marginLeft = '5px';
-                        
-                        listItem.appendChild(radio);
-                        listItem.appendChild(label);
-                        list.appendChild(listItem);
-                        
-                        radio.addEventListener('change', updateSqlBuilder);
-                    });
-                    
-                    container.appendChild(list);
-                    updateSqlBuilder();
-                }).catch(err => {
-                    alert(err.message || 'Network/SQL error. Try refreshing.');
-                });
+
+                const data = await response.json();
+                localStorage.setItem('admin-name', name);
+                localStorage.setItem('admin-password', password);
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-dashboard-container').style.display = 'block';
+                loadSqlTables();
+                loadConversations();
+            } catch (err) {
+                alert('Cannot reach server - is it running?');
             }
+        });
 
-            let conversationsData = [];
-            function loadConversations() {
-                fetch('/api/conversations', { credentials: 'include' }).then(r => r.json()).then(data => {
-                    conversationsData = data.conversations || [];
-                    const announcementChatSelect = document.getElementById('new-announcement-chat-input');
-                    const membersChatSelect = document.getElementById('chat-admin-members-select');
-                    
-                    announcementChatSelect.innerHTML = '<option value="">Select a chat...</option>';
-                    membersChatSelect.innerHTML = '<option value="">Select a chat...</option>';
-                    
-                    conversationsData.forEach(conv => {
-                        const label = conv.label || conv.id;
-                        const opt1 = document.createElement('option');
-                        opt1.value = conv.id;
-                        opt1.textContent = label;
-                        announcementChatSelect.appendChild(opt1);
-                        
-                        const opt2 = document.createElement('option');
-                        opt2.value = conv.id;
-                        opt2.textContent = label;
-                        membersChatSelect.appendChild(opt2);
-                    });
-                }).catch(err => {
-                    console.error('Failed to load conversations:', err);
+        function loadSqlTables() {
+            fetch('/api/admin/sqlDbTables').then(r => r.json()).then(data => {
+                const sqlDbTables = data.tables;
+                const container = document.getElementById('sql-table-radios');
+                const list = document.createElement('ul');
+                list.style.listStyle = 'none';
+                list.style.padding = '0';
+
+                sqlDbTables.forEach((table, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.style.marginBottom = '8px';
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'sql-db-radio';
+                    radio.value = table.name;
+                    radio.id = `sql-db-radio-${table.name}`;
+                    if (index === 0) radio.checked = true;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `sql-db-radio-${table.name}`;
+                    label.textContent = table.name;
+                    label.style.cursor = 'pointer';
+                    label.style.marginLeft = '5px';
+
+                    listItem.appendChild(radio);
+                    listItem.appendChild(label);
+                    list.appendChild(listItem);
+
+                    radio.addEventListener('change', updateSqlBuilder);
                 });
-            }
 
-            document.getElementById('new-announcement-scope-input').addEventListener('change', (e) => {
-                const chatSelect = document.getElementById('new-announcement-chat-input');
-                if (e.target.value === 'here') {
-                    chatSelect.style.display = 'inline-block';
-                } else {
-                    chatSelect.style.display = 'none';
-                }
-            });
-
-            document.getElementById('chat-admin-tab-new').addEventListener('click', () => {
-                document.getElementById('chat-admin-tab-new').classList.add('chat-admin-tab--active');
-                document.getElementById('chat-admin-tab-members').classList.remove('chat-admin-tab--active');
-                document.getElementById('chat-admin-panel-new').style.display = 'block';
-                document.getElementById('chat-admin-panel-members').style.display = 'none';
-            });
-
-            document.getElementById('chat-admin-tab-members').addEventListener('click', () => {
-                document.getElementById('chat-admin-tab-members').classList.add('chat-admin-tab--active');
-                document.getElementById('chat-admin-tab-new').classList.remove('chat-admin-tab--active');
-                document.getElementById('chat-admin-panel-members').style.display = 'block';
-                document.getElementById('chat-admin-panel-new').style.display = 'none';
-            });
-
-            document.getElementById('chat-admin-members-select').addEventListener('change', (e) => {
-                const convId = e.target.value;
-                if (!convId) {
-                    document.getElementById('chat-admin-members-context').textContent = '';
-                    document.getElementById('chat-admin-members-list').innerHTML = '';
-                    return;
-                }
-                
-                const conv = conversationsData.find(c => c.id === convId);
-                const label = conv ? (conv.label || conv.id) : convId;
-                document.getElementById('chat-admin-members-context').textContent = `Managing members for: ${label}`;
-                
-                fetch(`/api/conversations/${encodeURIComponent(convId)}/members`, { credentials: 'include' }).then(r => r.json()).then(data => {
-                    const membersList = document.getElementById('chat-admin-members-list');
-                    membersList.innerHTML = '';
-                    if (data.members && data.members.length > 0) {
-                        data.members.forEach(member => {
-                            const memberDiv = document.createElement('div');
-                            memberDiv.textContent = member.name;
-                            memberDiv.style.padding = '4px 0';
-                            membersList.appendChild(memberDiv);
-                        });
-                    } else {
-                        membersList.innerHTML = '<p style="color: #666;">No members found</p>';
-                    }
-                }).catch(err => {
-                    alert('Failed to load members: ' + err.message);
-                });
-            });
-
-            document.getElementById('new-chat-modal-ok').addEventListener('click', () => {
-                const name = document.getElementById('new-chat-modal-input').value.trim();
-                const members = document.getElementById('new-chat-members-input').value.trim();
-                const isPublic = document.getElementById('new-chat-modal-public').checked;
-                
-                fetch('/api/createConversation', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name,
-                        members,
-                        public: isPublic,
-                        adminName: localStorage.getItem('admin-name'),
-                        password: localStorage.getItem('admin-password')
-                    })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'Failed to create chat');
-                    }
-                    return r.json();
-                }).then(data => {
-                    alert(data.message || 'Chat created successfully');
-                    document.getElementById('new-chat-modal-input').value = '';
-                    document.getElementById('new-chat-members-input').value = '';
-                    document.getElementById('new-chat-modal-public').checked = false;
-                    loadConversations();
-                }).catch(err => {
-                    alert(err.message);
-                });
-            });
-
-            document.getElementById('chat-edit-members-ok').addEventListener('click', () => {
-                const convId = document.getElementById('chat-admin-members-select').value;
-                if (!convId) return alert('Please select a chat first');
-                
-                const members = document.getElementById('chat-edit-members-input').value.trim();
-                if (!members) return alert('Please enter members to add');
-                
-                fetch('/api/conversation/addMembers', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        conversationId: convId,
-                        members,
-                        name: localStorage.getItem('admin-name'),
-                        password: localStorage.getItem('admin-password')
-                    })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'Failed to add members');
-                    }
-                    return r.json();
-                }).then(data => {
-                    alert(data.message || 'Members added successfully');
-                    document.getElementById('chat-edit-members-input').value = '';
-                    document.getElementById('chat-admin-members-select').dispatchEvent(new Event('change'));
-                }).catch(err => {
-                    alert(err.message);
-                });
-            });
-
-            document.getElementById('chat-remove-members-ok').addEventListener('click', () => {
-                const convId = document.getElementById('chat-admin-members-select').value;
-                if (!convId) return alert('Please select a chat first');
-                
-                const members = document.getElementById('chat-remove-members-input').value.trim();
-                if (!members) return alert('Please enter members to remove');
-                
-                fetch('/api/conversation/removeMembers', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        conversationId: convId,
-                        members,
-                        name: localStorage.getItem('admin-name'),
-                        password: localStorage.getItem('admin-password')
-                    })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'Failed to remove members');
-                    }
-                    return r.json();
-                }).then(data => {
-                    alert(data.message || 'Members removed successfully');
-                    document.getElementById('chat-remove-members-input').value = '';
-                    document.getElementById('chat-admin-members-select').dispatchEvent(new Event('change'));
-                }).catch(err => {
-                    alert(err.message);
-                });
-            });
-
-            document.getElementById('new-announcement-button').addEventListener('click', () => {
-                const message = document.getElementById('new-announcement-input').value.trim();
-                const scope = document.getElementById('new-announcement-scope-input').value;
-
-                if (!message) return alert('Please enter an announcement');
-
-                let conversationId = null;
-                if (scope === 'here') {
-                    conversationId = document.getElementById('new-announcement-chat-input').value;
-                    if (!conversationId) return alert('Please select a chat for "here" scope');
-                }
-
-                fetch('/api/announcements', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        message,
-                        scope,
-                        conversationId
-                    })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'Failed to create announcement');
-                    }
-                    return r.json();
-                }).then(data => {
-                    alert('Announcement created successfully');
-                    document.getElementById('new-announcement-input').value = '';
-                }).catch(err => {
-                    alert(err.message);
-                });
-            });
-
-            function updateSqlBuilder() {
-                const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
-                if (!checkedRadio) return;
-                const tableName = checkedRadio.value;
-                
-                document.querySelectorAll('.table-name-display').forEach(el => {
-                    el.textContent = tableName;
-                });
-                
-                updateSqlPreview();
-            }
-
-            function updateSqlPreview() {
-                const commandType = document.getElementById('sql-command-type').value;
-                const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
-                if (!checkedRadio) return;
-                const tableName = checkedRadio.value;
-                
-                let sql = '';
-                
-                if (commandType === 'SELECT') {
-                    const columns = document.getElementById('sql-select-columns').value || '*';
-                    const where = document.getElementById('sql-select-where').value;
-                    sql = `SELECT ${columns} FROM ${tableName}`;
-                    if (where) sql += ` WHERE ${where}`;
-                } else if (commandType === 'UPDATE') {
-                    const set = document.getElementById('sql-update-set').value || 'column = value';
-                    const where = document.getElementById('sql-update-where').value || 'id = ?';
-                    sql = `UPDATE ${tableName} SET ${set} WHERE ${where}`;
-                } else if (commandType === 'INSERT') {
-                    const columns = document.getElementById('sql-insert-columns').value || '(column1, column2)';
-                    const values = document.getElementById('sql-insert-values').value || "('value1', 'value2')";
-                    sql = `INSERT INTO ${tableName} ${columns} VALUES ${values}`;
-                } else if (commandType === 'DELETE') {
-                    const where = document.getElementById('sql-delete-where').value || 'id = ?';
-                    sql = `DELETE FROM ${tableName} WHERE ${where}`;
-                }
-                
-                document.getElementById('sql-preview-text').textContent = sql;
-            }
-
-            document.getElementById('sql-command-type').addEventListener('change', () => {
-                const commandType = document.getElementById('sql-command-type').value;
-                
-                document.querySelectorAll('.sql-command-builder').forEach(el => el.style.display = 'none');
-                
-                if (commandType === 'SELECT') {
-                    document.getElementById('sql-select-builder').style.display = 'block';
-                } else if (commandType === 'UPDATE') {
-                    document.getElementById('sql-update-builder').style.display = 'block';
-                } else if (commandType === 'INSERT') {
-                    document.getElementById('sql-insert-builder').style.display = 'block';
-                } else if (commandType === 'DELETE') {
-                    document.getElementById('sql-delete-builder').style.display = 'block';
-                }
-                
+                container.appendChild(list);
                 updateSqlBuilder();
+            }).catch(err => {
+                alert(err.message || 'Network/SQL error. Try refreshing.');
             });
+        }
 
-            document.querySelectorAll('#sql-select-columns, #sql-select-where, #sql-update-set, #sql-update-where, #sql-insert-columns, #sql-insert-values, #sql-delete-where').forEach(input => {
-                input.addEventListener('input', updateSqlPreview);
+        let conversationsData = [];
+        function loadConversations() {
+            fetch('/api/conversations', { credentials: 'include' }).then(r => r.json()).then(data => {
+                conversationsData = data.conversations || [];
+                const announcementChatSelect = document.getElementById('new-announcement-chat-input');
+                const membersChatSelect = document.getElementById('chat-admin-members-select');
+
+                announcementChatSelect.innerHTML = '<option value="">Select a chat...</option>';
+                membersChatSelect.innerHTML = '<option value="">Select a chat...</option>';
+
+                conversationsData.forEach(conv => {
+                    const label = conv.label || conv.id;
+                    const opt1 = document.createElement('option');
+                    opt1.value = conv.id;
+                    opt1.textContent = label;
+                    announcementChatSelect.appendChild(opt1);
+
+                    const opt2 = document.createElement('option');
+                    opt2.value = conv.id;
+                    opt2.textContent = label;
+                    membersChatSelect.appendChild(opt2);
+                });
+            }).catch(err => {
+                console.error('Failed to load conversations:', err);
             });
+        }
 
-            function formatAsTable(data, title) {
-                if (!data || data.length === 0) return `<h4>${title}</h4><p>No results</p>`;
-                
-                const keys = Object.keys(data[0]);
-                let html = `<h4>${title}</h4><table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; margin: 10px 0;">`;
-                html += '<thead><tr>';
-                keys.forEach(key => {
-                    html += `<th style="background: #333; color: white; padding: 8px;">${key}</th>`;
-                });
-                html += '</tr></thead><tbody>';
-                
-                data.forEach(row => {
-                    html += '<tr>';
-                    keys.forEach(key => {
-                        html += `<td style="padding: 8px; border: 1px solid #ddd;">${row[key] !== null ? row[key] : '<em>null</em>'}</td>`;
-                    });
-                    html += '</tr>';
-                });
-                
-                html += '</tbody></table>';
-                return html;
+        document.getElementById('new-announcement-scope-input').addEventListener('change', (e) => {
+            const chatSelect = document.getElementById('new-announcement-chat-input');
+            if (e.target.value === 'here') {
+                chatSelect.style.display = 'inline-block';
+            } else {
+                chatSelect.style.display = 'none';
+            }
+        });
+
+        document.getElementById('chat-admin-tab-new').addEventListener('click', () => {
+            document.getElementById('chat-admin-tab-new').classList.add('chat-admin-tab--active');
+            document.getElementById('chat-admin-tab-members').classList.remove('chat-admin-tab--active');
+            document.getElementById('chat-admin-panel-new').style.display = 'block';
+            document.getElementById('chat-admin-panel-members').style.display = 'none';
+        });
+
+        document.getElementById('chat-admin-tab-members').addEventListener('click', () => {
+            document.getElementById('chat-admin-tab-members').classList.add('chat-admin-tab--active');
+            document.getElementById('chat-admin-tab-new').classList.remove('chat-admin-tab--active');
+            document.getElementById('chat-admin-panel-members').style.display = 'block';
+            document.getElementById('chat-admin-panel-new').style.display = 'none';
+        });
+
+        document.getElementById('chat-admin-members-select').addEventListener('change', (e) => {
+            const convId = e.target.value;
+            if (!convId) {
+                document.getElementById('chat-admin-members-context').textContent = '';
+                document.getElementById('chat-admin-members-list').innerHTML = '';
+                return;
             }
 
-            document.getElementById('sql-db-button').addEventListener('click', () => {
-                const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
-                if (!checkedRadio) return alert('Please select a table first');
-                const table = checkedRadio.value;
-                const command = document.getElementById('sql-preview-text').textContent;
-                if (!command) return alert('Please build a SQL command');
-                
-                fetch('/api/admin/sqlDbExecute', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ table, command, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'SQL execution failed');
-                    }
-                    return r.json();
-                }).then(data => {
-                    let output = '';
-                    if (data.result && data.result.length > 0) {
-                        output += formatAsTable(data.result, 'SQL Command Result');
-                    } else {
-                        output += '<h4>SQL Command Result</h4><p>Command executed successfully (no rows returned)</p>';
-                    }
-                    if (data.tableState && data.tableState.length > 0) {
-                        output += formatAsTable(data.tableState, `Current Table State: ${table}`);
-                    } else {
-                        output += `<h4>Current Table State: ${table}</h4><p>Table is empty</p>`;
-                    }
-                    document.getElementById('sql-db-output').innerHTML = output;
-                }).catch(err => {
-                    alert(err.message || 'Network/SQL error. Try refreshing.');
-                });
+            const conv = conversationsData.find(c => c.id === convId);
+            const label = conv ? (conv.label || conv.id) : convId;
+            document.getElementById('chat-admin-members-context').textContent = `Managing members for: ${label}`;
+
+            fetch(`/api/conversations/${encodeURIComponent(convId)}/members`, { credentials: 'include' }).then(r => r.json()).then(data => {
+                const membersList = document.getElementById('chat-admin-members-list');
+                membersList.innerHTML = '';
+                if (data.members && data.members.length > 0) {
+                    data.members.forEach(member => {
+                        const memberDiv = document.createElement('div');
+                        memberDiv.textContent = member.name;
+                        memberDiv.style.padding = '4px 0';
+                        membersList.appendChild(memberDiv);
+                    });
+                } else {
+                    membersList.innerHTML = '<p style="color: #666;">No members found</p>';
+                }
+            }).catch(err => {
+                alert('Failed to load members: ' + err.message);
+            });
+        });
+
+        document.getElementById('new-chat-modal-ok').addEventListener('click', () => {
+            const name = document.getElementById('new-chat-modal-input').value.trim();
+            const members = document.getElementById('new-chat-members-input').value.trim();
+            const isPublic = document.getElementById('new-chat-modal-public').checked;
+
+            fetch('/api/createConversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    members,
+                    public: isPublic,
+                    adminName: localStorage.getItem('admin-name'),
+                    password: localStorage.getItem('admin-password')
+                })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'Failed to create chat');
+                }
+                return r.json();
+            }).then(data => {
+                alert(data.message || 'Chat created successfully');
+                document.getElementById('new-chat-modal-input').value = '';
+                document.getElementById('new-chat-members-input').value = '';
+                document.getElementById('new-chat-modal-public').checked = false;
+                loadConversations();
+            }).catch(err => {
+                alert(err.message);
+            });
+        });
+
+        document.getElementById('chat-edit-members-ok').addEventListener('click', () => {
+            const convId = document.getElementById('chat-admin-members-select').value;
+            if (!convId) return alert('Please select a chat first');
+
+            const members = document.getElementById('chat-edit-members-input').value.trim();
+            if (!members) return alert('Please enter members to add');
+
+            fetch('/api/conversation/addMembers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conversationId: convId,
+                    members,
+                    name: localStorage.getItem('admin-name'),
+                    password: localStorage.getItem('admin-password')
+                })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'Failed to add members');
+                }
+                return r.json();
+            }).then(data => {
+                alert(data.message || 'Members added successfully');
+                document.getElementById('chat-edit-members-input').value = '';
+                document.getElementById('chat-admin-members-select').dispatchEvent(new Event('change'));
+            }).catch(err => {
+                alert(err.message);
+            });
+        });
+
+        document.getElementById('chat-remove-members-ok').addEventListener('click', () => {
+            const convId = document.getElementById('chat-admin-members-select').value;
+            if (!convId) return alert('Please select a chat first');
+
+            const members = document.getElementById('chat-remove-members-input').value.trim();
+            if (!members) return alert('Please enter members to remove');
+
+            fetch('/api/conversation/removeMembers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conversationId: convId,
+                    members,
+                    name: localStorage.getItem('admin-name'),
+                    password: localStorage.getItem('admin-password')
+                })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'Failed to remove members');
+                }
+                return r.json();
+            }).then(data => {
+                alert(data.message || 'Members removed successfully');
+                document.getElementById('chat-remove-members-input').value = '';
+                document.getElementById('chat-admin-members-select').dispatchEvent(new Event('change'));
+            }).catch(err => {
+                alert(err.message);
+            });
+        });
+
+        document.getElementById('new-announcement-button').addEventListener('click', () => {
+            const message = document.getElementById('new-announcement-input').value.trim();
+            const scope = document.getElementById('new-announcement-scope-input').value;
+
+            if (!message) return alert('Please enter an announcement');
+
+            let conversationId = null;
+            if (scope === 'here') {
+                conversationId = document.getElementById('new-announcement-chat-input').value;
+                if (!conversationId) return alert('Please select a chat for "here" scope');
+            }
+
+            fetch('/api/announcements', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    message,
+                    scope,
+                    conversationId
+                })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'Failed to create announcement');
+                }
+                return r.json();
+            }).then(data => {
+                alert('Announcement created successfully');
+                document.getElementById('new-announcement-input').value = '';
+            }).catch(err => {
+                alert(err.message);
+            });
+        });
+
+        function updateSqlBuilder() {
+            const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
+            if (!checkedRadio) return;
+            const tableName = checkedRadio.value;
+
+            document.querySelectorAll('.table-name-display').forEach(el => {
+                el.textContent = tableName;
             });
 
-            document.getElementById('status-button').addEventListener('click', () => {
-                const status = document.getElementById('status-input').value;
-                if (!status) return alert('Please enter a status');
-                
-                fetch('/api/admin/updateStatus', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'Status update failed');
-                    }
-                    return r.json();
-                }).then(data => {
-                    document.getElementById('status-output').innerHTML = `<span style="color: green;">${data.message || 'Status updated successfully'}</span>`;
-                }).catch(err => {
-                    alert(err.message || 'Network/status error. Try refreshing.');
+            updateSqlPreview();
+        }
+
+        function updateSqlPreview() {
+            const commandType = document.getElementById('sql-command-type').value;
+            const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
+            if (!checkedRadio) return;
+            const tableName = checkedRadio.value;
+
+            let sql = '';
+
+            if (commandType === 'SELECT') {
+                const columns = document.getElementById('sql-select-columns').value || '*';
+                const where = document.getElementById('sql-select-where').value;
+                sql = `SELECT ${columns} FROM ${tableName}`;
+                if (where) sql += ` WHERE ${where}`;
+            } else if (commandType === 'UPDATE') {
+                const set = document.getElementById('sql-update-set').value || 'column = value';
+                const where = document.getElementById('sql-update-where').value || 'id = ?';
+                sql = `UPDATE ${tableName} SET ${set} WHERE ${where}`;
+            } else if (commandType === 'INSERT') {
+                const columns = document.getElementById('sql-insert-columns').value || '(column1, column2)';
+                const values = document.getElementById('sql-insert-values').value || "('value1', 'value2')";
+                sql = `INSERT INTO ${tableName} ${columns} VALUES ${values}`;
+            } else if (commandType === 'DELETE') {
+                const where = document.getElementById('sql-delete-where').value || 'id = ?';
+                sql = `DELETE FROM ${tableName} WHERE ${where}`;
+            }
+
+            document.getElementById('sql-preview-text').textContent = sql;
+        }
+
+        document.getElementById('sql-command-type').addEventListener('change', () => {
+            const commandType = document.getElementById('sql-command-type').value;
+
+            document.querySelectorAll('.sql-command-builder').forEach(el => el.style.display = 'none');
+
+            if (commandType === 'SELECT') {
+                document.getElementById('sql-select-builder').style.display = 'block';
+            } else if (commandType === 'UPDATE') {
+                document.getElementById('sql-update-builder').style.display = 'block';
+            } else if (commandType === 'INSERT') {
+                document.getElementById('sql-insert-builder').style.display = 'block';
+            } else if (commandType === 'DELETE') {
+                document.getElementById('sql-delete-builder').style.display = 'block';
+            }
+
+            updateSqlBuilder();
+        });
+
+        document.querySelectorAll('#sql-select-columns, #sql-select-where, #sql-update-set, #sql-update-where, #sql-insert-columns, #sql-insert-values, #sql-delete-where').forEach(input => {
+            input.addEventListener('input', updateSqlPreview);
+        });
+
+        function formatAsTable(data, title) {
+            if (!data || data.length === 0) return `<h4>${title}</h4><p>No results</p>`;
+
+            const keys = Object.keys(data[0]);
+            let html = `<h4>${title}</h4><table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; margin: 10px 0;">`;
+            html += '<thead><tr>';
+            keys.forEach(key => {
+                html += `<th style="background: #333; color: white; padding: 8px;">${key}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            data.forEach(row => {
+                html += '<tr>';
+                keys.forEach(key => {
+                    html += `<td style="padding: 8px; border: 1px solid #ddd;">${row[key] !== null ? row[key] : '<em>null</em>'}</td>`;
                 });
+                html += '</tr>';
             });
 
-            document.getElementById('reset-password-button').addEventListener('click', () => {
-                const username = document.getElementById('reset-password-username-input').value.trim();
-                const newPassword = document.getElementById('reset-password-newpassword-input').value;
-                
-                if (!username || !newPassword) return alert('Please enter both username and new password');
-                
-                fetch('/api/admin/resetPassword', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        username, 
-                        newPassword,
-                        name: localStorage.getItem('admin-name'), 
-                        password: localStorage.getItem('admin-password') 
-                    })
-                }).then(async r => {
-                    if (!r.ok) {
-                        const data = await r.json().catch(() => ({}));
-                        throw new Error(data.error || 'Password reset failed');
-                    }
-                    return r.json();
-                }).then(data => {
-                    alert(data.message || 'Password reset successfully');
-                    document.getElementById('reset-password-username-input').value = '';
-                    document.getElementById('reset-password-newpassword-input').value = '';
-                }).catch(err => {
-                    alert(err.message || 'Network/password reset error. Try refreshing.');
-                });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        document.getElementById('sql-db-button').addEventListener('click', () => {
+            const checkedRadio = document.querySelector('input[name="sql-db-radio"]:checked');
+            if (!checkedRadio) return alert('Please select a table first');
+            const table = checkedRadio.value;
+            const command = document.getElementById('sql-preview-text').textContent;
+            if (!command) return alert('Please build a SQL command');
+
+            fetch('/api/admin/sqlDbExecute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ table, command, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'SQL execution failed');
+                }
+                return r.json();
+            }).then(data => {
+                let output = '';
+                if (data.result && data.result.length > 0) {
+                    output += formatAsTable(data.result, 'SQL Command Result');
+                } else {
+                    output += '<h4>SQL Command Result</h4><p>Command executed successfully (no rows returned)</p>';
+                }
+                if (data.tableState && data.tableState.length > 0) {
+                    output += formatAsTable(data.tableState, `Current Table State: ${table}`);
+                } else {
+                    output += `<h4>Current Table State: ${table}</h4><p>Table is empty</p>`;
+                }
+                document.getElementById('sql-db-output').innerHTML = output;
+            }).catch(err => {
+                alert(err.message || 'Network/SQL error. Try refreshing.');
             });
-        </script>
-    </body>
+        });
+
+        document.getElementById('status-button').addEventListener('click', () => {
+            const status = document.getElementById('status-input').value;
+            if (!status) return alert('Please enter a status');
+
+            fetch('/api/admin/updateStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status, name: localStorage.getItem('admin-name'), password: localStorage.getItem('admin-password') })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'Status update failed');
+                }
+                return r.json();
+            }).then(data => {
+                document.getElementById('status-output').innerHTML = `<span style="color: green;">${data.message || 'Status updated successfully'}</span>`;
+            }).catch(err => {
+                alert(err.message || 'Network/status error. Try refreshing.');
+            });
+        });
+
+        document.getElementById('reset-password-button').addEventListener('click', () => {
+            const username = document.getElementById('reset-password-username-input').value.trim();
+            const newPassword = document.getElementById('reset-password-newpassword-input').value;
+
+            if (!username || !newPassword) return alert('Please enter both username and new password');
+
+            fetch('/api/admin/resetPassword', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username,
+                    newPassword,
+                    name: localStorage.getItem('admin-name'),
+                    password: localStorage.getItem('admin-password')
+                })
+            }).then(async r => {
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'Password reset failed');
+                }
+                return r.json();
+            }).then(data => {
+                alert(data.message || 'Password reset successfully');
+                document.getElementById('reset-password-username-input').value = '';
+                document.getElementById('reset-password-newpassword-input').value = '';
+            }).catch(err => {
+                alert(err.message || 'Network/password reset error. Try refreshing.');
+            });
+        });
+    </script>
+</body>
+<script src="/assets/javascript/include-html.js"></script>
+
 </html>

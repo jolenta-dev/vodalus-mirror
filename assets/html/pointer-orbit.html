@@ -91,59 +91,64 @@
         }
     }
 </style>
-
-<body onload="move1(); move2();">
+<div class="pointer-orbit-root" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;">
     <div class="orbitingElement" style="position: absolute; top: -6px; left: -12.5px;" id="follower1">✧</div>
     <div class="orbitingElement2" style="position: absolute; top: 6px; left: 12.5px;" id="follower2">✧</div>
-    <script>
-        var mouseX = 0;
-        var mouseY = 0;
-        document.onmousemove = function getMouseXY(abc) {
-            mouseX = abc.pageX;
-            mouseY = abc.pageY;
-        };
+</div>
+<script>
+    var mouseX = 0;
+    var mouseY = 0;
+    document.onmousemove = function getMouseXY(abc) {
+        mouseX = abc.pageX;
+        mouseY = abc.pageY;
+    };
 
-        function move1() {
-            var element = document.getElementById("follower1");
-            var targetX = 0;
-            var targetY = 0;
-            var currentX = 0;
-            var currentY = 0;
-            var easing = 0.25;
-            var offset = 8;
+    function move1() {
+        var element = document.getElementById("follower1");
+        if (!element) return;
+        var targetX = 0;
+        var targetY = 0;
+        var currentX = 0;
+        var currentY = 0;
+        var easing = 0.25;
+        var offset = 8;
 
-            function animateFollower() {
-                targetX = mouseX - offset;
-                targetY = mouseY - offset;
-                currentX += (targetX - currentX) * easing;
-                currentY += (targetY - currentY) * easing;
-                element.style.marginLeft = currentX + "px";
-                element.style.marginTop = currentY + "px";
-                requestAnimationFrame(animateFollower);
-            }
-
+        function animateFollower() {
+            targetX = mouseX - offset;
+            targetY = mouseY - offset;
+            currentX += (targetX - currentX) * easing;
+            currentY += (targetY - currentY) * easing;
+            element.style.marginLeft = currentX + "px";
+            element.style.marginTop = currentY + "px";
             requestAnimationFrame(animateFollower);
         }
 
-        function move2() {
-            var element = document.getElementById("follower2");
-            var targetX = 0;
-            var targetY = 0;
-            var currentX = 0;
-            var currentY = 0;
-            var easing = 0.25;
-            var offset = 8;
+        requestAnimationFrame(animateFollower);
+    }
 
-            function animateFollower() {
-                targetX = mouseX - offset;
-                targetY = mouseY - offset;
-                currentX += (targetX - currentX) * easing;
-                currentY += (targetY - currentY) * easing;
-                element.style.marginLeft = currentX + "px";
-                element.style.marginTop = currentY + "px";
-                requestAnimationFrame(animateFollower);
-            }
+    function move2() {
+        var element = document.getElementById("follower2");
+        if (!element) return;
+        var targetX = 0;
+        var targetY = 0;
+        var currentX = 0;
+        var currentY = 0;
+        var easing = 0.25;
+        var offset = 8;
 
+        function animateFollower() {
+            targetX = mouseX - offset;
+            targetY = mouseY - offset;
+            currentX += (targetX - currentX) * easing;
+            currentY += (targetY - currentY) * easing;
+            element.style.marginLeft = currentX + "px";
+            element.style.marginTop = currentY + "px";
             requestAnimationFrame(animateFollower);
         }
-    </script>
+
+        requestAnimationFrame(animateFollower);
+    }
+
+    move1();
+    move2();
+</script>

@@ -22,9 +22,10 @@
     position: absolute;
      top: 50%;
      -ms-transform: translateY(-50%);
-     transform: translateY(-50%)  translateX(50%);
+     transform: translateY(-50%)  translateX(10%);
      font-size: 1rem;
  }
+
 
 /* Base #setup above must stay *before* this block: rules here override desktop transforms on small viewports. */
 @media (max-width: 600px) {
