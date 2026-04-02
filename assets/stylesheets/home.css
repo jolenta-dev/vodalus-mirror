@@ -3,12 +3,17 @@
     -webkit-overflow-scrolling: touch;
 }
 
+h2 {
+    text-align: center;
+}
+
 #gambling-leaderboard-table {
     table-layout: fixed;
     width: 90%;
     max-width: 60rem;
     margin: 10px auto;
     border-collapse: collapse;
+    margin: 10px 0;
 }
 
 #gambling-leaderboard-table th,

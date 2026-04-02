@@ -531,27 +531,38 @@ app.get('/api/conversations/:conversationId/members', (req, res) => {
         `).all(conversationId);
     }
 
-    const members = rows.map((r) => ({
-        name: r.name,
-        vip: !!r.vip,
-        journey_level: r.journey_level != null ? r.journey_level : 0,
-        prestige_level: r.prestige_level != null ? r.prestige_level : 0,
-        selected_chat_tag: resolveSelectedChatTag(
-            r.name,
-            !!r.vip,
-            r.journey_level != null ? r.journey_level : 0,
-            r.prestige_level != null ? r.prestige_level : 0,
-            r.selected_chat_tag
-        ),
-        all_tags: computeAvailableChatTagsForUser(
-            r.name,
-            !!r.vip,
-            r.journey_level != null ? r.journey_level : 0,
-            r.prestige_level != null ? r.prestige_level : 0
-        ),
-        color: r.color,
-        decoration: r.decoration != null ? r.decoration : ''
-    }));
+    const members = rows.map((r) => {
+        const vip = !!r.vip;
+        const lower = String(r.name || '').trim().toLowerCase();
+        /* protected_names defaults (pink, ⋆˙⟡) are VIP styling; ordinary non-VIPs must not inherit them in the roster */
+        const keepDbColor = vip || lower === 'jolenta' || lower === 'admin';
+        const color = keepDbColor ? r.color : '#000000';
+        const decoration =
+            vip && r.decoration != null && String(r.decoration).trim() !== ''
+                ? String(r.decoration)
+                : '';
+        return {
+            name: r.name,
+            vip,
+            journey_level: r.journey_level != null ? r.journey_level : 0,
+            prestige_level: r.prestige_level != null ? r.prestige_level : 0,
+            selected_chat_tag: resolveSelectedChatTag(
+                r.name,
+                vip,
+                r.journey_level != null ? r.journey_level : 0,
+                r.prestige_level != null ? r.prestige_level : 0,
+                r.selected_chat_tag
+            ),
+            all_tags: computeAvailableChatTagsForUser(
+                r.name,
+                vip,
+                r.journey_level != null ? r.journey_level : 0,
+                r.prestige_level != null ? r.prestige_level : 0
+            ),
+            color,
+            decoration
+        };
+    });
     res.json({ members });
 });
 

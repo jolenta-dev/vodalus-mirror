@@ -11,26 +11,26 @@ td {
     vertical-align: top;
 }
 
-/* date column */
-tr :nth-child(1) {
+/*
+ * Only direct row cells get column widths. `tr :nth-child(2)` (descendant) also matched
+ * e.g. .message-the-house inside the name td and broke roster name tags.
+ */
+#name-table tr > :nth-child(1) {
     text-align: right;
     width: 20%;
 }
 
-/* name column */
-tr :nth-child(2) {
+#name-table tr > :nth-child(2) {
     text-align: left;
     width: 15%;
 }
 
-/* website column */
-tr :nth-child(3) {
+#name-table tr > :nth-child(3) {
     text-align: left;
     width: 20%;
 }
 
-/* note column */
-tr :nth-child(4) {
+#name-table tr > :nth-child(4) {
     text-align: left;
     width: 45%;
 }
@@ -139,6 +139,11 @@ html.site-dim--dim #name-table tbody tr:nth-child(odd) {
 }
 
 #name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+    color: lightpink;
+}
+
+#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-journey-4,
+#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-journey-5-plus {
     color: lightpink;
 }
 

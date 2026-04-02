@@ -7,40 +7,6 @@
         return div.innerHTML;
     }
 
-    /* DB stores one decoration string; the trailing side is mirrored in JS. Treat ୨୧ as one token so it never becomes ୧୨. */
-    function mirrorDecorationSuffix(s) {
-        var pair = "୨୧";
-        var tokens = [];
-        var i = 0;
-        while (i < s.length) {
-            if (s.slice(i, i + pair.length) === pair) {
-                tokens.push(pair);
-                i += pair.length;
-            } else {
-                var cp = s.codePointAt(i);
-                var w = cp > 0xffff ? 2 : 1;
-                tokens.push(s.slice(i, i + w));
-                i += w;
-            }
-        }
-        tokens.reverse();
-        return tokens.join("");
-    }
-
-    /* Reversing char-by-char breaks ZWJ emoji, combining marks, flags, etc. — duplicate the prefix instead of mirroring. */
-    function decorationMirroringBreaksRendering(s) {
-        if (!s) return false;
-        if (/[\u200D\uFE0E\uFE0F\u200C]/.test(s)) return true;
-        if (/[\u202A-\u202E\u2066-\u2069]/.test(s)) return true;
-        if (/[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/.test(s)) return true;
-        try {
-            if (/[\u{1F1E6}-\u{1F1FF}]{2}/u.test(s)) return true;
-        } catch (e) {
-            /* ignore if Unicode property regex unsupported */
-        }
-        return false;
-    }
-
     function prestigeTagStyle(prestigeLevel) {
         var rainbow = ["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#4b0082", "#8f00ff"];
         var lvl = Number(prestigeLevel) || 0;
@@ -113,9 +79,15 @@
         }
         var safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#000000";
         var safeDecoration = escapeHtml(decoration);
-        var decorationAfter = decorationMirroringBreaksRendering(decoration)
-            ? safeDecoration
-            : mirrorDecorationSuffix(safeDecoration);
+        var decoLead = "";
+        var decoTrail = "";
+        if (safeDecoration) {
+            decoLead = '<span class="message-name-deco">' + safeDecoration + "</span>";
+            decoTrail =
+                '<span class="message-name-deco message-name-deco--mirror" aria-hidden="true" style="display:inline-block;transform:scale(-1,1)">' +
+                safeDecoration +
+                "</span>";
+        }
         /* Jolenta uses OWNER / THE HOUSE only — no stock (VIP) tag or name-color--vip */
         var showVipChrome = isVip && n !== "jolenta";
         var vipTag = showVipChrome ? '<span class="message-vip">(VIP) </span>' : "";
@@ -131,9 +103,9 @@
             prestigeTag +
             journeyTag +
             masterGamblerTag +
-            safeDecoration +
+            decoLead +
             displayName +
-            decorationAfter +
+            decoTrail +
             "</span>"
         );
     }

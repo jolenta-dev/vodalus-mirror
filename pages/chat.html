@@ -129,38 +129,6 @@
 				return div.innerHTML;
 			}
 
-			/* DB stores one decoration; trailing side is mirrored here. Keep ୨୧ as one token (never ୧୨). */
-			function mirrorDecorationSuffix(s) {
-				const pair = '୨୧';
-				const tokens = [];
-				let i = 0;
-				while (i < s.length) {
-					if (s.slice(i, i + pair.length) === pair) {
-						tokens.push(pair);
-						i += pair.length;
-					} else {
-						const cp = s.codePointAt(i);
-						const w = cp > 0xffff ? 2 : 1;
-						tokens.push(s.slice(i, i + w));
-						i += w;
-					}
-				}
-				tokens.reverse();
-				return tokens.join('');
-			}
-
-			/* Reversing breaks ZWJ emoji, combining marks, flags, etc. — show the same trim on both sides. */
-			function decorationMirroringBreaksRendering(s) {
-				if (!s) return false;
-				if (/[\u200D\uFE0E\uFE0F\u200C]/.test(s)) return true;
-				if (/[\u202A-\u202E\u2066-\u2069]/.test(s)) return true;
-				if (/[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/.test(s)) return true;
-				try {
-					if (/[\u{1F1E6}-\u{1F1FF}]{2}/u.test(s)) return true;
-				} catch (e) { /* ignore */ }
-				return false;
-			}
-
 			// VIP / journey / owner-admin tags + colored name (same rules as chat lines; used in roster + addToList)
 			function prestigeTagStyle(prestigeLevel) {
 				const rainbow = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#8f00ff'];
@@ -245,12 +213,18 @@
 				if (n === 'jolenta') deco = '';
 				const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : '#000000';
 				const safeDecoration = escapeHtml(deco);
-				const decorationAfter = decorationMirroringBreaksRendering(deco)
-					? safeDecoration
-					: mirrorDecorationSuffix(safeDecoration);
+				let decoLead = '';
+				let decoTrail = '';
+				if (safeDecoration) {
+					decoLead = '<span class="message-name-deco">' + safeDecoration + '</span>';
+					decoTrail =
+						'<span class="message-name-deco message-name-deco--mirror" aria-hidden="true" style="display:inline-block;transform:scale(-1,1)">' +
+						safeDecoration +
+						'</span>';
+				}
 				const showVipChrome = isVip && n !== 'jolenta';
 				const nameColorClass = 'name-color' + (showVipChrome ? ' name-color--vip' : '');
-				return roleTag + '<span class="' + nameColorClass + '" style="color: ' + safeColor + ';">' + tagInsideNameColor + safeDecoration + '<span class="chat-name-hover">' + displayName + '<span class="chat-name-hover-box">' + tooltipHtml + '</span></span>' + decorationAfter + '</span>';
+				return roleTag + '<span class="' + nameColorClass + '" style="color: ' + safeColor + ';">' + tagInsideNameColor + decoLead + '<span class="chat-name-hover">' + displayName + '<span class="chat-name-hover-box">' + tooltipHtml + '</span></span>' + decoTrail + '</span>';
 			}
 
 			function normalizeMemberRosterEntry(m) {
