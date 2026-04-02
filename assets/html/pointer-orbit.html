@@ -100,7 +100,9 @@
         border-radius: 3px; */
         color: gold;
         cursor: default;
-        transform: rotate(-90deg);
+        /* +90deg maps horizontal NBSP growth to downward tail; left top keeps ⋆ anchored at left/top until top is nudged in JS */
+        transform: rotate(90deg);
+        transform-origin: left top;
     }
 </style>
 <div class="pointer-orbit-root" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;">
@@ -145,6 +147,8 @@
 
     var trailAgeSpanMs = 700
     var trailAgeMaxDashes = 50;
+    /* Per appended NBSP: drop this many px so the trail falls as the string grows (rotation keeps tail vertical). */
+    var trailFallPxPerDash = 0.85;
 
     function trailDashCount(bornAt, now) {
         return Math.min(trailAgeMaxDashes, Math.floor((now - bornAt) / (trailAgeSpanMs / trailAgeMaxDashes)));
@@ -160,7 +164,8 @@
                 continue;
             }
             var dashes = trailDashCount(t.bornAt, now);
-            t.el.textContent = "⋆" +`\u00A0`.repeat(dashes);
+            t.el.textContent = "⋆" + "\u00A0".repeat(dashes);
+            t.el.style.top = (t.originY - 3 + dashes * trailFallPxPerDash) + "px";
         }
     }
 
@@ -177,10 +182,10 @@
         el.className = "trail";
         el.textContent = "*";
         el.style.userSelect = "none";
-        el.style.left = (event.pageX - 3) + "px";
-        el.style.top = (event.pageY - 3) + "px";
+        el.style.left = (event.pageX + 9) + "px";
+        el.style.top = (event.pageY + 9) + "px";
         document.body.appendChild(el);
-        trailLive.push({ el: el, bornAt: Date.now() });
+        trailLive.push({ el: el, bornAt: Date.now(), originX: event.pageX, originY: event.pageY });
     });
 </script>
 
