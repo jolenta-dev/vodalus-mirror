@@ -166,6 +166,7 @@
             var dashes = trailDashCount(t.bornAt, now);
             t.el.textContent = "⋆" + "\u00A0".repeat(dashes);
             t.el.style.top = (t.originY - 3 + dashes * trailFallPxPerDash) + "px";
+            t.el.style.opacity = 1 - (now - t.bornAt) / trailAgeSpanMs;
         }
     }
 

@@ -1,0 +1,83 @@
+<script>
+    function initBouncer(numberBouncers) {
+        var bouncers = [];
+        for (var i = 0; i < numberBouncers; i++) {
+            var div = document.createElement("div");
+            div.id = "bouncer" + i;
+            div.style.position = "fixed";
+            div.style.top = "0px";
+            div.style.left = "0px";
+            div.style.cursor = "pointer";
+            div.style.userSelect = "none";
+            div.style.padding = "50px";
+            div.textContent = "bounces around";
+            document.body.appendChild(div);
+            div.style.position = "fixed";
+            div.style.top = Math.random() * (window.innerHeight - 100) + "px"; // give bouncers random starting pos
+            div.style.left = Math.random() * (window.innerWidth - 100) + "px";
+            div.vy = Math.random() > 0.5 ? 5 : -5; // vertical delta per tick
+            div.vx = Math.random() > 0.5 ? 5 : -5; // horizontal delta per tick
+            bouncers.push(div);
+        }
+
+        function tickBouncer(element) {
+            if (!element || !element.isConnected) {
+                return;
+            }
+            var maxTop = window.innerHeight - element.offsetHeight;
+            var maxLeft = window.innerWidth - element.offsetWidth;
+            var top = parseInt(element.style.top, 10) || 0;
+            var left = parseInt(element.style.left, 10) || 0;
+            top += element.vy;
+            left += element.vx;
+            if (top > maxTop) {
+                top = maxTop;
+                element.vy = -Math.abs(element.vy);
+            } else if (top < 0) {
+                top = 0;
+                element.vy = Math.abs(element.vy);
+            }
+            if (left > maxLeft) {
+                left = maxLeft;
+                element.vx = -Math.abs(element.vx);
+            } else if (left < 0) {
+                left = 0;
+                element.vx = Math.abs(element.vx);
+            }
+            element.style.top = top + "px";
+            element.style.left = left + "px";
+        }
+        var fallIntervalId = setInterval(function () {
+            for (var i = 0; i < bouncers.length; i++) {
+                tickBouncer(bouncers[i]);
+            }
+        }, 10);
+
+        function clickToggle(element) {
+            if (element.textContent === "clicked") {
+                element.textContent = "bounces around";
+            } else {
+                element.textContent = "clicked";
+                var idx = bouncers.indexOf(element);
+                if (idx !== -1) {
+                    bouncers.splice(idx, 1);
+                }
+                element.remove();
+                return;
+            }
+        }
+        for (var i = 0; i < numberBouncers; i++) {
+            document.getElementById("bouncer" + i).addEventListener("click", function (e) {
+                if (e.target !== this) return;
+                clickToggle(this);
+            });
+        }
+    }
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", function () {
+            initBouncer(100);
+        });
+    } else {
+        initBouncer(100);
+    }
+</script>
