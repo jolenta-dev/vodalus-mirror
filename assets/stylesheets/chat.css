@@ -1071,3 +1071,40 @@ html.chat-embed #setup {
     padding: 0 0.5rem;
     box-sizing: border-box;
 }
+
+/* Desktop only: same breakpoint as sidebar dim FAB; mobile keeps chrome in the drawer */
+html.chat-page .window-controls {
+    display: none;
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    right: calc(max(1rem, env(safe-area-inset-right, 0px)) + 3.25rem);
+    z-index: 199;
+    flex-direction: row;
+    gap: 0.35rem;
+    font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
+}
+
+@media screen and (min-width: 601px) {
+    html.chat-page .window-controls {
+        display: flex;
+    }
+}
+
+html.chat-page .window-control-button {
+    min-width: 2rem;
+    height: 2.5rem;
+    padding: 0 0.4rem;
+    border: none;
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.88);
+    color: #ccc;
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+html.chat-page .window-control-button:hover {
+    color: #f1f1f1;
+}

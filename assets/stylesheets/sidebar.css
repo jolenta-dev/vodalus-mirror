@@ -341,3 +341,29 @@ html.site-dim--dim .main {
 .sidenav .nowplaying span {
     color: #f1f1f1 !important;
 }
+
+/* /journey?embed=1 & /tzadkiels-ship?embed=1 — panel inside draggable iframe: match chat-embed chrome */
+html.page-embed {
+    height: 100%;
+}
+
+html.page-embed body {
+    min-height: 100%;
+    margin: 0;
+}
+
+html.page-embed #site-sidebar-mount,
+html.page-embed .sidebar-container {
+    display: none !important;
+}
+
+html.page-embed div[w3-include-html] {
+    display: none !important;
+}
+
+html.page-embed .main {
+    margin-left: 0 !important;
+    min-height: 100%;
+    min-height: 100dvh;
+    box-sizing: border-box;
+}

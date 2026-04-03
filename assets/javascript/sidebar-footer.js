@@ -21,6 +21,45 @@
         }
     }
 
+    function addWindowControls() {
+        if (document.documentElement.classList.contains("chat-embed")) return;
+        if ((window.location.pathname || "") !== "/chat") return;
+        if (document.getElementById("chat-window-controls")) return;
+
+        var wrap = document.createElement("div");
+        wrap.id = "chat-window-controls";
+        wrap.className = "window-controls";
+        wrap.setAttribute("aria-label", "Open journey or ship in a panel");
+        wrap.innerHTML =
+            '<button type="button" class="window-control-button" id="window-control-open-journey" data-draggable-src="/journey?embed=1" data-draggable-title="Journey">J</button>' +
+            '<button type="button" class="window-control-button" id="window-control-open-tzadkiels-ship" data-draggable-src="/tzadkiels-ship?embed=1" data-draggable-title="Tzadkiel\'s Ship">T</button>';
+        document.body.appendChild(wrap);
+
+        var opening = false;
+        wrap.addEventListener("click", function (e) {
+            var btn = e.target && e.target.closest && e.target.closest("button[data-draggable-src]");
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (document.getElementById("draggable-div") || opening) return;
+            opening = true;
+            var src = btn.getAttribute("data-draggable-src");
+            var title = btn.getAttribute("data-draggable-title") || "";
+            import("/assets/javascript/draggable-div.js")
+                .then(function (mod) {
+                    if (document.getElementById("draggable-div")) return;
+                    var frame = document.createElement("iframe");
+                    frame.src = src;
+                    frame.title = title;
+                    mod.initDraggableDiv(title, frame);
+                })
+                .catch(function () {})
+                .finally(function () {
+                    opening = false;
+                });
+        });
+    }
+
     function refreshConveneUnreadMarker() {
         if (unreadRefreshInFlight) return;
         unreadRefreshInFlight = true;
@@ -153,6 +192,7 @@
             });
         }
 
+        addWindowControls();
         refreshConveneUnreadMarker();
         if (!unreadWatchersBound) {
             unreadWatchersBound = true;
