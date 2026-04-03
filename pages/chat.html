@@ -15,7 +15,7 @@
 <div class="main">
 
 	<body>
-		<div id="setup"> <!--TODO: explain how this works to the user-->
+		<div id="setup">
 			<h1>Login</h1>
 			<h3> RULES: </h3>
 
@@ -24,7 +24,8 @@
 			</body>
 			<br>
 			<p><i>Enter a nickname to join the chat. If it's a new nickname, you'll be given the option to claim it and
-					register a password. <br>If your name is already claimed, it'll prompt you for your password.</i></p>
+					register a password. <br>If your name is already claimed, it'll prompt you for your password.</i>
+			</p>
 			<input id="input-name" placeholder="nickname">
 			<button id="join-btn" type="button" data-sticky-follow>join</button>
 		</div>
@@ -33,8 +34,10 @@
 			<div class="chat-with-sidebar">
 				<div class="chat-primary">
 					<div class="chat-toolbar" role="toolbar" aria-label="Chat actions">
-						<button id="announcements-btn" type="button" style="display: none;" data-sticky-follow>hark!</button>
-						<button id="new-chat-btn" type="button" style="display: none;" data-sticky-follow>chat admin</button>
+						<button id="announcements-btn" type="button" style="display: none;"
+							data-sticky-follow>hark!</button>
+						<button id="new-chat-btn" type="button" style="display: none;" data-sticky-follow>chat
+							admin</button>
 						<button id="open-chat-directory-btn" type="button" data-sticky-follow>available chats</button>
 						<button id="chat-tag-btn" type="button" data-sticky-follow>chat tag</button>
 					</div>
@@ -1350,7 +1353,7 @@
 				});
 			}
 		</script>
-	<script src="/assets/javascript/sticky-follow.js"></script>
+		<script src="/assets/javascript/sticky-follow.js"></script>
 	</body>
 </div>
 <script src="/assets/javascript/include-html.js"></script>
