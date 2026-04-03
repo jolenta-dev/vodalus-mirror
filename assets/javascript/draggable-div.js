@@ -22,7 +22,7 @@ export function initDraggableDiv(header, content) {
         draggableDivContent.innerHTML = content;
     }
     if (content instanceof HTMLIFrameElement) {
-        Object.assign(draggableDivContent.style, { minHeight: '320px' });
+        Object.assign(draggableDivContent.style, { minHeight: '0' });
         Object.assign(content.style, {
             width: '100%',
             height: '100%',
@@ -46,6 +46,8 @@ export function initDraggableDiv(header, content) {
     Object.assign(draggableDiv.style, {
         position: 'absolute',
         zIndex: '9',
+        width: '512px',
+        height: '288px',
         backgroundColor: '#f1f1f1',
         textAlign: 'center',
         border: '1px solid #d3d3d3',
@@ -106,8 +108,8 @@ export function initDraggableDiv(header, content) {
 
     function placeExpandedInMain(el) {
         void el.offsetHeight;
-        var w = el.offsetWidth || 280;
-        var h = el.offsetHeight || 360;
+        var w = el.offsetWidth || 256;
+        var h = el.offsetHeight || 144;
         var pad = 8;
         var main = document.querySelector('.main');
         if (main) {

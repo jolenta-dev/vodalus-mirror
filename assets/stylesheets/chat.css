@@ -1051,7 +1051,8 @@ html.chat-embed > div[w3-include-html] {
     display: none !important;
 }
 
-html.chat-embed #site-sidebar-mount {
+html.chat-embed #site-sidebar-mount,
+html.chat-embed .sidebar-container {
     display: none !important;
 }
 
