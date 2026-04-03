@@ -122,7 +122,7 @@
             var v = localStorage.getItem(STORAGE_KEY);
             if (v === "0") {
                 document.documentElement.classList.remove(DIM_CLASS);
-            } else if (v === "1") {
+            } else {
                 document.documentElement.classList.add(DIM_CLASS);
             }
         } catch (e) {}
