@@ -39,6 +39,14 @@
     border-style: solid;
 }
 
+.main #enter-btn:hover,
+.main #submit-btn:hover,
+.main #prestige-btn:hover,
+.main #corridors-btn:hover,
+.main #submit-colors-decorations-btn:hover {
+    color: lightgray;
+}
+
 #corridors-btn {
     position: fixed;
     left: calc(160px + 2rem);
