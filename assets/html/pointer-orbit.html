@@ -125,6 +125,7 @@
     var mouseY = 0;
     var active = true;
     var trailInterval = null;
+    var followingDotHandle = null;
 
     function onDocMouseMove(abc) {
         mouseX = abc.pageX;
@@ -230,7 +231,7 @@
         if (window.pointerOrbitDestroy === destroy) window.pointerOrbitDestroy = null;
     }
 
-    /* var followingDotHandle = null; // works great, just too busy for this (maybe make them user-toggleable?)
+    /* Optional following dot — uncomment block to enable:
     import('/assets/javascript/followingdotcursor.js').then(function (mod) {
         if (!active) return;
         var handle = mod.followingDotCursor({

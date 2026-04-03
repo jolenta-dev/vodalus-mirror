@@ -87,9 +87,6 @@
         atriumClockLoading = import('/assets/javascript/clock-cursor.js').then(({ clockCursor }) => {
             atriumClockLoading = null;
             if (seq !== atriumClockSeq) return;
-            const e2 = document.getElementById('entrance');
-            if (!e2) return;
-            if (getComputedStyle(e2).display !== 'none') return;
             if (atriumClockHandle) return;
             atriumClockHandle = clockCursor({
                 element: document.body,
@@ -99,6 +96,8 @@
                 minutesColor: 'blue',
                 hoursColor: 'black'
             });
+        }).catch(() => {
+            atriumClockLoading = null;
         });
     }
 
