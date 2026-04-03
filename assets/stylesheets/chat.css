@@ -121,6 +121,7 @@
 .chat-toolbar button[type="button"]:not(.chat-tab) {
     align-self: stretch;
     padding: 10px 24px;
+    border-radius: 0;
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
@@ -149,6 +150,23 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 
     .chat-toolbar button:not(:last-child) {
         border-right: 1px solid #000;
+    }
+
+    /* four-button grid: one rounded corner per outer cell */
+    .chat-toolbar--privileged #announcements-btn {
+        border-radius: 5px 0 0 0;
+    }
+
+    .chat-toolbar--privileged #new-chat-btn {
+        border-radius: 0 5px 0 0;
+    }
+
+    .chat-toolbar--privileged #open-chat-directory-btn {
+        border-radius: 0 0 0 5px;
+    }
+
+    .chat-toolbar--privileged #chat-tag-btn {
+        border-radius: 0 0 5px 0;
     }
 }
 
@@ -180,12 +198,28 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
     margin: 0 0 0 0;
 }
 
-#announcements-btn {
-    border-radius: 5px 0px 0px 5px;
+/* Toolbar: segmented row; class set in refreshPrivilegedControls (hidden admin buttons break :first-child) */
+.chat-toolbar:not(.chat-toolbar--privileged) #open-chat-directory-btn {
+    border-radius: 5px 0 0 5px;
 }
 
-#chat-tag-btn {
-    border-radius: 0px 5px 5px 0px;
+.chat-toolbar:not(.chat-toolbar--privileged) #chat-tag-btn {
+    border-radius: 0 5px 5px 0;
+}
+
+@media (min-width: 641px) {
+    .chat-toolbar--privileged #announcements-btn {
+        border-radius: 5px 0 0 5px;
+    }
+
+    .chat-toolbar--privileged #new-chat-btn,
+    .chat-toolbar--privileged #open-chat-directory-btn {
+        border-radius: 0;
+    }
+
+    .chat-toolbar--privileged #chat-tag-btn {
+        border-radius: 0 5px 5px 0;
+    }
 }
 
 #send-btn {

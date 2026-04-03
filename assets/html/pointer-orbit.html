@@ -111,12 +111,26 @@
     <div class="orbitingElement2" style="position: absolute; top: 6px; left: 12.5px;" id="follower2">✧</div>
 </div>
 <script>
+(function () {
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root || !root.classList || !root.classList.contains('pointer-orbit-root')) return;
+
+    var entrance = document.getElementById('entrance');
+    if (entrance && getComputedStyle(entrance).display === 'none') {
+        root.remove();
+        return;
+    }
+
     var mouseX = 0;
     var mouseY = 0;
-    document.onmousemove = function getMouseXY(abc) {
+    var active = true;
+    var trailInterval = null;
+
+    function onDocMouseMove(abc) {
         mouseX = abc.pageX;
         mouseY = abc.pageY;
-    };
+    }
+    document.addEventListener('mousemove', onDocMouseMove);
 
     function move(elementID) {
         var element = document.getElementById(elementID);
@@ -129,6 +143,7 @@
         var offset = 8;
 
         function animateFollower() {
+            if (!active) return;
             targetX = mouseX - offset;
             targetY = mouseY - offset;
             currentX += (targetX - currentX) * easing;
@@ -146,9 +161,8 @@
 
     var trailLive = [];
 
-    var trailAgeSpanMs = 700
+    var trailAgeSpanMs = 700;
     var trailAgeMaxDashes = 50;
-    /* Per appended NBSP: drop this many px so the trail falls as the string grows (rotation keeps tail vertical). */
     var trailFallPxPerDash = 0.85;
 
     function trailDashCount(bornAt, now) {
@@ -156,6 +170,7 @@
     }
 
     function refreshTrailAges() {
+        if (!active) return;
         var now = Date.now();
         for (var i = trailLive.length - 1; i >= 0; i--) {
             var t = trailLive[i];
@@ -165,18 +180,19 @@
                 continue;
             }
             var dashes = trailDashCount(t.bornAt, now);
-            t.el.textContent = "⋆" + "\u00A0".repeat(dashes);
+            t.el.textContent = "★" + "\u00A0".repeat(dashes);
             t.el.style.top = (t.originY - 3 + dashes * trailFallPxPerDash) + "px";
             t.el.style.opacity = 1 - (now - t.bornAt) / trailAgeSpanMs;
         }
     }
 
-    setInterval(refreshTrailAges, trailAgeSpanMs / trailAgeMaxDashes);
+    trailInterval = setInterval(refreshTrailAges, trailAgeSpanMs / trailAgeMaxDashes);
 
     var trailEveryNthMove = 10;
     var trailEventCounter = 0;
 
-    addEventListener("mousemove", function(event) {
+    function onTrailMouseMove(event) {
+        if (!active) return;
         trailEventCounter++;
         if (trailEveryNthMove > 1 && trailEventCounter % trailEveryNthMove !== 0) return;
 
@@ -189,5 +205,46 @@
         el.style.top = (event.pageY + 9) + "px";
         document.body.appendChild(el);
         trailLive.push({ el: el, bornAt: Date.now(), originX: event.pageX, originY: event.pageY });
-    });
+    }
+
+    window.addEventListener("mousemove", onTrailMouseMove);
+
+    function destroy() {
+        if (!active) return;
+        active = false;
+        if (trailInterval !== null) {
+            clearInterval(trailInterval);
+            trailInterval = null;
+        }
+        document.removeEventListener('mousemove', onDocMouseMove);
+        window.removeEventListener('mousemove', onTrailMouseMove);
+        for (var j = 0; j < trailLive.length; j++) {
+            if (trailLive[j].el && trailLive[j].el.parentNode) trailLive[j].el.remove();
+        }
+        trailLive.length = 0;
+        if (root.parentNode) root.remove();
+        if (followingDotHandle) {
+            followingDotHandle.destroy();
+            followingDotHandle = null;
+        }
+        if (window.pointerOrbitDestroy === destroy) window.pointerOrbitDestroy = null;
+    }
+
+    /* var followingDotHandle = null; // works great, just too busy for this (maybe make them user-toggleable?)
+    import('/assets/javascript/followingdotcursor.js').then(function (mod) {
+        if (!active) return;
+        var handle = mod.followingDotCursor({
+            element: document.body,
+            color: 'rgba(0,0,0,0.2)',
+            zIndex: '100000'
+        });
+        if (!active) {
+            handle.destroy();
+            return;
+        }
+        followingDotHandle = handle;
+    }); */
+
+    window.pointerOrbitDestroy = destroy;
+})();
 </script>

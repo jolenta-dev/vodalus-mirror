@@ -7,11 +7,11 @@
     <title>The Atrium of Time</title>
     <link rel="stylesheet" href="/assets/stylesheets/atrium.css">
 </head>
-<div w3-include-html="/assets/html/pointer-orbit.html"></div>
 <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
 
 <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
 <script src="/assets/javascript/sidebar-footer.js"></script>
+<div w3-include-html="/assets/html/pointer-orbit.html"></div>
 <div class="main">
     <div id="entrance">
         <h2>Triskele has brought you to a strange place. The hall stretches out before you, at it's end you hear the
@@ -60,6 +60,48 @@
     </div>
 </div>
 <script>
+    let atriumClockHandle = null;
+    let atriumClockLoading = null;
+    let atriumClockSeq = 0;
+
+    function syncAtriumClockCursor() {
+        const entrance = document.getElementById('entrance');
+        if (!entrance) return;
+        const pastEntrance = getComputedStyle(entrance).display === 'none';
+
+        if (!pastEntrance) {
+            atriumClockSeq++;
+            if (atriumClockHandle) {
+                atriumClockHandle.destroy();
+                atriumClockHandle = null;
+            }
+            return;
+        }
+
+        if (typeof window.pointerOrbitDestroy === 'function') {
+            window.pointerOrbitDestroy();
+        }
+
+        if (atriumClockHandle || atriumClockLoading) return;
+        const seq = atriumClockSeq;
+        atriumClockLoading = import('/assets/javascript/clock-cursor.js').then(({ clockCursor }) => {
+            atriumClockLoading = null;
+            if (seq !== atriumClockSeq) return;
+            const e2 = document.getElementById('entrance');
+            if (!e2) return;
+            if (getComputedStyle(e2).display !== 'none') return;
+            if (atriumClockHandle) return;
+            atriumClockHandle = clockCursor({
+                element: document.body,
+                dateColor: 'white',
+                faceColor: 'black',
+                secondsColor: 'red',
+                minutesColor: 'blue',
+                hoursColor: 'black'
+            });
+        });
+    }
+
     function promptPassword(messageText) {
         const overlay = document.getElementById('password-modal-overlay');
         const messageEl = document.getElementById('password-modal-message');
@@ -162,6 +204,7 @@
                         credentials: 'same-origin',
                         body: JSON.stringify({ event: 'all_gambling_complete', name })
                     });
+                    syncAtriumClockCursor();
                 } else {
                     alert('Failed to set colors and decorations. Please try again.');
                 }
@@ -297,6 +340,7 @@
     document.getElementById('enter-btn').addEventListener('click', () => {
         document.getElementById('entrance').style.display = 'none';
         document.getElementById('atrium').style.display = 'block';
+        syncAtriumClockCursor();
     });
 
     document.getElementById('submit-colors-decorations-btn').addEventListener('click', async () => {
@@ -345,6 +389,7 @@
     document.getElementById('corridors-btn').addEventListener('click', () => {
         document.getElementById('corridors').style.display = 'block';
         document.getElementById('atrium').style.display = 'none';
+        syncAtriumClockCursor();
     });
     document.getElementById('prestige-btn').addEventListener('click', () => {
         const name = document.getElementById('name-input-prestige').value.trim();
@@ -372,7 +417,9 @@
         });
         document.getElementById('corridors').style.display = 'none';
         document.getElementById('atrium').style.display = 'block';
+        syncAtriumClockCursor();
     });
+    syncAtriumClockCursor();
 </script>
 <script src="/assets/javascript/include-html.js"></script>
 
