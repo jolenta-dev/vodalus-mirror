@@ -852,7 +852,6 @@
 				const visible = isPrivilegedUser();
 				document.getElementById('announcements-btn').style.display = visible ? 'inline-block' : 'none';
 				document.getElementById('new-chat-btn').style.display = visible ? 'inline-block' : 'none';
-				document.querySelector('.chat-toolbar').classList.toggle('chat-toolbar--privileged', visible);
 				updateToolbarEdgeClasses();
 			}
 

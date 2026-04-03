@@ -132,32 +132,27 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
 }
 
 .chat-toolbar button:not(:last-child) {
-  border-right: none; /* Prevent double borders */
+    border-right: none;
 }
 
 /* First/last *visible* toolbar control (see updateToolbarEdgeClasses in chat.html). */
 .chat-toolbar button.chat-toolbar-btn--first {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .chat-toolbar button.chat-toolbar-btn--last {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-/* Add a background color on hover */
-.chat-toolbar button:hover {
+.chat-toolbar button:hover,
 .chat-page button[type="button"]:not(.chat-tab):hover {
     background-color: lightgray;
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
     background-color: #8a8a8a;
-}
-
-.chat-toolbar button:not(:last-child) {
-    border-right: none;
 }
 
 @media (max-width: 640px) {
@@ -168,30 +163,14 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
     .chat-toolbar button:not(:last-child) {
         border-right: 1px solid #000;
     }
-
-    /* four-button grid: one rounded corner per outer cell */
-    .chat-toolbar--privileged #announcements-btn {
-        border-radius: 5px 0 0 0;
-    }
-
-    .chat-toolbar--privileged #new-chat-btn {
-        border-radius: 0 5px 0 0;
-    }
-
-    .chat-toolbar--privileged #open-chat-directory-btn {
-        border-radius: 0 0 0 5px;
-    }
-
-    .chat-toolbar--privileged #chat-tag-btn {
-        border-radius: 0 0 5px 0;
-    }
 }
 
 /* Modal / dialog: merge borders for adjacent action pairs (same row as toolbar) */
 .chat-page #password-modal button[type="button"] + button[type="button"],
 .chat-page #new-announcement-modal button[type="button"] + button[type="button"],
 .chat-page #chat-directory-modal button[type="button"] + button[type="button"],
-.chat-page #chat-tag-modal button[type="button"] + button[type="button"] {
+.chat-page #chat-tag-modal button[type="button"] + button[type="button"],
+.chat-page #new-dm-modal .new-dm-modal-actions button[type="button"] + button[type="button"] {
     margin-left: -1px;
     border-left: none;
 }
@@ -213,30 +192,6 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 #conversation-tabs {
     width: 100%;
     margin: 0 0 0 0;
-}
-
-/* Toolbar: segmented row; class set in refreshPrivilegedControls (hidden admin buttons break :first-child) */
-.chat-toolbar:not(.chat-toolbar--privileged) #open-chat-directory-btn {
-    border-radius: 5px 0 0 5px;
-}
-
-.chat-toolbar:not(.chat-toolbar--privileged) #chat-tag-btn {
-    border-radius: 0 5px 5px 0;
-}
-
-@media (min-width: 641px) {
-    .chat-toolbar--privileged #announcements-btn {
-        border-radius: 5px 0 0 5px;
-    }
-
-    .chat-toolbar--privileged #new-chat-btn,
-    .chat-toolbar--privileged #open-chat-directory-btn {
-        border-radius: 0;
-    }
-
-    .chat-toolbar--privileged #chat-tag-btn {
-        border-radius: 0 5px 5px 0;
-    }
 }
 
 #send-btn {
