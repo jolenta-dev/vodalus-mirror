@@ -1,3 +1,90 @@
+/* Form row: mirror chat message composer (.chat-compose, #input-message, primary buttons in chat.css) */
+.guestbook-compose {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    margin: 10px 0;
+    box-sizing: border-box;
+    gap: 0;
+}
+
+.guestbook-compose input {
+    flex: 1 1 9rem;
+    min-width: 0;
+    margin: 0;
+    padding: 6px 14px;
+    font: inherit;
+    font-weight: bold;
+    color: #111;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+
+.guestbook-compose button[type="button"] {
+    flex: 0 0 auto;
+    align-self: stretch;
+    background-color: white;
+    border: 1px solid #000;
+    color: black;
+    padding: 6px 14px;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.guestbook-compose button[type="button"]:hover {
+    background-color: lightgray;
+}
+
+html.site-dim--dim .guestbook-compose input {
+    background-color: #8c8c8c;
+    border-color: #000;
+    color: #111;
+}
+
+html.site-dim--dim .guestbook-compose button[type="button"] {
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+}
+
+html.site-dim--dim .guestbook-compose button[type="button"]:hover {
+    background-color: #8a8a8a;
+}
+
+@media (min-width: 601px) {
+    .guestbook-compose {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    /* Keep full borders between all controls, including input -> button edge. */
+    .guestbook-compose > input + button[type="button"] {
+        margin-left: 0;
+    }
+
+    .guestbook-compose > input + input {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .guestbook-compose {
+        flex-direction: column;
+        margin: 8px 0;
+    }
+
+    .guestbook-compose input,
+    .guestbook-compose button[type="button"] {
+        flex: none;
+        width: 100%;
+        max-width: none;
+    }
+}
+
 table {
     table-layout: fixed;
     width: 90%;

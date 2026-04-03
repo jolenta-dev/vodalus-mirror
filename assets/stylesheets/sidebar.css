@@ -5,6 +5,25 @@
     --site-dim-chat-panel: #737373;
 }
 
+@font-face {
+    font-family: "Meylda";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/assets/fonts/meylda/Meylda-Regular.ttf") format("truetype");
+    /* Font has no figures: skip ASCII 0–9 so the stack renders digits from the serif fallbacks */
+    unicode-range: U+0000-002F, U+003A-10FFFF;
+}
+
+/* Meylda for all main pages (this sheet is linked sitewide) */
+h1 {
+    font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
+}
+
+html.home-page h2 {
+    font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
+}
+
 hr.rounded {
   border: none;
   border-top: 1px solid #4f4f4f;
@@ -40,6 +59,7 @@ html.site-dim--dim .main {
     overflow-x: hidden;
     padding-top: 20px;
     transition: transform 0.3s ease;
+    font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
 }
 
 
@@ -70,11 +90,13 @@ html.site-dim--dim .main {
     box-sizing: border-box;
 }
 
+
 .sidenav a {
     /* ~35% from tight (2px) back toward original (6px) vertical padding */
     padding: calc(2px + (6px - 2px) * 0.35) 8px calc(2px + (6px - 2px) * 0.35) 16px;
     text-decoration: none;
     font-size: 25px;
+    font-family: inherit;
     color: rgb(104, 104, 104);
     display: block;
     line-height: 1.2;
@@ -219,6 +241,7 @@ html.site-dim--dim .main {
 
 .sidenav-bottom-stack button {
     align-self: flex-start;
+    font-family: inherit;
 }
 
 /* Dim toggle: one node in sidebar.html; desktop = fixed corner FAB, mobile = in-stack (see max-width rule). */
@@ -271,9 +294,10 @@ html.site-dim--dim .main {
     left: 0;
     right: 0;
     padding: 0 8px 0 16px;
-    font-size: 9px;
+    font-size: calc(9px * 1.75);
     color: #f1f1f1 !important;
     line-height: 1.3;
+    font-family: serif;
 }
 
 /* Must follow .sidenav .nowplaying / .status so stack children stay in the flex column (same specificity would lose to source order) */
