@@ -13,7 +13,14 @@
     }
     .box { flex: none; max-height: 45vh; width: auto; margin: 0 0 8px 0; max-width: 100%; display: flex; flex-direction: column; overflow: hidden; }
     .box ul { flex: 1; min-height: 0; height: auto; overflow-y: scroll; }
-    #input-message { width: auto; max-width: calc(100% - 70px); margin: 8px 0; }
+    .chat-compose {
+        margin: 8px 0;
+    }
+
+    #input-message {
+        max-width: none;
+        margin: 0;
+    }
 }
 
 #setup {
@@ -25,7 +32,6 @@
      transform: translateY(-50%)  translateX(10%);
      font-size: 1rem;
  }
-
 
 /* Base #setup above must stay *before* this block: rules here override desktop transforms on small viewports. */
 @media (max-width: 600px) {
@@ -61,6 +67,7 @@
     min-width: 0;
     box-sizing: border-box;
     padding: 0 10px;
+    border-radius: 10px;
 }
 
 /* draw the chat box — fills the 80% column (same footprint as old 80%-wide box + side margins) */
@@ -72,6 +79,7 @@
     padding: 10px;
     margin: 10px 0;
     box-sizing: border-box;
+    border-radius: 0px 0px 10px 10px;
 }
 
 /* message panel shares side borders with the tab strip above (W3-style tab chrome) */
@@ -85,37 +93,42 @@
     flex-wrap: wrap;
     align-items: center;
     margin: 0 0 0.5rem 0;
+    border-radius: 136px;
 }
 
-.chat-toolbar button {
+/* Primary button chrome: login, send, modals, admin tabs (not conversation .chat-tab); toolbar overrides padding below */
+.chat-page button[type="button"]:not(.chat-tab) {
     background-color: white;
     border: 1px solid #000;
     color: black;
-    padding: 10px 24px;
+    padding: 6px 14px;
     cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.chat-toolbar button[type="button"]:not(.chat-tab) {
     align-self: stretch;
+    padding: 10px 24px;
 }
 
-html.site-dim--dim .chat-toolbar button {
-  background-color: #6a6a6a; /* gray background */
-  border: 1px solid #000; /* black border */
-  color: black; /* black text */
-  padding: 10px 24px; /* Some padding */
-  cursor: pointer; /* Pointer/hand icon */
+html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+    /*! border-radius: 0px 5px 5px 0px; */
 }
 
-
-.chat-toolbar button:not(:last-child) {
-  border-right: none; /* Prevent double borders */
-}
-
-/* Add a background color on hover */
-.chat-toolbar button:hover {
+.chat-page button[type="button"]:not(.chat-tab):hover {
     background-color: lightgray;
 }
 
-html.site-dim--dim .chat-toolbar button:hover {
-  background-color: #8a8a8a;
+html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
+    background-color: #8a8a8a;
+}
+
+.chat-toolbar button:not(:last-child) {
+    border-right: none;
 }
 
 @media (max-width: 640px) {
@@ -128,12 +141,47 @@ html.site-dim--dim .chat-toolbar button:hover {
     }
 }
 
+/* Modal / dialog: merge borders for adjacent action pairs (same row as toolbar) */
+.chat-page #password-modal button[type="button"] + button[type="button"],
+.chat-page #new-announcement-modal button[type="button"] + button[type="button"],
+.chat-page #chat-directory-modal button[type="button"] + button[type="button"],
+.chat-page #chat-tag-modal button[type="button"] + button[type="button"] {
+    margin-left: -1px;
+    border-left: none;
+}
+
+.chat-page #password-modal > button[type="button"]:first-of-type {
+    margin-top: 0.5rem;
+}
+
+.chat-page #new-announcement-modal select + button[type="button"],
+.chat-page #chat-directory-modal #chat-directory-list + button[type="button"],
+.chat-page #chat-tag-modal #chat-tag-list + button[type="button"] {
+    margin-top: 0.5rem;
+}
+
+.chat-page #new-chat-modal > #new-chat-modal-cancel {
+    margin-top: 0.75rem;
+}
+
 #conversation-tabs {
     width: 100%;
     margin: 0 0 0 0;
 }
 
+#announcements-btn {
+    border-radius: 5px 0px 0px 5px;
+}
+
+#chat-tag-btn {
+    border-radius: 0px 5px 5px 0px;
+}
+
 /* compact member list to the right of messages; width grows to fit one line per name (no wrap) */
+#member-list {
+    border-radius: 10px;
+}
+
 .member-list-aside {
     flex: 0 0 auto;
     width: max-content;
@@ -194,6 +242,7 @@ html.site-dim--dim .chat-toolbar button:hover {
     margin: 0;
     background-color: inherit;
     border: none;
+    border-radius: 5px 5px 0 0;
     border-right: 1px solid #ccc;
     cursor: pointer;
     padding: 0.5rem 0.55rem 0.5rem 1rem;
@@ -262,12 +311,32 @@ html.site-dim--dim .chat-toolbar button:hover {
     z-index: 1;
 }
 
-#input-message {
-    width: 75%;
-    margin: 10px;
+.chat-compose {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    margin: 10px 0;
     box-sizing: border-box;
 }
 
+#input-message {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 6px 14px;
+    font: inherit;
+    font-weight: bold;
+    color: #111;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+
+html.site-dim--dim #input-message {
+    background-color: #8c8c8c;
+    border-color: #000;
+    color: #111;
+}
 /* remove bullets from the ul of chat messages */
 ul.nobullets {
     list-style-type: none;
@@ -502,10 +571,6 @@ li.rules {
     cursor: pointer;
 }
 
-#password-modal button {
-    margin-right: 0.5rem;
-}
-
 #new-chat-modal-overlay,
 #new-announcement-modal-overlay,
 #chat-directory-modal-overlay,
@@ -557,21 +622,22 @@ li.rules {
 
 .chat-admin-tabs {
     display: flex;
-    gap: 0.25rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0;
     margin-bottom: 0.75rem;
 }
 
 .chat-admin-tab {
     flex: 1;
-    padding: 0.35rem 0.5rem;
-    border: 1px solid #000;
-    background: #f0f0f0;
-    cursor: pointer;
-    font: inherit;
+    min-width: 0;
+}
+
+.chat-admin-tabs .chat-admin-tab:not(:last-child) {
+    border-right: none;
 }
 
 .chat-admin-tab--active {
-    background: #fff;
     font-weight: bold;
 }
 
@@ -746,11 +812,13 @@ html.site-dim--dim.chat-page .box,
 html.site-dim--dim.chat-page .member-list-aside {
     background-color: var(--site-dim-chat-panel, #737373);
     border-color: #4a4a4a;
+    /*! border-radius: 0px 0px 10px 10px; */
 }
 
 html.site-dim--dim.chat-page .chat-tabs {
     background-color: #6a6a6a;
     border-color: #4a4a4a;
+    border-radius: 10px 10px 0px 0px;
 }
 
 html.site-dim--dim.chat-page .chat-tab {
@@ -783,14 +851,8 @@ html.site-dim--dim.chat-page .member-list-ul .member-list-li--empty {
     color: #b0b0b0;
 }
 
-html.site-dim--dim .chat-admin-tab {
-    background: #7c7c7c;
-    border-color: #333;
-    color: #111;
-}
-
-html.site-dim--dim .chat-admin-tab--active {
-    background: #9a9a9a;
+/* .chat-admin-tab uses same button chrome as .chat-page button[type="button"] (site-dim block above) */
+html.site-dim--dim.chat-page .chat-admin-tab--active {
     font-weight: bold;
 }
 

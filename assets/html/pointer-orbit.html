@@ -96,6 +96,7 @@
     }
     .trail {
         position: absolute;
+        pointer-events: none;
        /* height: 6px; width: 6px;
         border-radius: 3px; */
         color: gold;
@@ -183,90 +184,10 @@
         el.className = "trail";
         el.textContent = "*";
         el.style.userSelect = "none";
+        el.style.pointerEvents = "none";
         el.style.left = (event.pageX + 9) + "px";
         el.style.top = (event.pageY + 9) + "px";
         document.body.appendChild(el);
         trailLive.push({ el: el, bornAt: Date.now(), originX: event.pageX, originY: event.pageY });
     });
-</script>
-
-<script>
-    /*
-var trailEveryNthMove = 30;
-    var trailEventCounter = 0;
-    var trailFalling = [];
-    var fallLoopId = null;
-    var fallStepPx = 4
-    var fallTickMs = 16;
-
-    function removeFromTrailFalling(el) {
-        var i = trailFalling.indexOf(el);
-        if (i !== -1) trailFalling.splice(i, 1);
-    }
-
- 
-    function fall(element) {
-        if (!element.isConnected) {
-            removeFromTrailFalling(element);
-            return;
-        }
-        var vectorY = element.bounced ? -fallStepPx : fallStepPx;
-        var floorY = window.innerHeight - element.offsetHeight;
-        var currentTop = parseFloat(element.style.top) || 0;
-        var nextTop = currentTop + vectorY;
-        var timesBounced = element._timesBounced || 0;
-
-        if (timesBounced > 2){
-            removeFromTrailFalling(element);
-            element.remove();
-            return;
-        }
-        if (!element.bounced) {
-            if (nextTop > floorY) {
-                nextTop = floorY;
-                var peakStartY =
-                    element._peakStartY !== undefined ? element._peakStartY : currentTop;
-                var fallDist = floorY - peakStartY;
-                element.bounceApex = floorY - fallDist / 3;
-                element.bounced = true;
-                element._timesBounced = timesBounced + 1;
-            }
-        } else {
-            if (nextTop <= element.bounceApex) {
-                nextTop = element.bounceApex;
-                element._peakStartY = element.bounceApex;
-                element.bounced = false;
-            }
-        }
-        element.style.top = nextTop + "px";
-    }
-
-    function ensureFallLoop() {
-        if (fallLoopId !== null) return;
-        fallLoopId = setInterval(function () {
-            for (var i = trailFalling.length - 1; i >= 0; i--) {
-                fall(trailFalling[i]);
-            }
-        }, fallTickMs);
-    }
-
-    addEventListener("mousemove", function (event) {
-        trailEventCounter++;
-        if (trailEveryNthMove > 1 && trailEventCounter % trailEveryNthMove !== 0) return;
-
-        var el = document.createElement("div");
-        el.className = "trail";
-        el.textContent = "⋆";
-        el.style.userSelect = "none";
-        el.style.position = "fixed";
-        el.style.left = (event.clientX - 3) + "px";
-        el.style.top = (event.clientY - 3) + "px";
-        el._peakStartY = event.clientY - 3;
-        el._timesBounced = 0;
-        el.bounced = false;
-        document.body.appendChild(el);
-        trailFalling.push(el);
-        ensureFallLoop();
-    }); */
-
 </script>

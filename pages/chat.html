@@ -26,25 +26,27 @@
 			<p><i>Enter a nickname to join the chat. If it's a new nickname, you'll be given the option to claim it and
 					register a password. <br>If your name is already claimed, it'll prompt you for your password.</i></p>
 			<input id="input-name" placeholder="nickname">
-			<button id="join-btn" type="button">join</button>
+			<button id="join-btn" type="button" data-sticky-follow>join</button>
 		</div>
 		<div id="chat" style="display:none;">
 			<h1>The Feast of Holy St. Katharine is upon us</h1>
 			<div class="chat-with-sidebar">
 				<div class="chat-primary">
 					<div class="chat-toolbar" role="toolbar" aria-label="Chat actions">
-						<button id="announcements-btn" type="button" style="display: none;">hark!</button>
-						<button id="new-chat-btn" type="button" style="display: none;">chat admin</button>
-						<button id="open-chat-directory-btn" type="button">available chats</button>
-						<button id="chat-tag-btn" type="button">chat tag</button>
+						<button id="announcements-btn" type="button" style="display: none;" data-sticky-follow>hark!</button>
+						<button id="new-chat-btn" type="button" style="display: none;" data-sticky-follow>chat admin</button>
+						<button id="open-chat-directory-btn" type="button" data-sticky-follow>available chats</button>
+						<button id="chat-tag-btn" type="button" data-sticky-follow>chat tag</button>
 					</div>
 					<div id="conversation-tabs"></div>
 					<div class="box">
 						<ul class="nobullets" id="message-list"></ul>
 						<div id="anchor"></div>
 					</div>
-					<input id="input-message" placeholder="message">
-					<button id="send-btn" type="button">send</button>
+					<div class="chat-compose">
+						<input id="input-message" placeholder="message">
+						<button id="send-btn" type="button" data-sticky-follow>send</button>
+					</div>
 				</div>
 				<aside id="member-list" class="member-list-aside" hidden>
 					<h3 class="member-list-heading">Members</h3>
@@ -1347,6 +1349,7 @@
 				});
 			}
 		</script>
+	<script src="/assets/javascript/sticky-follow.js"></script>
 	</body>
 </div>
 <script src="/assets/javascript/include-html.js"></script>
