@@ -2,10 +2,23 @@
     var unreadRefreshInFlight = false;
     var unreadWatchersBound = false;
 
+    function conveneUnreadSuffix(hasUnread) {
+        return hasUnread ? " (*)" : "";
+    }
+
     function setConveneMarker(hasUnread) {
         var link = document.querySelector('.sidenav a[href="/chat"]');
-        if (!link) return;
-        link.textContent = "convene" + (hasUnread ? " (*)" : "");
+        if (link) link.textContent = "convene" + conveneUnreadSuffix(hasUnread);
+        var titleBase = (document.title || "").replace(/\s*\(\*\)\s*$/, "");
+        document.title = titleBase + conveneUnreadSuffix(hasUnread);
+        var hdr = document.querySelector("#draggable-div-header-text");
+        if (hdr) {
+            if (!hdr.dataset.conveneTitleBase) {
+                hdr.dataset.conveneTitleBase =
+                    (hdr.textContent || "").replace(/\s*\(\*\)\s*$/, "") || "Convene";
+            }
+            hdr.textContent = hdr.dataset.conveneTitleBase + conveneUnreadSuffix(hasUnread);
+        }
     }
 
     function refreshConveneUnreadMarker() {

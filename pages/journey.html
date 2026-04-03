@@ -47,6 +47,15 @@
     </div>
   </div>
 
+  <script type="module">
+    import { initDraggableDiv } from '/assets/javascript/draggable-div.js';
+
+    const frame = document.createElement('iframe');
+    frame.src = '/chat';
+    frame.title = 'Convene';
+    initDraggableDiv('Convene', frame);
+  </script>
+
   <script>
     var COOLDOWN_MS = 3000;
     var onCooldown = false;
@@ -99,7 +108,7 @@
             'Thecla does not love you and you torture her to death.'
           ],
           [
-            'Malrubius has chosen to kill you for your obstinance. You die in the Matachin Towers.',
+            'Gurloes and Palaemon have chosen to kill you for your obstinance. You die in the Matachin Towers.',
             'Agius has slain you for your belongings. You die in Nessus.',
             'Baldanders is uncomfortable by your presence and slays you in the inn.',
             'You crash the flier in the race with Agia and cannot pay for the damages.'

@@ -21,8 +21,6 @@
     width: min(100%, 24rem);
     margin: 0.5rem auto;
     box-sizing: border-box;
-    font-size: clamp(1rem, 2.2vw, 1.1rem);
-    padding: 0.5rem 0.65rem;
 }
 
 .main #enter-btn,

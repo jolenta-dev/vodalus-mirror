@@ -218,7 +218,6 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 /* Modal / dialog: merge borders for adjacent action pairs (same row as toolbar) */
 .chat-page #password-modal button[type="button"] + button[type="button"],
 .chat-page #new-announcement-modal button[type="button"] + button[type="button"],
-.chat-page #chat-directory-modal button[type="button"] + button[type="button"],
 .chat-page #chat-tag-modal button[type="button"] + button[type="button"],
 .chat-page #new-dm-modal .new-dm-modal-actions button[type="button"] + button[type="button"] {
     margin-left: -1px;

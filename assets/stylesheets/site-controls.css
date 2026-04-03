@@ -1,0 +1,185 @@
+/* Form chrome aligned with chat login/setup (scoped so sidebar controls stay untouched). */
+
+html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab) {
+    background-color: white;
+    border: 1px solid #000;
+    color: black;
+    padding: 6px 14px;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover {
+    background-color: lightgray;
+}
+
+html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab) {
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+}
+
+html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover {
+    background-color: #8a8a8a;
+}
+
+html.site-form-chrome .main input:not([type="checkbox"]):not([type="radio"]),
+html.site-form-chrome .main select,
+html.site-form-chrome #login-section input:not([type="checkbox"]):not([type="radio"]) {
+    padding: 6px 14px;
+    font: inherit;
+    font-weight: bold;
+    color: #111;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+
+html.site-dim--dim.site-form-chrome .main input:not([type="checkbox"]):not([type="radio"]),
+html.site-dim--dim.site-form-chrome .main select,
+html.site-dim--dim.site-form-chrome #login-section input:not([type="checkbox"]):not([type="radio"]) {
+    background-color: #8c8c8c;
+    border-color: #000;
+    color: #111;
+}
+
+/* Admin: tab strip matches chat admin tabs (shared borders). */
+html.site-form-chrome.admin-page .admin-dashboard-tabs {
+    gap: 0;
+}
+
+html.site-form-chrome.admin-page .tablinks:not(:last-child) {
+    border-right: none;
+}
+
+html.site-form-chrome.admin-page .chat-admin-tabs {
+    gap: 0;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+html.site-form-chrome.admin-page .chat-admin-tabs .chat-admin-tab:not(:last-child) {
+    border-right: none;
+}
+
+html.site-form-chrome.admin-page .tablinks.active,
+html.site-form-chrome.admin-page .chat-admin-tab--active {
+    font-weight: bold;
+}
+
+html.site-form-chrome.admin-page .tablinks {
+    background-color: white;
+    border-radius: 0;
+}
+
+html.site-form-chrome.admin-page .tablinks:hover {
+    background-color: lightgray;
+}
+
+html.site-dim--dim.site-form-chrome.admin-page .tablinks {
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+}
+
+html.site-dim--dim.site-form-chrome.admin-page .tablinks:hover {
+    background-color: #8a8a8a;
+}
+
+html.site-dim--dim.site-form-chrome.admin-page .tablinks.active {
+    background-color: #737373;
+}
+
+/* Password modal (atrium, ship, etc.) — match chat */
+#password-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#password-modal {
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 1.25rem;
+    min-width: 280px;
+}
+
+#password-modal p {
+    margin: 0 0 0.75rem 0;
+}
+
+#password-modal input[type="password"],
+#password-modal input[type="text"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+    padding: 6px 14px;
+    font: inherit;
+    font-weight: bold;
+    color: #111;
+    background-color: #ffffff;
+    border: 1px solid #000;
+}
+
+#password-modal label {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+}
+
+html.site-form-chrome #password-modal button[type="button"] + button[type="button"] {
+    margin-left: -1px;
+    border-left: none;
+}
+
+html.site-form-chrome #password-modal > button[type="button"]:first-of-type {
+    margin-top: 0.5rem;
+}
+
+html.site-dim--dim #password-modal-overlay {
+    background: rgba(22, 22, 22, 0.78) !important;
+}
+
+html.site-dim--dim #password-modal {
+    background: #8e8e8e !important;
+    border-color: #3d3d3d !important;
+    color: #141414 !important;
+}
+
+html.site-dim--dim #password-modal input[type="password"],
+html.site-dim--dim #password-modal input[type="text"] {
+    background: #a8a8a8 !important;
+    border: 1px solid #4a4a4a !important;
+    color: #111 !important;
+}
+
+/* Tzadkiel's ship: boarding block mirrors chat #setup */
+.ship-page .ship-board-setup {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%) translateX(10%);
+    transform: translateY(-50%) translateX(10%);
+    font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+    .ship-page .ship-board-setup {
+        left: 50%;
+        right: auto;
+        width: min(100% - 2rem, 22rem);
+        max-width: calc(100vw - 2rem);
+        box-sizing: border-box;
+        padding: 0 0.5rem;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+}

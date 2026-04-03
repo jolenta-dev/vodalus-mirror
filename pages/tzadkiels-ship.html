@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="site-dim--dim" lang="en">
+<html class="site-dim--dim site-form-chrome ship-page" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,36 +7,11 @@
     <title>Tzadkiel's Ship</title>
     <link rel="stylesheet" href="/assets/stylesheets/atrium.css">
     <link rel="stylesheet" href="/assets/stylesheets/journey.css">
+    <link rel="stylesheet" href="/assets/stylesheets/site-controls.css">
     <style>
         #password-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
             z-index: 10000;
             display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #password-modal {
-            background: #fff;
-            border: 1px solid #000;
-            border-radius: 8px;
-            padding: 1.25rem;
-            min-width: 280px;
-        }
-
-        html.site-dim--dim #password-modal {
-            background: #8e8e8e !important;
-            border-color: #3d3d3d !important;
-            color: #141414 !important;
-        }
-
-        html.site-dim--dim #password-modal input[type="password"],
-        html.site-dim--dim #password-modal input[type="text"] {
-            background: #a8a8a8 !important;
-            border: 1px solid #4a4a4a !important;
-            color: #111 !important;
         }
     </style>
 </head>
@@ -49,11 +24,11 @@
     <script src="/assets/javascript/sidebar-footer.js"></script>
     <script src="/assets/javascript/journey-typed-line.js"></script>
     <div class="main">
-        <div id="board-ship">
+        <div id="board-ship" class="ship-board-setup">
             <h1>Tzadkiel's Ship has arrived at the House Absolute, Lictor.</h1>
             <h3>Speak your name to board.</h3>
             <input id="name-input" placeholder="your name">
-            <button id="board-btn" type="button" style="display: inline-block;">board the ship</button>
+            <button id="board-btn" type="button">board the ship</button>
         </div>
         <div id="password-modal-overlay">
             <div id="password-modal">
@@ -77,6 +52,14 @@
                     <button id="yesod-journey-btn" class="journey-btn" type="button">Begin your journey.</button>
                 </div>
             </div>
+            <script type="module">
+                import { initDraggableDiv } from '/assets/javascript/draggable-div.js';
+
+                const frame = document.createElement('iframe');
+                frame.src = '/chat';
+                frame.title = 'Convene';
+                initDraggableDiv('Convene', frame);
+            </script>
             <script>
                 function promptPassword(messageText) {
                     const overlay = document.getElementById('password-modal-overlay');
