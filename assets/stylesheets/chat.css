@@ -99,22 +99,11 @@
     margin-top: 0;
 }
 
-/* One outer frame; rounding only on the bar ends (desktop). Mobile: square shell, 2-col grid. */
 .chat-toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
     margin: 0 0 0.5rem 0;
-    box-sizing: border-box;
-    border: 1px solid #000;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-@media (max-width: 640px) {
-    .chat-toolbar {
-        border-radius: 0;
-    }
 }
 
 /* Primary button chrome: login, send, modals, admin tabs (not conversation .chat-tab); toolbar overrides padding below */
@@ -131,14 +120,44 @@
 .chat-toolbar button[type="button"]:not(.chat-tab) {
     align-self: stretch;
     padding: 10px 24px;
-    margin: 0;
-    border: none;
     border-radius: 0;
+}
+
+.chat-toolbar button:not(:last-child) {
+    border-right: none;
+}
+
+/* #new-dm-btn stays in DOM but display:none for admins — restore tag’s outer right border (same as pre-dm when tag was :last-child). */
+.chat-toolbar--privileged #chat-tag-btn {
     border-right: 1px solid #000;
 }
 
-.chat-toolbar button[type="button"].chat-toolbar-btn--last {
-    border-right: none;
+/* Desktop: same strip as before dm; non-priv right round moves from #chat-tag-btn to #new-dm-btn. */
+@media (min-width: 641px) {
+    .chat-toolbar:not(.chat-toolbar--privileged) #open-chat-directory-btn {
+        border-radius: 5px 0 0 5px;
+    }
+
+    .chat-toolbar:not(.chat-toolbar--privileged) #chat-tag-btn {
+        border-radius: 0;
+    }
+
+    .chat-toolbar:not(.chat-toolbar--privileged) #new-dm-btn {
+        border-radius: 0 5px 5px 0;
+    }
+
+    .chat-toolbar--privileged #announcements-btn {
+        border-radius: 5px 0 0 5px;
+    }
+
+    .chat-toolbar--privileged #new-chat-btn,
+    .chat-toolbar--privileged #open-chat-directory-btn {
+        border-radius: 0;
+    }
+
+    .chat-toolbar--privileged #chat-tag-btn {
+        border-radius: 0 5px 5px 0;
+    }
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
@@ -160,6 +179,39 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 @media (max-width: 640px) {
     .chat-toolbar button[type="button"]:not(.chat-tab) {
         flex: 1 1 50%;
+    }
+
+    .chat-toolbar button:not(:last-child) {
+        border-right: 1px solid #000;
+    }
+
+    .chat-toolbar:not(.chat-toolbar--privileged) #open-chat-directory-btn {
+        border-radius: 5px 0 0 0;
+    }
+
+    .chat-toolbar:not(.chat-toolbar--privileged) #chat-tag-btn {
+        border-radius: 0 5px 0 0;
+    }
+
+    .chat-toolbar:not(.chat-toolbar--privileged) #new-dm-btn {
+        flex: 1 1 100%;
+        border-radius: 0 0 5px 5px;
+    }
+
+    .chat-toolbar--privileged #announcements-btn {
+        border-radius: 5px 0 0 0;
+    }
+
+    .chat-toolbar--privileged #new-chat-btn {
+        border-radius: 0 5px 0 0;
+    }
+
+    .chat-toolbar--privileged #open-chat-directory-btn {
+        border-radius: 0 0 0 5px;
+    }
+
+    .chat-toolbar--privileged #chat-tag-btn {
+        border-radius: 0 0 5px 0;
     }
 }
 

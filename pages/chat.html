@@ -853,18 +853,7 @@
 				document.getElementById('announcements-btn').style.display = visible ? 'inline-block' : 'none';
 				document.getElementById('new-chat-btn').style.display = visible ? 'inline-block' : 'none';
 				document.getElementById('new-dm-btn').style.display = visible ? 'none' : 'inline-block';
-				updateToolbarEdgeClasses();
-			}
-
-			/** Last *visible* control (hidden admin/dm break :last-child in CSS). */
-			function updateToolbarEdgeClasses() {
-				const bar = document.querySelector('.chat-toolbar');
-				if (!bar) return;
-				const buttons = Array.from(bar.querySelectorAll('button'));
-				buttons.forEach((b) => b.classList.remove('chat-toolbar-btn--last'));
-				const vis = buttons.filter((b) => getComputedStyle(b).display !== 'none');
-				if (!vis.length) return;
-				vis[vis.length - 1].classList.add('chat-toolbar-btn--last');
+				document.querySelector('.chat-toolbar').classList.toggle('chat-toolbar--privileged', visible);
 			}
 
 			// change room tab → reconnect ws with new conversationId
