@@ -57,12 +57,14 @@
                 </div>
             </div>
             <script type="module">
-                import { initDraggableDiv } from '/assets/javascript/draggable-div.js';
-
-                const frame = document.createElement('iframe');
-                frame.src = '/chat?embed=1';
-                frame.title = 'Convene';
-                initDraggableDiv('Convene', frame);
+                if (!document.documentElement.classList.contains('page-embed')) {
+                    import('/assets/javascript/draggable-div.js').then(function (mod) {
+                        var frame = document.createElement('iframe');
+                        frame.src = '/chat?embed=1';
+                        frame.title = 'Convene';
+                        mod.initDraggableDiv('Convene', frame);
+                    });
+                }
             </script>
             <script>
                 function promptPassword(messageText) {

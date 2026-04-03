@@ -255,6 +255,7 @@ html.site-dim--dim .main {
     background: transparent;
     cursor: pointer;
     line-height: 0;
+    z-index: 1000;
 }
 
 #toggle-dim-btn img {
@@ -357,7 +358,7 @@ html.page-embed .sidebar-container {
     display: none !important;
 }
 
-html.page-embed div[w3-include-html] {
+html.page-embed .pointer-orbit-root {
     display: none !important;
 }
 

@@ -1047,7 +1047,7 @@ html.chat-embed .main {
     box-sizing: border-box;
 }
 
-html.chat-embed > div[w3-include-html] {
+html.chat-embed .pointer-orbit-root {
     display: none !important;
 }
 

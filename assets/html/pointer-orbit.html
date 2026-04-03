@@ -115,6 +115,14 @@
     var root = document.currentScript && document.currentScript.previousElementSibling;
     if (!root || !root.classList || !root.classList.contains('pointer-orbit-root')) return;
 
+    if (document.documentElement.classList.contains('chat-embed') ||
+        document.documentElement.classList.contains('page-embed')) {
+        var styleEl = root.previousElementSibling;
+        if (styleEl && styleEl.tagName === 'STYLE') styleEl.remove();
+        root.remove();
+        return;
+    }
+
     var entrance = document.getElementById('entrance');
     if (entrance && getComputedStyle(entrance).display === 'none') {
         root.remove();
