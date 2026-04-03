@@ -183,3 +183,44 @@ html.site-dim--dim #password-modal input[type="text"] {
         transform: translate(-50%, -50%);
     }
 }
+
+/* Atrium: .main #id beats generic .main button — keep atrium.css size/placement, add chat chrome + bold type */
+html.site-form-chrome .main #entrance #enter-btn,
+html.site-form-chrome .main #atrium #submit-btn,
+html.site-form-chrome .main #atrium #corridors-btn,
+html.site-form-chrome .main #corridors #prestige-btn,
+html.site-form-chrome .main #colors-decorations #submit-colors-decorations-btn {
+    background-color: #fff;
+    border: 1px solid #000;
+    color: #000;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+html.site-form-chrome .main #entrance #enter-btn:hover,
+html.site-form-chrome .main #atrium #submit-btn:hover,
+html.site-form-chrome .main #atrium #corridors-btn:hover,
+html.site-form-chrome .main #corridors #prestige-btn:hover,
+html.site-form-chrome .main #colors-decorations #submit-colors-decorations-btn:hover {
+    background-color: lightgray;
+}
+
+html.site-dim--dim.site-form-chrome .main #entrance #enter-btn,
+html.site-dim--dim.site-form-chrome .main #atrium #submit-btn,
+html.site-dim--dim.site-form-chrome .main #atrium #corridors-btn,
+html.site-dim--dim.site-form-chrome .main #corridors #prestige-btn,
+html.site-dim--dim.site-form-chrome .main #colors-decorations #submit-colors-decorations-btn {
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+}
+
+html.site-dim--dim.site-form-chrome .main #entrance #enter-btn:hover,
+html.site-dim--dim.site-form-chrome .main #atrium #submit-btn:hover,
+html.site-dim--dim.site-form-chrome .main #atrium #corridors-btn:hover,
+html.site-dim--dim.site-form-chrome .main #corridors #prestige-btn:hover,
+html.site-dim--dim.site-form-chrome .main #colors-decorations #submit-colors-decorations-btn:hover {
+    background-color: #8a8a8a;
+}

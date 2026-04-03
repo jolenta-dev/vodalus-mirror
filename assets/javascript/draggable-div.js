@@ -16,6 +16,14 @@ export function initDraggableDiv(header, content) {
     var draggableDivContent = draggableDiv.querySelector('#draggable-div-content');
     if (content instanceof Node) {
         draggableDivContent.appendChild(content);
+        if (content.tagName === 'IFRAME') {
+            Object.assign(content.style, {
+                width: '100%',
+                height: '100%',
+                border: '0',
+                display: 'block',
+            });
+        }
     } else {
         draggableDivContent.innerHTML = content;
     }
@@ -32,12 +40,27 @@ export function initDraggableDiv(header, content) {
     });
 
     Object.assign(draggableDiv.style, {
-        position: 'absolute',
-        zIndex: '9',
+        position: 'fixed',
+        bottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
+        right: 'max(12px, env(safe-area-inset-right, 0px))',
+        top: 'auto',
+        left: 'auto',
+        zIndex: '5000',
+        display: 'flex',
+        flexDirection: 'column',
+        width: 'min(400px, calc(100vw - 24px))',
+        height: 'min(520px, calc(100vh - 24px))',
+        minWidth: '260px',
+        minHeight: '220px',
+        maxWidth: 'calc(100vw - 24px)',
+        maxHeight: 'calc(100vh - 24px)',
+        resize: 'both',
+        overflow: 'auto',
         backgroundColor: '#f1f1f1',
         textAlign: 'center',
         border: '1px solid #d3d3d3',
-        borderRadius: '10%',
+        borderRadius: '8px',
+        boxSizing: 'border-box',
     });
 
     const headerButtonStyle = {
@@ -61,12 +84,21 @@ export function initDraggableDiv(header, content) {
 
     Object.assign(draggableDivHeader.style, {
         display: 'flex',
+        flexShrink: '0',
         padding: '10px',
         cursor: 'move',
         zIndex: '10',
         backgroundColor: '#245DDA',
         color: '#fff',
         borderRadius: '8px 8px 0 0',
+    });
+
+    Object.assign(draggableDivContent.style, {
+        flex: '1',
+        minHeight: '0',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
     });
 
     function dragElement(element) {
@@ -88,8 +120,9 @@ export function initDraggableDiv(header, content) {
             e.preventDefault();
             element.style.transition = '';
             if (element.style.bottom || element.style.right) {
-                element.style.top = element.offsetTop + 'px';
-                element.style.left = element.offsetLeft + 'px';
+                var rFix = element.getBoundingClientRect();
+                element.style.top = rFix.top + 'px';
+                element.style.left = rFix.left + 'px';
                 element.style.bottom = 'auto';
                 element.style.right = 'auto';
             }
@@ -116,12 +149,15 @@ export function initDraggableDiv(header, content) {
             document.onmousemove = null;
         }
 
+        var cornerInset = 12;
+
         function toggleMinimize() {
             if (contentEl.style.display === 'none') {
                 element.style.bottom = 'auto';
                 element.style.right = 'auto';
-                element.style.top = element.offsetTop + 'px';
-                element.style.left = element.offsetLeft + 'px';
+                var rOpen = element.getBoundingClientRect();
+                element.style.top = rOpen.top + 'px';
+                element.style.left = rOpen.left + 'px';
                 contentEl.style.display = 'block';
                 contentEl.style.opacity = '1';
                 contentEl.style.transition = 'opacity 0.3s ease';
@@ -137,21 +173,19 @@ export function initDraggableDiv(header, content) {
                 });
                 minimizeEl.textContent = '-';
             } else {
-                preMinimizeTop = element.offsetTop;
-                preMinimizeLeft = element.offsetLeft;
+                var expandedRect = element.getBoundingClientRect();
+                preMinimizeTop = expandedRect.top;
+                preMinimizeLeft = expandedRect.left;
                 contentEl.style.display = 'none';
                 contentEl.style.opacity = '0';
                 element.style.bottom = 'auto';
                 element.style.right = 'auto';
-                element.style.top = element.offsetTop + 'px';
-                element.style.left = element.offsetLeft + 'px';
+                void element.offsetHeight;
                 var rect = element.getBoundingClientRect();
-                var targetTop =
-                    element.offsetTop +
-                    (window.innerHeight - rect.height - rect.top);
-                var targetLeft =
-                    element.offsetLeft +
-                    (window.innerWidth - rect.width - rect.left);
+                element.style.top = rect.top + 'px';
+                element.style.left = rect.left + 'px';
+                var targetTop = window.innerHeight - rect.height - cornerInset;
+                var targetLeft = window.innerWidth - rect.width - cornerInset;
                 element.style.transition = 'none';
                 void element.offsetHeight;
                 requestAnimationFrame(function () {
