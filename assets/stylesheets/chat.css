@@ -1072,6 +1072,14 @@ html.chat-embed #setup {
     box-sizing: border-box;
 }
 
+/* Desktop: sidenav is z-index 1 in sidebar.css; fixed dim lives inside it and cannot paint above
+   body-level layers (e.g. draggable at 9). Match .window-controls so dim + J/T sit above the panel. */
+@media screen and (min-width: 601px) {
+    html.chat-page:not(.chat-embed) .sidenav {
+        z-index: 199;
+    }
+}
+
 /* Desktop only: same breakpoint as sidebar dim FAB; mobile keeps chrome in the drawer */
 html.chat-page .window-controls {
     display: none;
