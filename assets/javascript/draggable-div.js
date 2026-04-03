@@ -49,8 +49,8 @@ export function initDraggableDiv(header, content) {
         backgroundColor: '#f1f1f1',
         textAlign: 'center',
         border: '1px solid #d3d3d3',
-        borderRadius: '10%',
-        overflow: 'hidden',
+        borderRadius: '8px',
+        overflow: 'visible',
         display: 'flex',
         flexDirection: 'column',
         boxSizing: 'border-box',
@@ -60,6 +60,7 @@ export function initDraggableDiv(header, content) {
         overflow: 'auto',
         minWidth: '0',
         flex: '1 1 auto',
+        borderRadius: '0 0 8px 8px',
     });
     Object.assign(draggableDivResize.style, {
         position: 'absolute',
@@ -100,11 +101,33 @@ export function initDraggableDiv(header, content) {
         borderRadius: '8px 8px 0 0',
     });
 
+    placeExpandedInMain(draggableDiv);
     dragElement(draggableDiv);
+
+    function placeExpandedInMain(el) {
+        void el.offsetHeight;
+        var w = el.offsetWidth || 280;
+        var h = el.offsetHeight || 360;
+        var pad = 8;
+        var main = document.querySelector('.main');
+        if (main) {
+            var m = main.getBoundingClientRect();
+            var left = m.right - w - pad;
+            var top = m.top + pad;
+            left = Math.max(m.left + pad, Math.min(left, m.right - w - pad));
+            top = Math.max(m.top + pad, Math.min(top, m.bottom - h - pad));
+            el.style.left = left + 'px';
+            el.style.top = top + 'px';
+        } else {
+            el.style.left = Math.max(pad, window.innerWidth - w - pad) + 'px';
+            el.style.top = pad + 'px';
+        }
+    }
 
     function dragElement(element) {
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
         var preMinimizeTop = 0, preMinimizeLeft = 0;
+        var preMinimizeHeightStyle = '';
         var contentEl = element.querySelector('#draggable-div-content');
         var minimizeEl = element.querySelector('#draggable-div-minimize');
         var resizeEl = element.querySelector('#draggable-div-resize');
@@ -151,11 +174,13 @@ export function initDraggableDiv(header, content) {
         }
 
         function toggleMinimize() {
+            var headerBar = element.querySelector('#draggable-div-header');
             if (contentEl.style.display === 'none') {
                 element.style.bottom = 'auto';
                 element.style.right = 'auto';
                 element.style.top = element.offsetTop + 'px';
                 element.style.left = element.offsetLeft + 'px';
+                element.style.height = preMinimizeHeightStyle;
                 contentEl.style.display = 'block';
                 contentEl.style.opacity = '1';
                 contentEl.style.transition = 'opacity 0.3s ease';
@@ -174,6 +199,7 @@ export function initDraggableDiv(header, content) {
             } else {
                 preMinimizeTop = element.offsetTop;
                 preMinimizeLeft = element.offsetLeft;
+                preMinimizeHeightStyle = element.style.height;
                 contentEl.style.display = 'none';
                 contentEl.style.opacity = '0';
                 resizeEl.style.display = 'none';
@@ -181,15 +207,22 @@ export function initDraggableDiv(header, content) {
                 element.style.right = 'auto';
                 element.style.top = element.offsetTop + 'px';
                 element.style.left = element.offsetLeft + 'px';
+                element.style.height = headerBar.offsetHeight + 'px';
                 var rect = element.getBoundingClientRect();
                 var pad = 8;
                 var main = document.querySelector('.main');
+                var mrect = main ? main.getBoundingClientRect() : null;
                 var anchorRight =
-                    (main ? main.getBoundingClientRect().right : window.innerWidth) -
-                    pad;
+                    (mrect ? mrect.right : window.innerWidth) - pad;
                 var anchorBottom = window.innerHeight - pad;
                 var targetTop = rect.top + (anchorBottom - rect.bottom);
                 var targetLeft = rect.left + (anchorRight - rect.right);
+                var minL = mrect ? mrect.left + pad : pad;
+                var maxL = (mrect ? mrect.right : window.innerWidth) - rect.width - pad;
+                var minT = mrect ? mrect.top + pad : pad;
+                var maxT = window.innerHeight - rect.height - pad;
+                targetLeft = Math.max(minL, Math.min(targetLeft, maxL));
+                targetTop = Math.max(minT, Math.min(targetTop, maxT));
                 element.style.transition = 'none';
                 void element.offsetHeight;
                 requestAnimationFrame(function () {

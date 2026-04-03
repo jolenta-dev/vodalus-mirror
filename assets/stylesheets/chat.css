@@ -1034,3 +1034,39 @@ html.site-dim--dim .new-dm-modal-actions button {
 html.site-dim--dim .new-dm-modal-actions button:hover {
     background-color: #8a8a8a !important;
 }
+
+/* /chat?embed=1 — panel in draggable iframe: no site sidebar/orbit; chat column + member list + toolbar + tabs only */
+html.chat-embed {
+    height: 100%;
+}
+
+html.chat-embed .main {
+    margin-left: 0 !important;
+    min-height: 100%;
+    min-height: 100dvh;
+    box-sizing: border-box;
+}
+
+html.chat-embed > div[w3-include-html] {
+    display: none !important;
+}
+
+html.chat-embed #site-sidebar-mount {
+    display: none !important;
+}
+
+html.chat-embed #chat > h1 {
+    display: none !important;
+}
+
+html.chat-embed #setup {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    max-width: 22rem;
+    margin: 1rem auto;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+}
