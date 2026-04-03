@@ -26,17 +26,22 @@
 .main #enter-btn,
 .main #submit-btn,
 .main #prestige-btn,
+.main #corridors-btn,
 .main #submit-colors-decorations-btn {
     display: inline-block;
     font-size: clamp(1.1rem, 2.8vw, 1.35rem);
     line-height: 1.25;
     padding: 0.6em 1.2em;
     margin: 0.6rem auto 0;
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+    border-style: solid;
 }
 
 #corridors-btn {
     position: fixed;
-    left: calc(160px + 1rem);
+    left: calc(160px + 2rem);
     bottom: max(1rem, env(safe-area-inset-bottom, 0px));
     z-index: 250;
     font-size: clamp(1.15rem, 3vw, 1.45rem);
@@ -45,6 +50,7 @@
 }
 
 @media screen and (max-width: 600px) {
+
     .main #entrance,
     .main #atrium,
     .main #corridors,
