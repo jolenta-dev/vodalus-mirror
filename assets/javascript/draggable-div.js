@@ -98,7 +98,7 @@ export function initDraggableDiv(header, content) {
         padding: '10px',
         cursor: 'move',
         zIndex: '10',
-        backgroundColor: '#245DDA',
+        backgroundColor: '#000',
         color: '#fff',
         borderRadius: '8px 8px 0 0',
     });
@@ -146,7 +146,16 @@ export function initDraggableDiv(header, content) {
                 return;
             e.preventDefault();
             element.style.transition = '';
-            if (element.style.bottom || element.style.right) {
+            if (element.style.position === 'fixed') {
+                var br = element.getBoundingClientRect();
+                var sx = window.scrollX || 0;
+                var sy = window.scrollY || 0;
+                element.style.position = 'absolute';
+                element.style.top = (br.top + sy) + 'px';
+                element.style.left = (br.left + sx) + 'px';
+                element.style.bottom = 'auto';
+                element.style.right = 'auto';
+            } else if (element.style.bottom || element.style.right) {
                 element.style.top = element.offsetTop + 'px';
                 element.style.left = element.offsetLeft + 'px';
                 element.style.bottom = 'auto';
@@ -178,10 +187,14 @@ export function initDraggableDiv(header, content) {
         function toggleMinimize() {
             var headerBar = element.querySelector('#draggable-div-header');
             if (contentEl.style.display === 'none') {
+                var sx0 = window.scrollX || 0;
+                var sy0 = window.scrollY || 0;
+                var r0 = element.getBoundingClientRect();
+                element.style.position = 'absolute';
+                element.style.top = (r0.top + sy0) + 'px';
+                element.style.left = (r0.left + sx0) + 'px';
                 element.style.bottom = 'auto';
                 element.style.right = 'auto';
-                element.style.top = element.offsetTop + 'px';
-                element.style.left = element.offsetLeft + 'px';
                 element.style.height = preMinimizeHeightStyle;
                 contentEl.style.display = 'block';
                 contentEl.style.opacity = '1';
@@ -205,34 +218,38 @@ export function initDraggableDiv(header, content) {
                 contentEl.style.display = 'none';
                 contentEl.style.opacity = '0';
                 resizeEl.style.display = 'none';
-                element.style.bottom = 'auto';
-                element.style.right = 'auto';
-                element.style.top = element.offsetTop + 'px';
-                element.style.left = element.offsetLeft + 'px';
                 element.style.height = headerBar.offsetHeight + 'px';
                 var rect = element.getBoundingClientRect();
                 var pad = 8;
                 var main = document.querySelector('.main');
                 var mrect = main ? main.getBoundingClientRect() : null;
-                var anchorRight =
+                var wantRightX =
                     (mrect ? mrect.right : window.innerWidth) - pad;
-                var anchorBottom = window.innerHeight - pad;
-                var targetTop = rect.top + (anchorBottom - rect.bottom);
-                var targetLeft = rect.left + (anchorRight - rect.right);
-                var minL = mrect ? mrect.left + pad : pad;
-                var maxL = (mrect ? mrect.right : window.innerWidth) - rect.width - pad;
-                var minT = mrect ? mrect.top + pad : pad;
-                var maxT = window.innerHeight - rect.height - pad;
-                targetLeft = Math.max(minL, Math.min(targetLeft, maxL));
-                targetTop = Math.max(minT, Math.min(targetTop, maxT));
+                var minRightX =
+                    (mrect ? mrect.left : 0) + pad + rect.width;
+                wantRightX = Math.max(
+                    minRightX,
+                    Math.min(
+                        wantRightX,
+                        (mrect ? mrect.right : window.innerWidth) - pad
+                    )
+                );
+                var startRight = window.innerWidth - rect.right;
+                var startBottom = window.innerHeight - rect.bottom;
+                var endRight = window.innerWidth - wantRightX;
                 element.style.transition = 'none';
+                element.style.position = 'fixed';
+                element.style.top = 'auto';
+                element.style.left = 'auto';
+                element.style.right = startRight + 'px';
+                element.style.bottom = startBottom + 'px';
                 void element.offsetHeight;
                 requestAnimationFrame(function () {
                     requestAnimationFrame(function () {
                         element.style.transition =
-                            'top 0.5s ease, left 0.5s ease';
-                        element.style.top = targetTop + 'px';
-                        element.style.left = targetLeft + 'px';
+                            'bottom 0.5s ease, right 0.5s ease';
+                        element.style.bottom = pad + 'px';
+                        element.style.right = endRight + 'px';
                     });
                 });
                 minimizeEl.textContent = '+';
