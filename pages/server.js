@@ -644,6 +644,62 @@ app.post('/api/chat-tag-preference', (req, res) => {
     res.json({ success: true, selected: requested });
 });
 
+/** Registered users: open existing 2-person (or self) DM or create it. */
+app.post('/api/conversations/open-dm', (req, res) => {
+    const nickname = req.signedCookies.chat_sid || null;
+    const creatorCanon = nickname ? resolveProtectedName(nickname) : null;
+    if (!creatorCanon) {
+        return res.status(403).json({ error: 'only registered nicknames can start direct messages' });
+    }
+    const raw = String((req.body && req.body.peer) || '').trim();
+    if (!raw) {
+        return res.status(400).json({ error: 'enter a nickname' });
+    }
+    const peerCanon = resolveProtectedName(raw);
+    if (!peerCanon) {
+        return res.status(400).json({ error: `no registered account for: ${raw}` });
+    }
+    const insertConv = chatdb.prepare('INSERT INTO conversations (id, type, label) VALUES (?, ?, ?)');
+    const insertMember = chatdb.prepare('INSERT OR IGNORE INTO conversation_members (conversation_id, user_name, role) VALUES (?, ?, ?)');
+
+    let id;
+    let label;
+    let memberList;
+    if (peerCanon.toLowerCase() === creatorCanon.toLowerCase()) {
+        const pair = dmIdAndLabelFromCanonical(creatorCanon, creatorCanon);
+        id = pair.id;
+        label = pair.label;
+        memberList = [creatorCanon];
+    } else {
+        const pair = dmIdAndLabelFromCanonical(creatorCanon, peerCanon);
+        id = pair.id;
+        label = pair.label;
+        memberList = [creatorCanon, peerCanon];
+    }
+
+    const existing = chatdb.prepare('SELECT id, type, label FROM conversations WHERE id = ?').get(id);
+    if (existing) {
+        if (existing.type !== 'dm') {
+            return res.status(409).json({ error: 'conversation id collision' });
+        }
+        return res.json({
+            success: true,
+            existed: true,
+            conversation: { id: existing.id, label: existing.label, type: 'dm' }
+        });
+    }
+    try {
+        chatdb.transaction(() => {
+            insertConv.run(id, 'dm', label);
+            memberList.forEach((m) => insertMember.run(id, m, 'member'));
+            seedReadStateForNewMembers(id, memberList);
+        })();
+    } catch (e) {
+        return res.status(500).json({ error: 'failed to create direct message' });
+    }
+    return res.json({ success: true, existed: false, conversation: { id, label, type: 'dm' } });
+});
+
 app.post('/api/conversations', (req, res) => {
     const nickname = req.signedCookies.chat_sid || null;
     if (!isPrivilegedNickname(nickname)) {

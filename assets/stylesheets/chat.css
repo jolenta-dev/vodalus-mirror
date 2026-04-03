@@ -109,6 +109,17 @@ html.site-dim--dim .chat-toolbar button {
   border-right: none; /* Prevent double borders */
 }
 
+/* First/last *visible* toolbar control (see updateToolbarEdgeClasses in chat.html). */
+.chat-toolbar button.chat-toolbar-btn--first {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.chat-toolbar button.chat-toolbar-btn--last {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
 /* Add a background color on hover */
 .chat-toolbar button:hover {
     background-color: lightgray;
@@ -509,7 +520,8 @@ li.rules {
 #new-chat-modal-overlay,
 #new-announcement-modal-overlay,
 #chat-directory-modal-overlay,
-#chat-tag-modal-overlay {
+#chat-tag-modal-overlay,
+#new-dm-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
@@ -522,7 +534,8 @@ li.rules {
 #new-chat-modal,
 #new-announcement-modal,
 #chat-directory-modal,
-#chat-tag-modal {
+#chat-tag-modal,
+#new-dm-modal {
     background: #fff;
     border: 1px solid #000;
     border-radius: 8px;
@@ -532,11 +545,51 @@ li.rules {
 
 #new-chat-modal input:not([type="checkbox"]),
 #new-announcement-modal input,
-#new-announcement-modal select {
+#new-announcement-modal select,
+#new-dm-modal input {
     display: block;
     width: 100%;
     margin-bottom: 0.5rem;
     box-sizing: border-box;
+}
+
+#new-dm-modal-intro {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+}
+
+.new-dm-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 0.25rem;
+}
+
+.new-dm-modal-actions button {
+    background-color: white;
+    border: 1px solid #000;
+    color: black;
+    padding: 10px 24px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.new-dm-modal-actions button:not(:last-child) {
+    border-right: none;
+}
+
+.new-dm-modal-actions button:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.new-dm-modal-actions button:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.new-dm-modal-actions button:hover {
+    background-color: lightgray;
 }
 
 .chat-admin-public-option {
@@ -815,7 +868,8 @@ html.site-dim--dim #password-modal-overlay,
 html.site-dim--dim #new-chat-modal-overlay,
 html.site-dim--dim #new-announcement-modal-overlay,
 html.site-dim--dim #chat-directory-modal-overlay,
-html.site-dim--dim #chat-tag-modal-overlay {
+html.site-dim--dim #chat-tag-modal-overlay,
+html.site-dim--dim #new-dm-modal-overlay {
     background: rgba(22, 22, 22, 0.78) !important;
 }
 
@@ -823,7 +877,8 @@ html.site-dim--dim #password-modal,
 html.site-dim--dim #new-chat-modal,
 html.site-dim--dim #new-announcement-modal,
 html.site-dim--dim #chat-directory-modal,
-html.site-dim--dim #chat-tag-modal {
+html.site-dim--dim #chat-tag-modal,
+html.site-dim--dim #new-dm-modal {
     background: #8e8e8e !important;
     border-color: #3d3d3d !important;
     color: #141414 !important;
@@ -834,8 +889,19 @@ html.site-dim--dim #password-modal input[type="text"],
 html.site-dim--dim #new-chat-modal input:not([type="checkbox"]),
 html.site-dim--dim #new-announcement-modal input,
 html.site-dim--dim #new-announcement-modal select,
-html.site-dim--dim #chat-tag-modal input {
+html.site-dim--dim #chat-tag-modal input,
+html.site-dim--dim #new-dm-modal input {
     background: #a8a8a8 !important;
     border: 1px solid #4a4a4a !important;
     color: #111 !important;
+}
+
+html.site-dim--dim .new-dm-modal-actions button {
+    background-color: #6a6a6a !important;
+    border-color: #000 !important;
+    color: #000 !important;
+}
+
+html.site-dim--dim .new-dm-modal-actions button:hover {
+    background-color: #8a8a8a !important;
 }
