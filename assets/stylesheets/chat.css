@@ -99,12 +99,22 @@
     margin-top: 0;
 }
 
+/* One outer frame; rounding only on the bar ends (desktop). Mobile: square shell, 2-col grid. */
 .chat-toolbar {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: stretch;
     margin: 0 0 0.5rem 0;
-    border-radius: 136px;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .chat-toolbar {
+        border-radius: 0;
+    }
 }
 
 /* Primary button chrome: login, send, modals, admin tabs (not conversation .chat-tab); toolbar overrides padding below */
@@ -121,7 +131,14 @@
 .chat-toolbar button[type="button"]:not(.chat-tab) {
     align-self: stretch;
     padding: 10px 24px;
+    margin: 0;
+    border: none;
     border-radius: 0;
+    border-right: 1px solid #000;
+}
+
+.chat-toolbar button[type="button"].chat-toolbar-btn--last {
+    border-right: none;
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
@@ -129,21 +146,6 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
     border-color: #000;
     color: #111;
     /*! border-radius: 0px 5px 5px 0px; */
-}
-
-.chat-toolbar button:not(:last-child) {
-    border-right: none;
-}
-
-/* First/last *visible* toolbar control (see updateToolbarEdgeClasses in chat.html). */
-.chat-toolbar button.chat-toolbar-btn--first {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.chat-toolbar button.chat-toolbar-btn--last {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
 .chat-toolbar button:hover,
@@ -156,12 +158,8 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 }
 
 @media (max-width: 640px) {
-    .chat-toolbar button {
+    .chat-toolbar button[type="button"]:not(.chat-tab) {
         flex: 1 1 50%;
-    }
-
-    .chat-toolbar button:not(:last-child) {
-        border-right: 1px solid #000;
     }
 }
 
