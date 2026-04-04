@@ -41,6 +41,7 @@ export function initDraggableDiv(header, content) {
         textAlign: 'center',
         margin: 'auto auto',
         width: '100%',
+        fontFamily: '"Meylda", ui-serif, Georgia, "Times New Roman", serif',
     });
 
     Object.assign(draggableDiv.style, {
