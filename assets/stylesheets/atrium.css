@@ -24,6 +24,7 @@
 }
 
 .main #enter-btn,
+.main #board-btn,
 .main #submit-btn,
 .main #prestige-btn,
 .main #submit-colors-decorations-btn {
@@ -53,6 +54,7 @@
 }
 
 .main #enter-btn:hover,
+.main #board-btn:hover,
 .main #submit-btn:hover,
 .main #prestige-btn:hover,
 .main #corridors-btn:hover,
