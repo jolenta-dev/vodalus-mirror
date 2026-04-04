@@ -545,37 +545,46 @@ ul .message-owner {
     font-weight: bold;
 }
 
-/* :has() so journey tags between (THE HOUSE) and .name-color do not break styling */
-ul li:has(.message-owner):has(.message-the-house) .name-color .message-name {
+/* :has() so journey tags between role tags and .name-color do not break styling */
+ul li:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 
-ul li:has(.message-owner):has(.message-the-house) .name-color .message-journey-4,
-ul li:has(.message-owner):has(.message-the-house) .name-color .message-journey-5-plus {
+ul li:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-4,
+ul li:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-5-plus {
     color: lightpink;
 }
 
-ul li:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+ul li:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: lightblue;
 }
 
 /* gold ⏾ before name; tail ˖✧°. (swapped from ✧˖°.; only ✧ gold) */
-ul li:has(.message-owner):has(.message-the-house) .name-color .message-name::before {
+ul li:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name::before {
     content: "⏾";
     color: gold;
 }
 
-ul li:has(.message-owner):has(.message-the-house) .name-color .message-name-tail {
+ul li:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail {
     color: lightpink;
 }
 
-ul li:has(.message-owner):has(.message-the-house) .name-color .message-name-tail-gold {
+ul li:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail-gold {
     color: gold;
 }
 
 /* custom the house tag styling for march 26 event */
 ul .message-the-house {
     background-image: linear-gradient(to left, orangered, red, maroon, red, orangered);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+/* custom the archon tag styling for april 26 event */
+ul .message-the-archon {
+    background-image: linear-gradient(45deg, skyblue, white, skyblue, white, skyblue);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -916,6 +925,14 @@ ul.chat-admin-members-ul li.member-list-entry {
 
 .message-the-house {
     background-image: linear-gradient(to left, orangered, red, maroon, red, orangered);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+.message-the-archon {
+    background-image: linear-gradient(45deg, skyblue, white, skyblue, white, skyblue);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;

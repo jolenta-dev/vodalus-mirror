@@ -113,6 +113,7 @@ function computeAvailableChatTagsForUser(name, vip, journeyLevel, prestigeLevel)
     if (lower === 'jolenta') {
         tags.push('OWNER');
         tags.push('THE HOUSE');
+        tags.push('THE ARCHON');
     } else if (lower === 'admin') {
         tags.push('ADMIN');
     }
