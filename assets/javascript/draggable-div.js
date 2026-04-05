@@ -86,6 +86,7 @@ export function initDraggableDiv(header, content) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        fontFamily: 'sans-serif',
     };
     [draggableDivClose].forEach((el) =>
         Object.assign(el.style, headerButtonStyle, { backgroundColor: "red" })
@@ -255,6 +256,7 @@ export function initDraggableDiv(header, content) {
                 });
                 minimizeEl.textContent = '+';
             }
+            headerBar.style.cursor = 'move';
         }
         draggableDivClose.addEventListener('click', () => {
             element.remove();

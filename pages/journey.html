@@ -77,6 +77,7 @@
       "You're one bet away from glory!",
       "Good things come to those who gamble.",
       "The key to success is getting started",
+      "Every heartbreak makes the victory sweeter.",
       '<img src="/assets/images/motivation.jpg" alt="Motivation">'
     ];
 
@@ -264,7 +265,7 @@
 
     function getMotivation() {
       if (Math.random() < 0.1) {
-        return { useHtml: true, content: motivation[6] };
+        return { useHtml: true, content: motivation[7] };
       }
       return { useHtml: false, content: motivation[randomInt(0, 5)] };
     }

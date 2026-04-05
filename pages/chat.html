@@ -210,16 +210,14 @@
 				const tags = Array.isArray(allTags) && allTags.length ? allTags : getAvailableTags(name, isVip, journeyLevel, prestigeLevel);
 				const sel = String(selectedTag || '').trim();
 				const chosenTag = sel && tags.includes(sel) ? sel : (tags[0] || '');
-				/* Jolenta: always OWNER + THE ARCHON; (THE HOUSE) only when selected in tag picker. */
+				/* Jolenta: always OWNER; THE HOUSE / THE ARCHON / journey tags only when selected in picker. */
 				const jolentaFixedRoleTags =
-					n === 'jolenta'
-						? tagToSpanHtml('OWNER', prestigeLevel) + tagToSpanHtml('THE ARCHON', prestigeLevel)
-						: '';
-				const jolentaSel = n === 'jolenta' && chosenTag ? String(chosenTag).trim().toUpperCase() : '';
+					n === 'jolenta' ? tagToSpanHtml('OWNER', prestigeLevel) : '';
+				const jolentaPickerUpper = n === 'jolenta' && chosenTag ? String(chosenTag).trim().toUpperCase() : '';
 				const selectedTagHtml =
 					n === 'jolenta'
-						? jolentaSel === 'THE HOUSE'
-							? tagToSpanHtml('THE HOUSE', prestigeLevel)
+						? chosenTag && jolentaPickerUpper !== 'OWNER'
+							? tagToSpanHtml(chosenTag, prestigeLevel)
 							: ''
 						: chosenTag
 							? tagToSpanHtml(chosenTag, prestigeLevel)
