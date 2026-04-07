@@ -123,7 +123,6 @@ html.site-dim--dim .main {
         padding: 4px;
         background: transparent;
         border-radius: 0;
-        box-shadow: none;
     }
 
     .main { padding: 0 8px 0 calc(8vw + 8px); }
@@ -256,6 +255,7 @@ html.site-dim--dim .main {
     cursor: pointer;
     line-height: 0;
     z-index: 1000;
+    box-shadow: none;
 }
 
 #toggle-dim-btn img {
@@ -274,7 +274,6 @@ html.site-dim--dim .main {
         padding: 0.55rem;
         background: rgba(17, 17, 17, 0.88);
         border-radius: 999px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
     }
 }
 

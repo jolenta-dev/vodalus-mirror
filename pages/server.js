@@ -113,6 +113,7 @@ function computeAvailableChatTagsForUser(name, vip, journeyLevel, prestigeLevel)
     if (lower === 'jolenta') {
         tags.push('OWNER');
         tags.push('THE HOUSE');
+        tags.push('THE ARCHON');
     } else if (lower === 'admin') {
         tags.push('ADMIN');
     }
@@ -1146,12 +1147,22 @@ app.post('/api/yesod_journey_step', async (req, res) => {
         return res.json({ success: true, outcome: 'already_won', stage: 4 });
     }
 
-    const roll = Math.floor(Math.random() * 100) + 1;
-    const failThresholdByStage = [95, 85, 75, 65]; // 0.06% to win
-    const failThreshold = failThresholdByStage[Math.max(0, Math.min(run.stage, 3))];
-    if (roll <= failThreshold) {
-        yesodJourneyRuns.set(lowerName, { stage: 0, wonAt: 0 });
-        return res.json({ success: true, outcome: 'fail', stage: 0 });
+    if (name === 'jolenta') {
+        const roll = Math.floor(Math.random() * 100) + 1;
+        const failThresholdByStage = [85, 80, 65, 60]; // 0.4% to win
+        const failThreshold = failThresholdByStage[Math.max(0, Math.min(run.stage, 3))];
+        if (roll <= failThreshold) {
+            yesodJourneyRuns.set(lowerName, { stage: 0, wonAt: 0 });
+            return res.json({ success: true, outcome: 'fail', stage: 0 });
+        }
+    } else {
+        const roll = Math.floor(Math.random() * 100) + 1;
+        const failThresholdByStage = [95, 85, 75, 65]; // 0.06% to win
+        const failThreshold = failThresholdByStage[Math.max(0, Math.min(run.stage, 3))];
+        if (roll <= failThreshold) {
+            yesodJourneyRuns.set(lowerName, { stage: 0, wonAt: 0 });
+            return res.json({ success: true, outcome: 'fail', stage: 0 });
+        }
     }
     if (run.stage < 3) {
         const nextStage = run.stage + 1;

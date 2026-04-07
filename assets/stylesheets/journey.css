@@ -104,20 +104,49 @@
     line-height: 1.25;
 }
 
-#journey-btn.journey-btn,
-#yesod-journey-btn.journey-btn {
-    display: block;
-    margin: 0;
-    font-size: 0.7em;
-    line-height: 1.3;
-    padding: 0.45em 1.15em;
+/* Primary actions — match Atrium of Time / site-form-chrome buttons */
+.main .journey-btn {
+    display: inline-block;
+    font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+    line-height: 1.25;
+    padding: 0.6em 1.2em;
+    margin: 0.6rem auto 0;
+    border: 1px solid #000;
+    border-color: #000;
+    border-style: solid;
+    color: #111;
+    background-color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: inherit;
+    box-sizing: border-box;
+}
+
+html.site-dim--dim .main .journey-btn {
+    background-color: #6a6a6a;
+    border-color: #000;
+    color: #111;
+}
+
+.main .journey-btn:hover {
+    background-color: #d3d3d3;
+    color: #000;
+}
+
+html.site-dim--dim .main .journey-btn:hover {
+    background-color: #8a8a8a;
+}
+
+.main .journey-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.85;
 }
 
 html.site-dim--dim .journey-layout__midline {
     opacity: 0.45;
 }
 
-/* Bottom tabs (same vocabulary as chat `.chat-tabs` / `.chat-tab`) */
+/* Bottom tabs — match chat `.chat-tabs` / `.chat-tab` (conversation strip) */
 .journey-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -131,23 +160,24 @@ html.site-dim--dim .journey-layout__midline {
 }
 
 .journey-tab {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     margin: 0;
     min-width: 0;
     background-color: inherit;
     border: none;
     border-right: 1px solid #ccc;
     cursor: pointer;
-    padding: 0.55rem 0.65rem;
+    padding: 0.5rem 0.55rem 0.5rem 1rem;
     transition: background-color 0.2s ease;
     font: inherit;
-    font-size: clamp(0.7rem, 2.2vw, 0.95rem);
+    font-size: 1rem;
     color: inherit;
     text-align: center;
-}
-
-.journey-tab:last-child {
-    border-right: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    max-width: 100%;
 }
 
 .journey-tab:hover {
@@ -163,6 +193,28 @@ html.site-dim--dim .journey-layout__midline {
     outline: 2px solid #000;
     outline-offset: -2px;
     z-index: 1;
+}
+
+html.site-dim--dim .journey-tabs {
+    background-color: #6a6a6a;
+    border-color: #4a4a4a;
+}
+
+html.site-dim--dim .journey-tab {
+    border-right-color: #4a4a4a;
+    color: #111;
+}
+
+html.site-dim--dim .journey-tab:hover {
+    background-color: #7a7a7a;
+}
+
+html.site-dim--dim .journey-tab--active {
+    background-color: #8c8c8c;
+}
+
+html.site-dim--dim .journey-tab:focus-visible {
+    outline-color: #222;
 }
 
 .journey-gate-msg {
@@ -205,7 +257,8 @@ html.site-dim--dim .journey-layout__midline {
     padding: 0.35rem 0.5rem;
 }
 
-.journey-btn--small {
-    font-size: 0.55em;
-    padding: 0.35em 1em;
+.main .journey-btn.journey-btn--small {
+    font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+    padding: 0.45em 1em;
+    margin-top: 0.35rem;
 }

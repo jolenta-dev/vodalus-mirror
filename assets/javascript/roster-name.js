@@ -36,7 +36,7 @@
         var n = String(name || "").trim().toLowerCase();
         var roleTag =
             n === "jolenta"
-                ? '<span class="message-owner">(OWNER) </span><span class="message-the-house">(THE HOUSE) </span>'
+                ? '<span class="message-owner">(OWNER) </span><span class="message-the-house">(THE HOUSE) </span><span class="message-the-archon">(THE ARCHON) </span>'
                 : n === "admin"
                   ? '<span class="message-admin">(ADMIN) </span>'
                   : "";
@@ -88,7 +88,7 @@
                 safeDecoration +
                 "</span>";
         }
-        /* Jolenta uses OWNER / THE HOUSE only — no stock (VIP) tag or name-color--vip */
+        /* Jolenta uses OWNER / THE HOUSE / THE ARCHON only — no stock (VIP) tag or name-color--vip */
         var showVipChrome = isVip && n !== "jolenta";
         var vipTag = showVipChrome ? '<span class="message-vip">(VIP) </span>' : "";
         var nameColorClass = "name-color" + (showVipChrome ? " name-color--vip" : "");

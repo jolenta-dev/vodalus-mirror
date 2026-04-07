@@ -168,6 +168,7 @@
 				if (n === 'jolenta') {
 					tags.push('OWNER');
 					tags.push('THE HOUSE');
+					tags.push('THE ARCHON');
 				} else if (n === 'admin') {
 					tags.push('ADMIN');
 				}
@@ -187,6 +188,7 @@
 				const lvlStyle = (hex) => ' style="color: ' + hex + '; font-weight: bold;"';
 				if (t === 'OWNER') return '<span class="message-owner">(OWNER) </span>';
 				if (t === 'THE HOUSE') return '<span class="message-the-house">(THE HOUSE) </span>';
+				if (t === 'THE ARCHON') return '<span class="message-the-archon">(THE ARCHON) </span>';
 				if (t === 'ADMIN') return '<span class="message-admin">(ADMIN) </span>';
 				if (t === 'VIP') return '<span class="message-vip">(VIP) </span>';
 				if (t === 'LVL 1 GAMBLER') return '<span class="message-journey-1"' + lvlStyle('#9665fc') + '>(LVL 1 GAMBLER) </span>';
@@ -208,15 +210,23 @@
 				const tags = Array.isArray(allTags) && allTags.length ? allTags : getAvailableTags(name, isVip, journeyLevel, prestigeLevel);
 				const sel = String(selectedTag || '').trim();
 				const chosenTag = sel && tags.includes(sel) ? sel : (tags[0] || '');
-				const alwaysOwnerTag = n === 'jolenta' ? tagToSpanHtml('OWNER', prestigeLevel) : '';
-				const selectedTagHtml = (chosenTag && !(n === 'jolenta' && chosenTag.toUpperCase() === 'OWNER'))
-					? tagToSpanHtml(chosenTag, prestigeLevel)
-					: '';
+				/* Jolenta: always OWNER; THE HOUSE / THE ARCHON / journey tags only when selected in picker. */
+				const jolentaFixedRoleTags =
+					n === 'jolenta' ? tagToSpanHtml('OWNER', prestigeLevel) : '';
+				const jolentaPickerUpper = n === 'jolenta' && chosenTag ? String(chosenTag).trim().toUpperCase() : '';
+				const selectedTagHtml =
+					n === 'jolenta'
+						? chosenTag && jolentaPickerUpper !== 'OWNER'
+							? tagToSpanHtml(chosenTag, prestigeLevel)
+							: ''
+						: chosenTag
+							? tagToSpanHtml(chosenTag, prestigeLevel)
+							: '';
 				/* VIP and ADMIN must stay the immediate previous sibling of .name-color (see chat.css + .name-color).
 				   Journey/prestige/autarch tags must live inside .name-color so color: inherit applies. */
 				const selUpper = chosenTag ? String(chosenTag).trim().toUpperCase() : '';
 				const selectedTagOutsideNameColor = selUpper === 'VIP' || selUpper === 'ADMIN';
-				const roleTag = alwaysOwnerTag + (selectedTagOutsideNameColor ? selectedTagHtml : '');
+				const roleTag = jolentaFixedRoleTags + (selectedTagOutsideNameColor ? selectedTagHtml : '');
 				const tagInsideNameColor = selectedTagOutsideNameColor ? '' : selectedTagHtml;
 				const nameText = n === 'jolenta' ? ('⋆.˚' + escapeHtml(name)) : escapeHtml(name);
 				const tooltipHtml = tags.length

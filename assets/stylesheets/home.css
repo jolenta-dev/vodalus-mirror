@@ -116,29 +116,29 @@ html.site-dim--dim #gambling-leaderboard-table tbody tr:nth-child(odd) {
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-journey-4,
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-journey-5-plus {
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-4,
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-5-plus {
     color: lightpink;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: lightblue;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name::before {
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name::before {
     content: "⏾";
     color: gold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name-tail {
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail {
     color: lightpink;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name-tail-gold {
+#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail-gold {
     color: gold;
 }
 
@@ -146,6 +146,23 @@ html.site-dim--dim #gambling-leaderboard-table tbody tr:nth-child(odd) {
 #gambling-leaderboard-table td.leaderboard-house-level .message-the-house,
 #gambling-leaderboard-table td.leaderboard-prestige-level .message-the-house {
     background-image: linear-gradient(to left, orangered, red, maroon, red, orangered);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+#gambling-leaderboard-table td.guestbook-name-cell .message-the-archon {
+    background-image: linear-gradient(45deg, skyblue, white, skyblue, white, skyblue);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+#gambling-leaderboard-table td.leaderboard-house-level .message-the-archon,
+#gambling-leaderboard-table td.leaderboard-prestige-level .message-the-archon {
+    background-image: linear-gradient(45deg, skyblue, white, skyblue, white, skyblue);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -161,10 +178,10 @@ html.site-dim--dim #gambling-leaderboard-table tbody tr:nth-child(odd) {
     font-weight: bold;
 }
 
-html.site-dim--dim #gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+html.site-dim--dim #gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 
-html.site-dim--dim #gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+html.site-dim--dim #gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: #b8d8f0;
 }

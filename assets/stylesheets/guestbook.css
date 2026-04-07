@@ -225,34 +225,42 @@ html.site-dim--dim #name-table tbody tr:nth-child(odd) {
     font-weight: bold;
 }
 
-#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+#name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 
-#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-journey-4,
-#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-journey-5-plus {
+#name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-4,
+#name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-5-plus {
     color: lightpink;
 }
 
-#name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+#name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: lightblue;
 }
 
-#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name::before {
+#name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name::before {
     content: "⏾";
     color: gold;
 }
 
-#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name-tail {
+#name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail {
     color: lightpink;
 }
 
-#name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name-tail-gold {
+#name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail-gold {
     color: gold;
 }
 
 #name-table td.guestbook-name-cell .message-the-house {
     background-image: linear-gradient(to left, orangered, red, maroon, red, orangered);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+#name-table td.guestbook-name-cell .message-the-archon {
+    background-image: linear-gradient(45deg, skyblue, white, skyblue, white, skyblue);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -270,10 +278,10 @@ html.site-dim--dim #name-table tbody tr:nth-child(odd) {
 
 /* Dim: keep roster colors from .name-color inline style (do not blanket .message-name) */
 
-html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):has(.message-the-house) .name-color .message-name {
+html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 
-html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)) .name-color .message-name {
+html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: #b8d8f0;
 }

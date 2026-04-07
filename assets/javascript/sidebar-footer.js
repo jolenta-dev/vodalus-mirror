@@ -6,12 +6,26 @@
         return hasUnread ? " (*)" : "";
     }
 
+    function draggableConveneHeaderEl() {
+        var panel = document.getElementById("draggable-div");
+        if (!panel) return null;
+        var iframe = panel.querySelector("#draggable-div-content iframe");
+        if (!iframe) return null;
+        var src = iframe.getAttribute("src") || iframe.src || "";
+        try {
+            if (new URL(src, location.href).pathname !== "/chat") return null;
+        } catch (e) {
+            return null;
+        }
+        return panel.querySelector("#draggable-div-header-text");
+    }
+
     function setConveneMarker(hasUnread) {
         var link = document.querySelector('.sidenav a[href="/chat"]');
         if (link) link.textContent = "convene" + conveneUnreadSuffix(hasUnread);
         var titleBase = (document.title || "").replace(/\s*\(\*\)\s*$/, "");
         document.title = titleBase + conveneUnreadSuffix(hasUnread);
-        var hdr = document.querySelector("#draggable-div-header-text");
+        var hdr = draggableConveneHeaderEl();
         if (hdr) {
             if (!hdr.dataset.conveneTitleBase) {
                 hdr.dataset.conveneTitleBase =
