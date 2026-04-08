@@ -22,7 +22,7 @@ function initAnimation() {
       scale: 0%;
     }
     to {
-      scale: 10000%;
+      scale: 15000%;
     }
   }
   
@@ -31,7 +31,7 @@ function initAnimation() {
       scale: 0%
     }
     to {
-      scale: 10000%;
+      scale: 15000%;
     }
   }
   
@@ -40,7 +40,7 @@ function initAnimation() {
       scale: 0%;
     }
     to {
-      scale: 10000%;
+      scale: 15000%;
     }
   }
   
