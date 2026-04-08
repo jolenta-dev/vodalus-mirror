@@ -19,6 +19,38 @@
 		requestAnimationFrame(tick);
 	}
 
+	let dynamicStyles = null;
+
+	function addAnimation(body) { // adds the keyframes without importing a new CSS file
+		if (!dynamicStyles) {
+			dynamicStyles = document.createElement('style');
+			dynamicStyles.type = 'text/css';
+			document.head.appendChild(dynamicStyles);
+		}
+
+		dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
+	}
+
+	addAnimation(`
+     @keyframes wiggle {
+		from {
+			rotate: 10deg;
+		}
+		25% {
+			rotate: -10deg;
+		}
+		50% {
+			rotate: 10deg;
+		}
+		75% {
+			rotate: -10deg;
+		}
+		to {
+			rotate: 10deg;
+    }
+    `);
+
+
 	document.addEventListener("mousemove", function (e) {
 		mouseX = e.clientX;
 		mouseY = e.clientY;
@@ -49,6 +81,11 @@
 			s.curTy = 0;
 			el.style.transform = "translate(0px,0px)";
 			s.following = true;
+			// style settings for the animation
+			el.style.animationName = 'wiggle';
+			el.style.animationIterationCount = 'infinite';
+			el.style.animationDuration = '1s';
+			el.style.animationDirection = 'alterante';
 		});
 
 		el.addEventListener("mouseleave", function () {
@@ -56,6 +93,11 @@
 			s.curTx = 0;
 			s.curTy = 0;
 			el.style.transform = "";
+			// clear the animation settings
+			el.style.animationName = '';
+			el.style.animationIterationCount = '';
+			el.style.animationDuration = '';
+			el.style.animationDirection = '';
 		});
 	}
 
