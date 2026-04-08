@@ -34,19 +34,19 @@
 	addAnimation(`
      @keyframes wiggle {
 		from {
-			rotate: 10deg;
+			rotate: 5deg;
 		}
 		25% {
-			rotate: -10deg;
+			rotate: -5deg;
 		}
 		50% {
-			rotate: 10deg;
+			rotate: 5deg;
 		}
 		75% {
-			rotate: -10deg;
+			rotate: -5deg;
 		}
 		to {
-			rotate: 10deg;
+			rotate: 5deg;
     }
     `);
 
@@ -84,8 +84,9 @@
 			// style settings for the animation
 			el.style.animationName = 'wiggle';
 			el.style.animationIterationCount = 'infinite';
-			el.style.animationDuration = '1s';
-			el.style.animationDirection = 'alterante';
+			el.style.animationTimingFunction = 'ease-in-out';
+			el.style.animationDuration = '0.5s';
+			el.style.animationDirection = 'alternate';
 		});
 
 		el.addEventListener("mouseleave", function () {
