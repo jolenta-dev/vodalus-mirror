@@ -6,6 +6,7 @@ function initSlidingDiv(messageContent) {
   Object.assign(slidingDiv.style, {
     fontSize: "36px",
     fontWeight: "bold",
+    fontFamily: "Nedar",
     border: "solid",
     display: "flex",
     width: "50%",

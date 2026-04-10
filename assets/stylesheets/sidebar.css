@@ -1,17 +1,17 @@
-/* these are the main dimming controls for the whole site. this should probably not be here. */
+/* site dim vars */
 :root {
-    --site-dim-chrome: #696969; /* dimgrey */
-    /* each RGB channel +10 vs dimgrey — chat panels sit slightly above page chrome */
+    --site-dim-chrome: #696969;
     --site-dim-chat-panel: #737373;
 }
 
+/* fonts */
 @font-face {
     font-family: "Meylda";
     font-style: normal;
     font-weight: 400;
     font-display: swap;
     src: url("/assets/fonts/meylda/Meylda-Regular.ttf") format("truetype");
-    /* Font has no figures: skip ASCII 0–9 so the stack renders digits from the serif fallbacks */
+    /* no figures: skip ASCII 0-9 so digits fall back to serif */
     unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
@@ -23,11 +23,12 @@
     src: url("/assets/fonts/Nedar/Nedar.ttf") format("truetype");
 }
 
+/* base elements */
 body {
     font-family: "Nedar", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Meylda for all main pages (this sheet is linked sitewide) */
+/* meylda for main pages (sheet linked sitewide) */
 h1 {
     font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
 }
@@ -37,22 +38,24 @@ html.home-page h2 {
 }
 
 hr.rounded {
-  border: none;
-  border-top: 1px solid #4f4f4f;
-  border-radius: 1px;
-  width: 100%;
-  height: 0;
-  /* ~35% back from tight (0.2rem) toward typical UA hr (~0.5rem block margin) */
-  margin: calc(0.2rem + (0.5rem - 0.2rem) * 0.35) 0;
-  padding: 0;
+    border: none;
+    border-top: 1px solid #fff;
+    border-radius: 1px;
+    width: 100%;
+    height: 0;
+    margin: calc(0.2rem + (0.5rem - 0.2rem) * 0.35) 0;
+    padding: 0;
 }
 
+/* site dim */
 html.site-dim--dim {
     background-color: var(--site-dim-chrome);
 }
+
 html.site-dim--dim body {
     background-color: transparent;
 }
+
 html.site-dim--dim .main {
     background-color: var(--site-dim-chrome);
     min-height: 100vh;
@@ -60,6 +63,7 @@ html.site-dim--dim .main {
     box-sizing: border-box;
 }
 
+/* sidenav */
 .sidenav {
     height: 100vh;
     width: 180px;
@@ -67,18 +71,14 @@ html.site-dim--dim .main {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background-color: #696969;
     overflow-x: hidden;
     padding-top: 20px;
     transition: transform 0.3s ease;
     font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
 }
 
-
-/*
- * Sidebar with .sidenav-bottom-stack: flex column + in-flow footer.
- * overflow-x: hidden makes a scrollport; absolute footers don’t grow scroll height.
- */
+/* sidenav flex layout when bottom stack present */
 .sidenav:has(.sidenav-bottom-stack) {
     display: flex;
     flex-direction: column;
@@ -92,43 +92,198 @@ html.site-dim--dim .main {
     box-sizing: border-box;
 }
 
-.sidenav:has(.sidenav-bottom-stack) .sidenav-bottom-stack {
-    position: static;
+.sidenav:has(.sidenav-bottom-stack) .stack-wrapper {
     margin-top: auto;
     flex-shrink: 0;
-    align-self: stretch;
-    width: 100%;
-    padding-bottom: 20px;
+    align-self: flex-start;
+    width: calc(100% - 20px);
+    margin-left: 10px;
+    margin-bottom: 20px;
     box-sizing: border-box;
+    position: relative;
 }
 
+/* sidenav links */
+.nav-item {
+    position: relative;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.nav-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: black;
+    transform: translate(-8px, 8px);
+}
 
 .sidenav a {
-    /* ~35% from tight (2px) back toward original (6px) vertical padding */
-    padding: calc(2px + (6px - 2px) * 0.35) 8px calc(2px + (6px - 2px) * 0.35) 16px;
+    padding: 10px 8px 10px 16px;
     text-decoration: none;
     font-size: 25px;
     font-family: inherit;
-    color: rgb(104, 104, 104);
-    display: block;
+    color: cornsilk;
+    background-color: lightpink;
+    display: flex;
     line-height: 1.2;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.1s ease;
 }
 
 .sidenav a:hover {
-    color: #f1f1f1;
+    color: black;
+    transform: translate(-6px, 6px);
 }
 
+/* stack wrapper: owns the black shadow, mirrors .nav-item pattern */
+.stack-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: black;
+    transform: translate(-8px, 8px);
+    z-index: 0;
+}
+
+/* bottom stack: content in flow, ::before is the visible face that moves on hover */
+.sidenav-bottom-stack {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 8px 8px 8px 16px;
+    box-sizing: border-box;
+}
+
+.sidenav-bottom-stack::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: cornsilk;
+    z-index: -1;
+    transition: transform 0.1s ease;
+}
+
+.sidenav-bottom-stack:hover::before {
+    transform: translate(-6px, 6px);
+}
+
+.sidenav-bottom-stack button {
+    align-self: flex-start;
+    font-family: inherit;
+}
+
+/* status widget */
+.sidenav .status {
+    font-size: calc(9px * 1.75);
+    line-height: 1.3;
+    font-family: "Nedar", ui-sans-serif, system-ui, sans-serif;
+}
+
+.sidenav .status,
+.sidenav .status p,
+.sidenav .status i {
+    color: #000 !important;
+}
+
+.sidenav .status .status-announcement {
+    font-weight: bold;
+    color: pink;
+}
+
+.sidenav .status .status-message {
+    font-style: italic;
+}
+
+/* nowplaying widget */
+.sidenav .nowplaying {
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+.sidenav .nowplaying,
+.sidenav .nowplaying .trackinfo,
+.sidenav .nowplaying #tracktitle,
+.sidenav .nowplaying #trackartist,
+.sidenav .nowplaying span {
+    color: #000 !important;
+}
+
+.sidenav .nowplaying .trackart {
+    display: block;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    margin-bottom: 4px;
+    border-radius: 2px;
+}
+
+/* main content */
 .main {
     margin-left: 180px;
     padding: 0px 0px;
 }
 
+/* sidebar toggle (hidden desktop) */
 #sidebar-toggle {
     display: none;
 }
 
+/* dim toggle: desktop = fixed corner FAB, mobile = in-stack */
+#toggle-dim-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    margin: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+    z-index: 1000;
+    box-shadow: none;
+}
+
+#toggle-dim-btn img {
+    display: block;
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
+/* page-embed overrides */
+html.page-embed {
+    height: 100%;
+}
+
+html.page-embed body {
+    min-height: 100%;
+    margin: 0;
+}
+
+html.page-embed #site-sidebar-mount,
+html.page-embed .sidebar-container {
+    display: none !important;
+}
+
+html.page-embed .pointer-orbit-root {
+    display: none !important;
+}
+
+html.page-embed .main {
+    margin-left: 0 !important;
+    min-height: 100%;
+    min-height: 100dvh;
+    box-sizing: border-box;
+}
+
+/* mobile (max-width: 600px) */
 @media screen and (max-width: 600px) {
-    /* Dim control stays in the sidebar column on small screens */
     #toggle-dim-btn {
         position: static;
         z-index: auto;
@@ -149,6 +304,7 @@ html.site-dim--dim .main {
         transform: translateX(calc(-100% + 8vw));
         transition: transform 0.3s ease;
     }
+
     .sidebar-container.is-open {
         transform: translateX(0);
     }
@@ -175,36 +331,21 @@ html.site-dim--dim .main {
         z-index: 1100;
         background: rgba(0, 0, 0, 0.35);
     }
+
     .sidebar-open .sidebar-backdrop { display: block; }
-    .sidenav .nowplaying,
-    .sidenav .status {
-        position: static;
-        flex-shrink: 0;
-    }
-    .sidenav .status {
-        order: 1;
-        margin-top: auto;
-    }
-    .sidenav .nowplaying { order: 2; }
-    /* Chat: stack children must not use footer order/margin from the standalone .status / .nowplaying rules */
-    .sidenav .sidenav-bottom-stack .status,
-    .sidenav .sidenav-bottom-stack .nowplaying {
-        order: 0;
-        margin-top: 0;
-    }
-    .sidenav .sidenav-bottom-stack button {
-        order: 0;
-    }
+
     .sidenav:has(.sidenav-bottom-stack) {
         height: 100%;
         min-height: 0;
         max-height: 100%;
     }
-    .sidenav:has(.sidenav-bottom-stack) .sidenav-bottom-stack {
-        padding-bottom: 0;
+
+    .sidenav:has(.sidenav-bottom-stack) .stack-wrapper {
         flex-shrink: 0;
         margin-top: auto;
+        margin-bottom: 0;
     }
+
     .main { margin-left: 0; }
 
     #sidebar-toggle {
@@ -228,55 +369,18 @@ html.site-dim--dim .main {
     }
 }
 
+/* low-height screens */
 @media screen and (max-height: 450px) {
     .sidenav {
         padding-top: 15px;
     }
+
     .sidenav a {
         font-size: 18px;
     }
 }
 
-/* Chat: dim button, status, nowplaying — one column anchored to the bottom of the sidebar */
-.sidenav-bottom-stack {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 0 8px 0 16px;
-    box-sizing: border-box;
-}
-
-.sidenav-bottom-stack button {
-    align-self: flex-start;
-    font-family: inherit;
-}
-
-/* Dim toggle: one node in sidebar.html; desktop = fixed corner FAB, mobile = in-stack (see max-width rule). */
-#toggle-dim-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    margin: 0;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    line-height: 0;
-    z-index: 1000;
-    box-shadow: none;
-}
-
-#toggle-dim-btn img {
-    display: block;
-    width: 20px;
-    height: 20px;
-    filter: invert(1);
-}
-
+/* desktop dim toggle FAB */
 @media screen and (min-width: 601px) {
     #toggle-dim-btn {
         position: fixed;
@@ -289,93 +393,7 @@ html.site-dim--dim .main {
     }
 }
 
-.sidenav .nowplaying {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    padding: 0 8px 0 16px;
-    font-size: 9px;
-    color: #f1f1f1 !important;
-    line-height: 1.3;
-}
-
-.sidenav .status {
-    position: absolute;
-    bottom: 120px;
-    left: 0;
-    right: 0;
-    padding: 0 8px 0 16px;
-    font-size: calc(9px * 1.75);
-    color: #f1f1f1 !important;
-    line-height: 1.3;
-    font-family: "Nedar", ui-sans-serif, system-ui, sans-serif;
-}
-
-/* Must follow .sidenav .nowplaying / .status so stack children stay in the flex column (same specificity would lose to source order) */
-.sidenav .sidenav-bottom-stack .nowplaying,
-.sidenav .sidenav-bottom-stack .status {
-    position: static;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    padding: 0;
-}
-
-.sidenav .status,
-.sidenav .status p,
-.sidenav .status i {
-    color: #f1f1f1 !important;
-}
-
-.sidenav .status .status-announcement {
-    font-weight: bold;
-    color: pink
-}
-
-.sidenav .status .status-message {
-    font-style: italic;
-}
-
-.sidenav .nowplaying .trackart {
-    display: block;
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    margin-bottom: 4px;
-    border-radius: 2px;
-}
-
-.sidenav .nowplaying,
-.sidenav .nowplaying .trackinfo,
-.sidenav .nowplaying #tracktitle,
-.sidenav .nowplaying #trackartist,
-.sidenav .nowplaying span {
-    color: #f1f1f1 !important;
-}
-
-/* /journey?embed=1 & /tzadkiels-ship?embed=1 — panel inside draggable iframe: match chat-embed chrome */
-html.page-embed {
-    height: 100%;
-}
-
-html.page-embed body {
-    min-height: 100%;
-    margin: 0;
-}
-
-html.page-embed #site-sidebar-mount,
-html.page-embed .sidebar-container {
-    display: none !important;
-}
-
-html.page-embed .pointer-orbit-root {
-    display: none !important;
-}
-
-html.page-embed .main {
-    margin-left: 0 !important;
-    min-height: 100%;
-    min-height: 100dvh;
-    box-sizing: border-box;
+/* remove this before adding back to the DOM please */
+body {
+    background-color: #696969;
 }
