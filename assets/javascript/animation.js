@@ -1,4 +1,4 @@
-function initAnimation() {
+function initTransition() {
     let dynamicStyles = null;
     function addAnimation(body) {
       if (!dynamicStyles) {
@@ -122,5 +122,5 @@ function initAnimation() {
                   })
   }
   document.addEventListener('click', () => {
-    initAnimation();
+    initTransition();
   })

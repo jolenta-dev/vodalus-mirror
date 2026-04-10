@@ -86,7 +86,7 @@ export function initDraggableDiv(header, content) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontFamily: 'sans-serif',
+        fontFamily: '"Nedar", ui-sans-serif, system-ui, sans-serif',
     };
     [draggableDivClose].forEach((el) =>
         Object.assign(el.style, headerButtonStyle, { backgroundColor: "red" })
