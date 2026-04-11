@@ -144,20 +144,20 @@ html.site-form-chrome #password-modal > button[type="button"]:first-of-type {
 }
 
 html.site-dim--dim #password-modal-overlay {
-    background: rgba(22, 22, 22, 0.78) !important;
+    background: rgba(26, 0, 51, 0.78) !important;
 }
 
 html.site-dim--dim #password-modal {
-    background: #8e8e8e !important;
-    border-color: #3d3d3d !important;
-    color: #141414 !important;
+    background: #9a7cb6 !important;
+    border-color: aliceblue !important;
+    color: aliceblue !important;
 }
 
 html.site-dim--dim #password-modal input[type="password"],
 html.site-dim--dim #password-modal input[type="text"] {
-    background: #a8a8a8 !important;
-    border: 1px solid #000 !important;
-    color: #111 !important;
+    background: var(--site-dim-chat-panel, #0f001e) !important;
+    border: 1px solid aliceblue !important;
+    color: aliceblue !important;
 }
 
 /* Tzadkiel's ship: boarding block mirrors chat #setup */

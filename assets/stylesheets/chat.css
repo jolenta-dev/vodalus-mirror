@@ -220,7 +220,7 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 .chat-page #new-announcement-modal button[type="button"] + button[type="button"],
 .chat-page #chat-tag-modal button[type="button"] + button[type="button"],
 .chat-page #new-dm-modal .new-dm-modal-actions button[type="button"] + button[type="button"] {
-    margin-left: -1px;
+    margin-left: -5px;
     border-left: none;
 }
 
@@ -411,9 +411,9 @@ html.site-dim--dim #input-message {
 }
 
 html.site-dim--dim #setup #input-name {
-    background-color: #8c8c8c;
-    border-color: #000;
-    color: #111;
+  background-color: #0f001e;
+  border-color: aliceblue;
+  color: aliceblue;
 }
 /* remove bullets from the ul of chat messages */
 ul.nobullets {
@@ -994,7 +994,7 @@ html.site-dim--dim.chat-page .chat-admin-tab--active {
 }
 
 html.site-dim--dim .chat-admin-members-list {
-    background: #7a7a7a;
+    background: #0f001e;
     border-color: #4a4a4a;
     color: #121212;
 }
@@ -1016,7 +1016,7 @@ html.site-dim--dim #new-announcement-modal-overlay,
 html.site-dim--dim #chat-directory-modal-overlay,
 html.site-dim--dim #chat-tag-modal-overlay,
 html.site-dim--dim #new-dm-modal-overlay {
-    background: rgba(22, 22, 22, 0.78) !important;
+    background: rgba(26, 0, 51, 0.78) !important;
 }
 
 html.site-dim--dim #password-modal,
@@ -1025,9 +1025,9 @@ html.site-dim--dim #new-announcement-modal,
 html.site-dim--dim #chat-directory-modal,
 html.site-dim--dim #chat-tag-modal,
 html.site-dim--dim #new-dm-modal {
-    background: #8e8e8e !important;
-    border-color: #3d3d3d !important;
-    color: #141414 !important;
+    background: #9a7cb6 !important;
+    border-color: aliceblue !important;
+    color: aliceblue !important;
 }
 
 html.site-dim--dim #password-modal input[type="password"],
@@ -1037,19 +1037,19 @@ html.site-dim--dim #new-announcement-modal input,
 html.site-dim--dim #new-announcement-modal select,
 html.site-dim--dim #chat-tag-modal input,
 html.site-dim--dim #new-dm-modal input {
-    background: #a8a8a8 !important;
-    border: 1px solid #4a4a4a !important;
-    color: #111 !important;
+    background: var(--site-dim-chat-panel, #0f001e) !important;
+    border: 1px solid aliceblue !important;
+    color: aliceblue !important;
 }
 
 html.site-dim--dim .new-dm-modal-actions button {
-    background-color: #6a6a6a !important;
-    border-color: #000 !important;
-    color: #000 !important;
+    background-color: #a387be !important;
+    border-color: aliceblue !important;
+    color: aliceblue !important;
 }
 
 html.site-dim--dim .new-dm-modal-actions button:hover {
-    background-color: #8a8a8a !important;
+    background-color: #dcc2f4 !important;
 }
 
 /* /chat?embed=1 — panel in draggable iframe: no site sidebar/orbit; chat column + member list + toolbar + tabs only */

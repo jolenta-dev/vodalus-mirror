@@ -71,8 +71,8 @@ html.site-dim--dim .tablinks.active {
 }
 
 html.site-dim--dim.admin-page .box {
-    background-color: #737373;
-    border-color: #4a4a4a;
+    background-color: #9a7cb6;
+    border-color: aliceblue;
 }
 
 #sql-table-radios {
@@ -191,6 +191,7 @@ html.site-dim--dim.admin-page .box {
     border: 1px solid #ccc;
     background: #fafafa;
     font-size: 0.95rem;
+    color: #000;
 }
 
 .chat-admin-members-empty {
