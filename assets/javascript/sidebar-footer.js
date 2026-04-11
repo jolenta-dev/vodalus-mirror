@@ -67,7 +67,7 @@
                     frame.title = title;
                     mod.initDraggableDiv(title, frame);
                 })
-                .catch(function () {})
+                .catch(function () { })
                 .finally(function () {
                     opening = false;
                 });
@@ -159,6 +159,21 @@
         (document.head || document.documentElement).appendChild(s);
     }
 
+    function createStars() {
+        var numberOfStars = 100;
+        for (var i = 0; i < numberOfStars; i++) {
+            var star = document.createElement("div");
+            star.className = "star";
+            var size = Math.random() * 3 + 1;
+            star.style.width = size + "px";
+            star.style.height = size + "px";
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.top = Math.random() * 100 + "vh";
+            star.style.animationDuration = Math.random() * 20 + 1 + "s";
+            document.body.appendChild(star);
+        }
+    }
+
     function runFooter() {
         var el = document.querySelector(".status[data-src]");
         function refreshStatusSnippet() {
@@ -168,7 +183,7 @@
             fetch(src, { cache: "no-store" })
                 .then(function (r) { return r.text(); })
                 .then(function (html) { el.innerHTML = html; })
-                .catch(function () {});
+                .catch(function () { });
         }
         refreshStatusSnippet();
 
@@ -191,7 +206,7 @@
             } else {
                 document.documentElement.classList.add(DIM_CLASS);
             }
-        } catch (e) {}
+        } catch (e) { }
 
         syncDimIcon();
 
@@ -202,7 +217,7 @@
                 syncDimIcon();
                 try {
                     localStorage.setItem(STORAGE_KEY, on ? "1" : "0");
-                } catch (e2) {}
+                } catch (e2) { }
             });
         }
 
@@ -228,14 +243,17 @@
                 setupMobileSidebarToggle();
                 loadNowPlaying();
                 runFooter();
+                createStars();
             })
             .catch(function () {
                 setupMobileSidebarToggle();
                 runFooter();
+                createStars();
             });
         return;
     }
 
+    createStars();
     setupMobileSidebarToggle();
     loadNowPlaying();
     runFooter();
