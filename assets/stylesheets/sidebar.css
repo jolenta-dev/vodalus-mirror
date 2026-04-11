@@ -1,7 +1,8 @@
 /* site dim vars */
 :root {
-    --site-dim-chrome: #696969;
-    --site-dim-chat-panel: #737373;
+    --site-dim-chrome: #1a0033;
+    --site-dim-chat-panel: #0f001e;
+    color: aliceblue;
 }
 
 /* fonts */
@@ -31,6 +32,7 @@ body {
 /* meylda for main pages (sheet linked sitewide) */
 h1 {
     font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
+    color: aliceblue;
 }
 
 html.home-page h2 {
@@ -124,7 +126,7 @@ html.site-dim--dim .main {
     text-decoration: none;
     font-size: 25px;
     font-family: inherit;
-    color: cornsilk;
+    color: aliceblue;
     background-color: lightpink;
     display: flex;
     line-height: 1.2;
@@ -391,9 +393,4 @@ html.page-embed .main {
         background: rgba(17, 17, 17, 0.88);
         border-radius: 999px;
     }
-}
-
-/* remove this before adding back to the DOM please */
-body {
-    background-color: #696969;
 }

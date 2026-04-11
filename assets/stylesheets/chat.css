@@ -161,9 +161,9 @@
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
-    background-color: #6a6a6a;
-    border-color: #000;
-    color: #111;
+    background-color: #a387be;
+    border-color: aliceblue;
+    color: aliceblue;
     /*! border-radius: 0px 5px 5px 0px; */
 }
 
@@ -173,7 +173,7 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
-    background-color: #8a8a8a;
+    background-color: #dcc2f4;
 }
 
 @media (max-width: 640px) {
@@ -404,9 +404,9 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
 }
 
 html.site-dim--dim #input-message {
-    background-color: #8c8c8c;
-    border-color: #000;
-    color: #111;
+    background-color: #0f001e;
+    border-color: aliceblue;
+    color: aliceblue;
     border-radius: 5px 0px 0px 5px;
 }
 
@@ -481,7 +481,7 @@ ul .date-separator {
 
 /* make the default non-vip nickname color black */
 ul .message-name {
-    color: black;
+    color: aliceblue;
     font-style: italic;
 }
 
@@ -953,22 +953,22 @@ html.site-dim--dim.chat-page .member-list-aside {
 }
 
 html.site-dim--dim.chat-page .chat-tabs {
-    background-color: #6a6a6a;
-    border-color: #4a4a4a;
+    background-color: #1a0033;
+    border-color: aliceblue;
     border-radius: 10px 10px 0px 0px;
 }
 
 html.site-dim--dim.chat-page .chat-tab {
-    border-right-color: #4a4a4a;
-    color: #111;
+    border-right-color: #9a7cb6;
+    color: aliceblue;
 }
 
 html.site-dim--dim.chat-page .chat-tab:hover {
-    background-color: #7a7a7a;
+    background-color: #dcc2f4;
 }
 
 html.site-dim--dim.chat-page .chat-tab--active {
-    background-color: #8c8c8c;
+    background-color: #9a7cb6;
 }
 
 html.site-dim--dim.chat-page .chat-tab:focus-visible {
