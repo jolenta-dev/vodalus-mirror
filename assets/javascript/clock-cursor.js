@@ -12,10 +12,10 @@ export function clockCursor(options) {
     let canvas, context, animationFrame;
   
     const dateColor = (options && options.dateColor) || "blue";
-    const faceColor = (options && options.faceColor) || "black";
+    const faceColor = (options && options.faceColor) || "pink";
     const secondsColor = (options && options.secondsColor) || "red";
-    const minutesColor = (options && options.minutesColor) || "black";
-    const hoursColor = (options && options.hoursColor) || "black";
+    const minutesColor = (options && options.minutesColor) || "pink";
+    const hoursColor = (options && options.hoursColor) || "aliceblue";
   
     const del = 0.4;
   

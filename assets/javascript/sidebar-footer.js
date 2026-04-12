@@ -160,18 +160,30 @@
     }
 
     function createStars() {
-        var numberOfStars = 100;
-        for (var i = 0; i < numberOfStars; i++) {
-            var star = document.createElement("div");
-            star.className = "star";
-            var size = Math.random() * 3 + 1;
-            star.style.width = size + "px";
-            star.style.height = size + "px";
-            star.style.left = Math.random() * 100 + "vw";
-            star.style.top = Math.random() * 100 + "vh";
-            star.style.animationDuration = Math.random() * 20 + 1 + "s";
-            document.body.appendChild(star);
+        function go() {
+            var field = document.getElementById("starfield");
+            if (!field) {
+                field = document.createElement("div");
+                field.id = "starfield";
+                field.setAttribute("aria-hidden", "true");
+                var main = document.querySelector(".main");
+                (main || document.body).insertBefore(field, (main || document.body).firstChild);
+            }
+            for (var i = 0; i < 100; i++) {
+                var star = document.createElement("div");
+                star.className = "star";
+                var size = Math.random() * 3 + 1;
+                star.style.width = size + "px";
+                star.style.height = size + "px";
+                star.style.left = Math.random() * 100 + "vw";
+                star.style.top = Math.random() * 100 + "vh";
+                star.style.animationDuration = Math.random() * 20 + 1 + "s";
+                field.appendChild(star);
+            }
         }
+        if (document.querySelector(".main")) go();
+        else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go);
+        else go();
     }
 
     function runFooter() {

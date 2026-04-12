@@ -100,7 +100,7 @@ export function initDraggableDiv(header, content) {
         padding: '10px',
         cursor: 'move',
         zIndex: '10',
-        backgroundColor: '#000',
+        backgroundColor: '#9a7cb6',
         color: '#fff',
         borderRadius: '8px 8px 0 0',
     });

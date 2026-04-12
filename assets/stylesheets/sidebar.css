@@ -229,6 +229,14 @@ html.site-dim--dim .main {
 .main {
     margin-left: 180px;
     padding: 0px 0px;
+    position: relative;
+}
+
+#starfield {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
 }
 
 /* sidebar toggle (hidden desktop) */

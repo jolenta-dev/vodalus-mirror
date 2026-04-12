@@ -481,8 +481,8 @@ ul .date-separator {
 
 /* make the default non-vip nickname color black */
 ul .message-name {
-    color: aliceblue;
     font-style: italic;
+    color: aliceblue;
 }
 
 /* make the default vip name pinkish (i don't think this does anything currently) */
@@ -1004,9 +1004,10 @@ html.site-dim--dim .chat-admin-members-empty {
 }
 
 html.site-dim--dim .chat-name-hover-box {
-    background: #7a7a7a;
-    border-color: #3e3e3e;
+    background: #a387be;
+    border-color: aliceblue;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    color: aliceblue;
 }
 
 /* Modals sit above dim chrome; !important beats inline <style> on some pages */
