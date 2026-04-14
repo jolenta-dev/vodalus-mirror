@@ -104,6 +104,15 @@
         /* +90deg maps horizontal NBSP growth to downward tail; left top keeps ⋆ anchored at left/top until top is nudged in JS */
         transform: rotate(90deg);
         transform-origin: left top;
+        animation: wiggle-stars 1s infinite alternate;
+    }
+    @keyframes wiggle-stars {
+        from {
+            transform: rotate(70deg);
+        }
+        to {
+            transform: rotate(110deg);
+        }
     }
 </style>
 <div class="pointer-orbit-root" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;">

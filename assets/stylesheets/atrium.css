@@ -53,12 +53,12 @@
     z-index: 250;
 }
 
-.main #enter-btn:hover,
-.main #board-btn:hover,
-.main #submit-btn:hover,
-.main #prestige-btn:hover,
-.main #corridors-btn:hover,
-.main #submit-colors-decorations-btn:hover {
+html:not(.site-dim--dim) .main #enter-btn:hover,
+html:not(.site-dim--dim) .main #board-btn:hover,
+html:not(.site-dim--dim) .main #submit-btn:hover,
+html:not(.site-dim--dim) .main #prestige-btn:hover,
+html:not(.site-dim--dim) .main #corridors-btn:hover,
+html:not(.site-dim--dim) .main #submit-colors-decorations-btn:hover {
     color: #000;
 }
 

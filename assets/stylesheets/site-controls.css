@@ -15,13 +15,13 @@ html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey
 }
 
 html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab) {
-    background-color: #6a6a6a;
-    border-color: #000;
-    color: #111;
+    background-color: #a387be;
+    border-color: aliceblue;
+    color: aliceblue;
 }
 
 html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover {
-    background-color: #8a8a8a;
+    background-color: #dcc2f4;
 }
 
 html.site-form-chrome .main input:not([type="checkbox"]):not([type="radio"]),
@@ -39,9 +39,9 @@ html.site-form-chrome #login-section input:not([type="checkbox"]):not([type="rad
 html.site-dim--dim.site-form-chrome .main input:not([type="checkbox"]):not([type="radio"]),
 html.site-dim--dim.site-form-chrome .main select,
 html.site-dim--dim.site-form-chrome #login-section input:not([type="checkbox"]):not([type="radio"]) {
-    background-color: #8c8c8c;
-    border-color: #000;
-    color: #111;
+    background-color: var(--site-dim-chat-panel, #0f001e);
+    border-color: aliceblue;
+    color: aliceblue;
 }
 
 /* Admin: tab strip matches chat admin tabs (shared borders). */
@@ -78,17 +78,17 @@ html.site-form-chrome.admin-page .tablinks:hover {
 }
 
 html.site-dim--dim.site-form-chrome.admin-page .tablinks {
-    background-color: #6a6a6a;
-    border-color: #000;
-    color: #111;
+    background-color: #a387be;
+    border-color: aliceblue;
+    color: aliceblue;
 }
 
 html.site-dim--dim.site-form-chrome.admin-page .tablinks:hover {
-    background-color: #8a8a8a;
+    background-color: #dcc2f4;
 }
 
 html.site-dim--dim.site-form-chrome.admin-page .tablinks.active {
-    background-color: #737373;
+    background-color: #a387be;
 }
 
 /* Password modal (atrium, ship, etc.) — match chat */
@@ -144,20 +144,20 @@ html.site-form-chrome #password-modal > button[type="button"]:first-of-type {
 }
 
 html.site-dim--dim #password-modal-overlay {
-    background: rgba(22, 22, 22, 0.78) !important;
+    background: rgba(26, 0, 51, 0.78) !important;
 }
 
 html.site-dim--dim #password-modal {
-    background: #8e8e8e !important;
-    border-color: #3d3d3d !important;
-    color: #141414 !important;
+    background: #9a7cb6 !important;
+    border-color: aliceblue !important;
+    color: aliceblue !important;
 }
 
 html.site-dim--dim #password-modal input[type="password"],
 html.site-dim--dim #password-modal input[type="text"] {
-    background: #a8a8a8 !important;
-    border: 1px solid #4a4a4a !important;
-    color: #111 !important;
+    background: var(--site-dim-chat-panel, #0f001e) !important;
+    border: 1px solid aliceblue !important;
+    color: aliceblue !important;
 }
 
 /* Tzadkiel's ship: boarding block mirrors chat #setup */

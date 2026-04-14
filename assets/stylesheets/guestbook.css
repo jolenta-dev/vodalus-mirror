@@ -40,19 +40,19 @@
 }
 
 html.site-dim--dim .guestbook-compose input {
-    background-color: #8c8c8c;
-    border-color: #000;
-    color: #111;
+    background-color: var(--site-dim-chat-panel, #0f001e);
+    border-color: aliceblue;
+    color: aliceblue;
 }
 
 html.site-dim--dim .guestbook-compose button[type="button"] {
-    background-color: #6a6a6a;
-    border-color: #000;
-    color: #111;
+    background-color: #a387be;
+    border-color: aliceblue;
+    color: aliceblue;
 }
 
 html.site-dim--dim .guestbook-compose button[type="button"]:hover {
-    background-color: #8a8a8a;
+    background-color: #dcc2f4;
 }
 
 @media (min-width: 601px) {
