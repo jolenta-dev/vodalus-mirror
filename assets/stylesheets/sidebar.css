@@ -28,6 +28,92 @@ body {
     font-family: "Nedar", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* sitewide cursor theme */
+html,
+body,
+* {
+    cursor: url("/assets/cursors/pink/default_pink.cur"), auto !important;
+}
+
+a,
+button,
+[role="button"],
+label[for],
+summary,
+select {
+    cursor: url("/assets/cursors/pink/link.cur"), pointer !important;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="search"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+input:not([type]),
+textarea,
+[contenteditable="true"] {
+    cursor: url("/assets/cursors/pink/beam.cur"), text !important;
+}
+
+[disabled],
+[aria-disabled="true"] {
+    cursor: url("/assets/cursors/pink/unavailable.cur"), not-allowed !important;
+}
+
+[draggable="true"],
+.is-dragging {
+    cursor: url("/assets/cursors/pink/move.cur"), move !important;
+}
+
+.resizable,
+.resize-handle {
+    cursor: url("/assets/cursors/pink/dgn1.cur"), nwse-resize !important;
+}
+
+[style*="cursor: move"] {
+    cursor: url("/assets/cursors/pink/move.cur"), move !important;
+}
+
+[style*="cursor: pointer"] {
+    cursor: url("/assets/cursors/pink/link.cur"), pointer !important;
+}
+
+[style*="cursor: nwse-resize"] {
+    cursor: url("/assets/cursors/pink/dgn1.cur"), nwse-resize !important;
+}
+
+[style*="cursor: nesw-resize"] {
+    cursor: url("/assets/cursors/pink/dgn2.cur"), nesw-resize !important;
+}
+
+[style*="cursor: ew-resize"],
+[style*="cursor: col-resize"] {
+    cursor: url("/assets/cursors/pink/horz.cur"), ew-resize !important;
+}
+
+[style*="cursor: ns-resize"],
+[style*="cursor: row-resize"] {
+    cursor: url("/assets/cursors/pink/vert.cur"), ns-resize !important;
+}
+
+[style*="cursor: text"] {
+    cursor: url("/assets/cursors/pink/beam.cur"), text !important;
+}
+
+[style*="cursor: help"] {
+    cursor: url("/assets/cursors/pink/help.cur"), help !important;
+}
+
+[style*="cursor: wait"] {
+    cursor: url("/assets/cursors/pink/busy.ani"), wait !important;
+}
+
+[style*="cursor: progress"] {
+    cursor: url("/assets/cursors/pink/working.ani"), progress !important;
+}
+
 /* meylda for main pages (sheet linked sitewide) */
 h1 {
     font-family: "Meylda", ui-serif, Georgia, "Times New Roman", serif;
