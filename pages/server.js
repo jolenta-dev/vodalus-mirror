@@ -1526,7 +1526,7 @@ app.post('/api/admin/updateStatus', async (req,res) => {
         const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
         if (!protected_name || protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') return res.status(404).json({ error: 'name not found' });
         if (!password || !(await bcrypt.compare(password, protected_name.password))) return res.status(401).json({ error: 'wrong password for admin' });
-        fs.writeFileSync('/var/www/vodalus.org/assets/html/jolentas_status.html', `<html><p><span class="status-announcement">Jolenta's current status:</span> <br> <span class="status-message">${status}</span> </p></html>`);
+        fs.writeFileSync('/vodalus/assets/html/jolentas_status.html', `<html><p><span class="status-announcement">Jolenta's current status:</span> <br> <span class="status-message">${status}</span> </p></html>`);
         res.json({ success: true, message: 'status updated' });
     } catch (e) {
         return res.status(500).json({ error: `status update failed: ${e.message}` });
@@ -1561,7 +1561,7 @@ app.post('/api/admin/resetPassword', async (req, res) => {
 });
 
 // guestbook endpoints
-const guestdb = new Database('/var/www/vodalus.org/pages/guestbook.db');
+const guestdb = new Database('/vodalus/pages/guestbook.db');
 guestdb.exec('CREATE TABLE IF NOT EXISTS names (id INTEGER PRIMARY KEY, name TEXT, website TEXT, note TEXT, date TEXT DEFAULT CURRENT_TIMESTAMP)');
 
 app.get('/api/names', (req, res) => {
