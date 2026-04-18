@@ -97,11 +97,8 @@
     .trail {
         position: absolute;
         pointer-events: none;
-       /* height: 6px; width: 6px;
-        border-radius: 3px; */
         color: gold;
         cursor: default;
-        /* +90deg maps horizontal NBSP growth to downward tail; left top keeps ⋆ anchored at left/top until top is nudged in JS */
         transform: rotate(90deg);
         transform-origin: left top;
         animation: wiggle-stars 1s infinite alternate;
@@ -145,8 +142,8 @@
     var followingDotHandle = null;
 
     function onDocMouseMove(abc) {
-        mouseX = abc.pageX;
-        mouseY = abc.pageY;
+        mouseX = abc.clientX;
+        mouseY = abc.clientY;
     }
     document.addEventListener('mousemove', onDocMouseMove);
 
@@ -248,7 +245,7 @@
         if (window.pointerOrbitDestroy === destroy) window.pointerOrbitDestroy = null;
     }
 
-    /* Optional following dot — uncomment block to enable:
+/*
     import('/assets/javascript/followingdotcursor.js').then(function (mod) {
         if (!active) return;
         var handle = mod.followingDotCursor({

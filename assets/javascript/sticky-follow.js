@@ -85,7 +85,7 @@
 			el.style.animationName = 'wiggle';
 			el.style.animationIterationCount = 'infinite';
 			el.style.animationTimingFunction = 'ease-in-out';
-			el.style.animationDuration = '0.5s';
+			el.style.animationDuration = '0.75s';
 			el.style.animationDirection = 'alternate';
 		});
 
