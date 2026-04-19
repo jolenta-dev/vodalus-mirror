@@ -1,3 +1,4 @@
+<!--- code for the mouse orbits -->
 <style>
     .orbitingElement {
         animation-name: orbitElementAnim;
@@ -94,6 +95,7 @@
             transform: scale(0.75);
         }
     }
+
     .trail {
         position: absolute;
         pointer-events: none;
@@ -103,163 +105,171 @@
         transform-origin: left top;
         animation: wiggle-stars 1s infinite alternate;
     }
+
     @keyframes wiggle-stars {
         from {
             transform: rotate(70deg);
         }
+
         to {
             transform: rotate(110deg);
         }
     }
 </style>
-<div class="pointer-orbit-root" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;">
+<div class="pointer-orbit-root" aria-hidden="true"
+    style="position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;">
     <div class="orbitingElement" style="position: absolute; top: -6px; left: -12.5px;" id="follower1">✦</div>
     <div class="orbitingElement2" style="position: absolute; top: 6px; left: 12.5px;" id="follower2">✦</div>
 </div>
 <script>
-(function () {
-    var root = document.currentScript && document.currentScript.previousElementSibling;
-    if (!root || !root.classList || !root.classList.contains('pointer-orbit-root')) return;
+    (function () {
+        var root = document.currentScript && document.currentScript.previousElementSibling;
+        if (!root || !root.classList || !root.classList.contains('pointer-orbit-root')) return;
 
-    if (document.documentElement.classList.contains('chat-embed') ||
-        document.documentElement.classList.contains('page-embed')) {
-        var styleEl = root.previousElementSibling;
-        if (styleEl && styleEl.tagName === 'STYLE') styleEl.remove();
-        root.remove();
-        return;
-    }
+        // if it's an iframe, remove the orbits (for draggable divs)
+        if (document.documentElement.classList.contains('chat-embed') ||
+            document.documentElement.classList.contains('page-embed')) {
+            var styleEl = root.previousElementSibling;
+            if (styleEl && styleEl.tagName === 'STYLE') styleEl.remove();
+            root.remove();
+            return;
+        }
 
-    var entrance = document.getElementById('entrance');
-    if (entrance && getComputedStyle(entrance).display === 'none') {
-        root.remove();
-        return;
-    }
+        // remove them from the atrium page so we can use the clock cursor
+        var entrance = document.getElementById('entrance');
+        if (entrance && getComputedStyle(entrance).display === 'none') {
+            root.remove();
+            return;
+        }
 
-    var mouseX = 0;
-    var mouseY = 0;
-    var active = true;
-    var trailInterval = null;
-    var followingDotHandle = null;
+        var mouseX = 0;
+        var mouseY = 0;
+        var active = true;
+        var trailInterval = null;
+        var followingDotHandle = null;
 
-    function onDocMouseMove(abc) {
-        mouseX = abc.clientX;
-        mouseY = abc.clientY;
-    }
-    document.addEventListener('mousemove', onDocMouseMove);
+        function onDocMouseMove(abc) {
+            mouseX = abc.clientX;
+            mouseY = abc.clientY;
+        }
+        document.addEventListener('mousemove', onDocMouseMove);
 
-    function move(elementID) {
-        var element = document.getElementById(elementID);
-        if (!element) return;
-        var targetX = 0;
-        var targetY = 0;
-        var currentX = 0;
-        var currentY = 0;
-        var easing = 0.25;
-        var offset = 8;
+        function move(elementID) {
+            var element = document.getElementById(elementID);
+            if (!element) return;
+            var targetX = 0;
+            var targetY = 0;
+            var currentX = 0;
+            var currentY = 0;
+            var easing = 0.25;
+            var offset = 8;
 
-        function animateFollower() {
-            if (!active) return;
-            targetX = mouseX - offset;
-            targetY = mouseY - offset;
-            currentX += (targetX - currentX) * easing;
-            currentY += (targetY - currentY) * easing;
-            element.style.marginLeft = currentX + "px";
-            element.style.marginTop = currentY + "px";
+            function animateFollower() {
+                if (!active) return;
+                targetX = mouseX - offset;
+                targetY = mouseY - offset;
+                currentX += (targetX - currentX) * easing;
+                currentY += (targetY - currentY) * easing;
+                element.style.marginLeft = currentX + "px";
+                element.style.marginTop = currentY + "px";
+                requestAnimationFrame(animateFollower);
+            }
+
             requestAnimationFrame(animateFollower);
         }
 
-        requestAnimationFrame(animateFollower);
-    }
+        move("follower1");
+        move("follower2");
 
-    move("follower1");
-    move("follower2");
+        // star trail code --------------------------------------------------------------
 
-    var trailLive = [];
+        var trailLive = [];
 
-    var trailAgeSpanMs = 700;
-    var trailAgeMaxDashes = 50;
-    var trailFallPxPerDash = 0.85;
+        var trailAgeSpanMs = 700;
+        var trailAgeMaxEmpties = 50;
+        var trailFallPxPerEmpty = 0.85;
 
-    function trailDashCount(bornAt, now) {
-        return Math.min(trailAgeMaxDashes, Math.floor((now - bornAt) / (trailAgeSpanMs / trailAgeMaxDashes)));
-    }
+        function trailEmptyCount(bornAt, now) {
+            return Math.min(trailAgeMaxEmpties, Math.floor((now - bornAt) / (trailAgeSpanMs / trailAgeMaxEmpties)));
+        }
 
-    function refreshTrailAges() {
-        if (!active) return;
-        var now = Date.now();
-        for (var i = trailLive.length - 1; i >= 0; i--) {
-            var t = trailLive[i];
-            if (now - t.bornAt >= trailAgeSpanMs) {
-                t.el.remove();
-                trailLive.splice(i, 1);
-                continue;
+        function refreshTrailAges() {
+            if (!active) return;
+            var now = Date.now();
+            for (var i = trailLive.length - 1; i >= 0; i--) {
+                var t = trailLive[i];
+                if (now - t.bornAt >= trailAgeSpanMs) {
+                    t.el.remove();
+                    trailLive.splice(i, 1);
+                    continue;
+                }
+                var empties = trailEmptyCount(t.bornAt, now);
+                // we append an empty char here to elongate the div and force the trail downwards
+                t.el.textContent = "★" + "\u00A0".repeat(empties);
+                t.el.style.top = (t.originY - 3 + empties * trailFallPxPerEmpty) + "px";
+                t.el.style.opacity = 1 - (now - t.bornAt) / trailAgeSpanMs;
             }
-            var dashes = trailDashCount(t.bornAt, now);
-            t.el.textContent = "★" + "\u00A0".repeat(dashes);
-            t.el.style.top = (t.originY - 3 + dashes * trailFallPxPerDash) + "px";
-            t.el.style.opacity = 1 - (now - t.bornAt) / trailAgeSpanMs;
         }
-    }
 
-    trailInterval = setInterval(refreshTrailAges, trailAgeSpanMs / trailAgeMaxDashes);
+        trailInterval = setInterval(refreshTrailAges, trailAgeSpanMs / trailAgeMaxEmpties);
 
-    var trailEveryNthMove = 10;
-    var trailEventCounter = 0;
+        var trailEveryNthMove = 10;
+        var trailEventCounter = 0;
 
-    function onTrailMouseMove(event) {
-        if (!active) return;
-        trailEventCounter++;
-        if (trailEveryNthMove > 1 && trailEventCounter % trailEveryNthMove !== 0) return;
+        function onTrailMouseMove(event) {
+            if (!active) return;
+            trailEventCounter++;
+            if (trailEveryNthMove > 1 && trailEventCounter % trailEveryNthMove !== 0) return;
 
-        var el = document.createElement("div");
-        el.className = "trail";
-        el.textContent = "*";
-        el.style.userSelect = "none";
-        el.style.pointerEvents = "none";
-        el.style.left = (event.pageX + 9) + "px";
-        el.style.top = (event.pageY + 9) + "px";
-        document.body.appendChild(el);
-        trailLive.push({ el: el, bornAt: Date.now(), originX: event.pageX, originY: event.pageY });
-    }
-
-    window.addEventListener("mousemove", onTrailMouseMove);
-
-    function destroy() {
-        if (!active) return;
-        active = false;
-        if (trailInterval !== null) {
-            clearInterval(trailInterval);
-            trailInterval = null;
+            var el = document.createElement("div");
+            el.className = "trail";
+            el.textContent = "★";
+            el.style.userSelect = "none";
+            el.style.pointerEvents = "none";
+            el.style.left = (event.pageX + 9) + "px";
+            el.style.top = (event.pageY + 9) + "px";
+            document.body.appendChild(el);
+            trailLive.push({ el: el, bornAt: Date.now(), originX: event.pageX, originY: event.pageY });
         }
-        document.removeEventListener('mousemove', onDocMouseMove);
-        window.removeEventListener('mousemove', onTrailMouseMove);
-        for (var j = 0; j < trailLive.length; j++) {
-            if (trailLive[j].el && trailLive[j].el.parentNode) trailLive[j].el.remove();
-        }
-        trailLive.length = 0;
-        if (root.parentNode) root.remove();
-        if (followingDotHandle) {
-            followingDotHandle.destroy();
-            followingDotHandle = null;
-        }
-        if (window.pointerOrbitDestroy === destroy) window.pointerOrbitDestroy = null;
-    }
 
-/*
-    import('/assets/javascript/followingdotcursor.js').then(function (mod) {
-        if (!active) return;
-        var handle = mod.followingDotCursor({
-            element: document.body,
-            color: 'rgba(0,0,0,0.2)',
-            zIndex: '100000'
-        });
-        if (!active) {
-            handle.destroy();
-            return;
-        }
-        followingDotHandle = handle;
-    }); */
+        window.addEventListener("mousemove", onTrailMouseMove);
 
-    window.pointerOrbitDestroy = destroy;
-})();
+        function destroy() {
+            if (!active) return;
+            active = false;
+            if (trailInterval !== null) {
+                clearInterval(trailInterval);
+                trailInterval = null;
+            }
+            document.removeEventListener('mousemove', onDocMouseMove);
+            window.removeEventListener('mousemove', onTrailMouseMove);
+            for (var j = 0; j < trailLive.length; j++) {
+                if (trailLive[j].el && trailLive[j].el.parentNode) trailLive[j].el.remove();
+            }
+            trailLive.length = 0;
+            if (root.parentNode) root.remove();
+            if (followingDotHandle) {
+                followingDotHandle.destroy();
+                followingDotHandle = null;
+            }
+            if (window.pointerOrbitDestroy === destroy) window.pointerOrbitDestroy = null;
+        }
+
+        /*
+            import('/assets/javascript/followingdotcursor.js').then(function (mod) {
+                if (!active) return;
+                var handle = mod.followingDotCursor({
+                    element: document.body,
+                    color: 'rgba(0,0,0,0.2)',
+                    zIndex: '100000'
+                });
+                if (!active) {
+                    handle.destroy();
+                    return;
+                }
+                followingDotHandle = handle;
+            }); */
+
+        window.pointerOrbitDestroy = destroy;
+    })();
 </script>

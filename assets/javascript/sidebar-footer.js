@@ -204,7 +204,7 @@
             moon.style.position = "fixed";
             var moonEw = 120;
             var moonEh = 120;
-            function startMoonToroidalDrift() { // TODO: just make this bounce instead
+            function startMoonDrift() {
                 var last = performance.now();
                 var angle = Math.random() * Math.PI * 2;
                 var spd = 1 + Math.random() * 12;
@@ -219,10 +219,12 @@
                 function wrap() {
                     w = window.innerWidth;
                     h = window.innerHeight;
-                    while (x >= w) x -= w;
-                    while (x + moonEw <= 0) x += w;
-                    while (y >= h) y -= h;
-                    while (y + moonEh <= 0) y += h;
+                    var maxX = w - moonEw;
+                    var maxY = h - moonEh;
+                    if (x > maxX) { x = maxX; vx = -Math.abs(vx); }
+                    else if (x < 0) { x = 0; vx = Math.abs(vx); }
+                    if (y > maxY) { y = maxY; vy = -Math.abs(vy); }
+                    else if (y < 0) { y = 0; vy = Math.abs(vy); }
                 }
                 function onResize() {
                     wrap();
@@ -257,7 +259,7 @@
             sun.style.left = Math.random() * 100 + "vw";
             sun.style.transform = "translateY(-50%)";
             field.appendChild(moon);
-            startMoonToroidalDrift();
+            startMoonDrift();
             field.appendChild(sun);
         }
         if (document.querySelector(".main")) go();

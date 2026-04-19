@@ -2,17 +2,17 @@
 (function (global) {
     function escapeHtml(str) {
         if (str == null) return "";
-        var div = document.createElement("div");
+        let div = document.createElement("div");
         div.textContent = str;
         return div.innerHTML;
     }
 
     function prestigeTagStyle(prestigeLevel) {
-        var rainbow = ["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#4b0082", "#8f00ff"];
-        var lvl = Number(prestigeLevel) || 0;
+        let rainbow = ["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#4b0082", "#8f00ff"];
+        let lvl = Number(prestigeLevel) || 0;
         if (lvl <= 0) return "";
-        var count = Math.min(lvl, rainbow.length);
-        var stops = rainbow.slice(0, count);
+        let count = Math.min(lvl, rainbow.length);
+        let stops = rainbow.slice(0, count);
         if (stops.length === 1) {
             return ' style="color: ' + stops[0] + ';"';
         }
@@ -24,7 +24,7 @@
     }
 
     function journeyTagStyle(journeyLevel) {
-        var jl = Number(journeyLevel) || 0;
+        let jl = Number(journeyLevel) || 0;
         if (jl === 1) return ' style="color: #9665fc; font-weight: bold;"';
         if (jl === 2) return ' style="color: #f1d4fa; font-weight: bold;"';
         if (jl === 3) return ' style="color: #ff3db2; font-weight: bold;"';
@@ -33,16 +33,16 @@
     }
 
     function rosterNameHtml(name, isVip, journeyLevel, color, decoration, prestigeLevel) {
-        var n = String(name || "").trim().toLowerCase();
-        var roleTag =
+        let n = String(name || "").trim().toLowerCase();
+        let roleTag =
             n === "jolenta"
                 ? '<span class="message-owner">(OWNER) </span><span class="message-the-house">(THE HOUSE) </span><span class="message-the-archon">(THE ARCHON) </span>'
                 : n === "admin"
                   ? '<span class="message-admin">(ADMIN) </span>'
                   : "";
-        var jl = journeyLevel != null ? journeyLevel : 0;
-        var pl = prestigeLevel != null ? Number(prestigeLevel) : 0;
-        var journeyTag =
+        let jl = journeyLevel != null ? journeyLevel : 0;
+        let pl = prestigeLevel != null ? Number(prestigeLevel) : 0;
+        let journeyTag =
             jl === 1
                 ? '<span class="message-journey-1"' + journeyTagStyle(1) + '>(LVL 1 GAMBLER) </span>'
                 : jl === 2
@@ -54,7 +54,7 @@
                       : jl >= 5
                         ? '<span class="message-journey-5-plus">(AUTARCH) </span>'
                         : "";
-        var prestigeTag =
+        let prestigeTag =
             pl > 0
                 ? '<span class="message-prestige-tag"' +
                   prestigeTagStyle(pl) +
@@ -62,10 +62,10 @@
                   String(pl) +
                   ') </span>'
                 : "";
-        var masterGamblerTag =
+        let masterGamblerTag =
             jl >= 5 || pl > 0 ? '<span class="message-master-gambler">(MASTER GAMBLER) </span>' : "";
-        var nameText = n === "jolenta" ? "⋆.˚" + escapeHtml(name) : escapeHtml(name);
-        var displayName =
+        let nameText = n === "jolenta" ? "⋆.˚" + escapeHtml(name) : escapeHtml(name);
+        let displayName =
             n === "jolenta"
                 ? '<span class="message-name">' +
                   nameText +
@@ -77,10 +77,10 @@
         if (n === "jolenta") {
             decoration = "";
         }
-        var safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#000000";
-        var safeDecoration = escapeHtml(decoration);
-        var decoLead = "";
-        var decoTrail = "";
+        let safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#000000";
+        let safeDecoration = escapeHtml(decoration);
+        let decoLead = "";
+        let decoTrail = "";
         if (safeDecoration) {
             decoLead = '<span class="message-name-deco">' + safeDecoration + "</span>";
             decoTrail =
@@ -88,10 +88,10 @@
                 safeDecoration +
                 "</span>";
         }
-        /* Jolenta uses OWNER / THE HOUSE / THE ARCHON only — no stock (VIP) tag or name-color--vip */
-        var showVipChrome = isVip && n !== "jolenta";
-        var vipTag = showVipChrome ? '<span class="message-vip">(VIP) </span>' : "";
-        var nameColorClass = "name-color" + (showVipChrome ? " name-color--vip" : "");
+        
+        let showVipChrome = isVip && n !== "jolenta";
+        let vipTag = showVipChrome ? '<span class="message-vip">(VIP) </span>' : "";
+        let nameColorClass = "name-color" + (showVipChrome ? " name-color--vip" : "");
         return (
             vipTag +
             roleTag +

@@ -1,29 +1,29 @@
-var lastDisplayed = { name: "", artist: "" };
+let lastDisplayed = { name: "", artist: "" };
 /* When nothing is "now playing", Last.fm still returns the last scrobble; use its time to go idle after 15 min. */
-var IDLE_AFTER_SCROBBLE_MS = 15 * 60 * 1000;
+let IDLE_AFTER_SCROBBLE_MS = 15 * 60 * 1000;
 
-var getSetLastFM = function() {
+let getSetLastFM = function () {
   fetch("/api/lastfm")
-    .then(function(resp) {
+    .then(function (resp) {
       if (!resp.ok) throw new Error("lastfm proxy not ok");
       return resp.json();
     })
-    .then(function(resp) {
-      var tracks = resp.recenttracks.track;
+    .then(function (resp) {
+      let tracks = resp.recenttracks.track;
       if (!tracks) return;
       if (!Array.isArray(tracks)) tracks = [tracks];
       if (!tracks.length) return;
-      var recentTrack = tracks.find(function(t) { return t["@attr"] && t["@attr"].nowplaying === "true"; }) || tracks[0];
-      var isNowPlaying = recentTrack["@attr"] && recentTrack["@attr"].nowplaying === "true";
-      var name;
-      var artist;
+      let recentTrack = tracks.find(function (t) { return t["@attr"] && t["@attr"].nowplaying === "true"; }) || tracks[0];
+      let isNowPlaying = recentTrack["@attr"] && recentTrack["@attr"].nowplaying === "true";
+      let name;
+      let artist;
       if (isNowPlaying) {
         name = recentTrack.name;
         artist = (recentTrack.artist && recentTrack.artist["#text"]) || "";
       } else {
-        var utsRaw = recentTrack.date && recentTrack.date.uts;
-        var utsMs = utsRaw != null ? parseInt(String(utsRaw), 10) * 1000 : NaN;
-        var scrobbleStale = !isNaN(utsMs) && Date.now() - utsMs > IDLE_AFTER_SCROBBLE_MS;
+        let utsRaw = recentTrack.date && recentTrack.date.uts;
+        let utsMs = utsRaw != null ? parseInt(String(utsRaw), 10) * 1000 : NaN;
+        let scrobbleStale = !isNaN(utsMs) && Date.now() - utsMs > IDLE_AFTER_SCROBBLE_MS;
         if (scrobbleStale) {
           name = "alone with my thoughts";
           artist = "";
@@ -36,9 +36,9 @@ var getSetLastFM = function() {
       lastDisplayed.name = name;
       lastDisplayed.artist = artist;
 
-      var trackTitle = document.querySelector("#tracktitle");
-      var trackArtist = document.querySelector("#trackartist");
-      var trackArt = document.querySelector("#trackart");
+      let trackTitle = document.querySelector("#tracktitle");
+      let trackArtist = document.querySelector("#trackartist");
+      let trackArt = document.querySelector("#trackart");
 
       if (trackTitle) {
         trackTitle.textContent = name;
@@ -60,13 +60,13 @@ var getSetLastFM = function() {
         }
       }
     })
-    .catch(function() {
+    .catch(function () {
       if (lastDisplayed.name === "" && lastDisplayed.artist === "") return;
       lastDisplayed.name = "";
       lastDisplayed.artist = "";
-      var trackTitle = document.querySelector("#tracktitle");
-      var trackArtist = document.querySelector("#trackartist");
-      var trackArt = document.querySelector("#trackart");
+      let trackTitle = document.querySelector("#tracktitle");
+      let trackArtist = document.querySelector("#trackartist");
+      let trackArt = document.querySelector("#trackart");
       if (trackTitle) {
         trackTitle.textContent = "404 Not Found";
         trackTitle.setAttribute("title", "404 Not Found");
