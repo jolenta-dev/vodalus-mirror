@@ -43,6 +43,8 @@ export function initDraggableDiv(header, content, state = 'minimized') {
               verticalAlign: 'top',
           });
       }
+      // iframes have no intrinsic size, so keep them pinned to the legacy default
+      const isIframe = content instanceof HTMLIFrameElement;
       document.body.appendChild(draggableDiv);
   
       Object.assign(draggableDivHeaderText.style, {
@@ -58,8 +60,8 @@ export function initDraggableDiv(header, content, state = 'minimized') {
       Object.assign(draggableDiv.style, {
           position: 'absolute',
           zIndex: '9',
-          width: '512px',
-          height: '288px',
+          width: isIframe ? '512px' : 'auto',
+          height: isIframe ? '288px' : 'auto',
           backgroundColor: '#f1f1f1',
           textAlign: 'center',
           border: '1px solid #d3d3d3',
@@ -68,7 +70,8 @@ export function initDraggableDiv(header, content, state = 'minimized') {
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
-          maxWidth: 'calc(100vw - 200px)',
+          maxWidth: 'min(512px, calc(100vw - 200px))',
+          maxHeight: '288px',
       });
       Object.assign(draggableDivContent.style, {
           overflow: 'auto',

@@ -1,6 +1,7 @@
 /* Form chrome aligned with chat login/setup (scoped so sidebar controls stay untouched). */
 
-html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab) {
+html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab),
+html.site-form-chrome #password-modal button[type="button"] {
     background-color: white;
     border: 1px solid #000;
     color: black;
@@ -10,17 +11,20 @@ html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey
     box-sizing: border-box;
 }
 
-html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover {
+html.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover,
+html.site-form-chrome #password-modal button[type="button"]:hover {
     background-color: lightgray;
 }
 
-html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab) {
+html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab),
+html.site-dim--dim.site-form-chrome #password-modal button[type="button"] {
     background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
 }
 
-html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover {
+html.site-dim--dim.site-form-chrome .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover,
+html.site-dim--dim.site-form-chrome #password-modal button[type="button"]:hover {
     background-color: #dcc2f4;
 }
 
