@@ -289,6 +289,10 @@
 			let openConversationIds = ['general'];
 			let unreadConversationIds = new Set();
 			let lastReadMessageCount = {};
+			let oldestMessageId = null;
+			let isLoadingOlder = false;
+			let noMoreOlder = false;
+			const HISTORY_PAGE_SIZE = 150;
 			const draggableDivModule = import('/assets/javascript/draggable-div.js');
 			const openDraggableWindows = {};
 
@@ -628,13 +632,20 @@
 						if (type === 'history') {
 							const list = document.getElementById('message-list');
 							list.innerHTML = '';
-							data.forEach(({ name, message, date, vip, color, decoration, journey_level, prestige_level, selected_chat_tag, all_tags, kind }) => {
+							oldestMessageId = null;
+							noMoreOlder = false;
+							isLoadingOlder = false;
+							let _msgCount = 0;
+							data.forEach(({ id, name, message, date, vip, color, decoration, journey_level, prestige_level, selected_chat_tag, all_tags, kind }) => {
 								if (kind === 'announcement') {
 									addAnnouncementToList(name, message, date);
 									return;
 								}
-								addToList(name, message, date, vip, color, decoration, journey_level || 0, prestige_level || 0, selected_chat_tag || '', all_tags || []);
+								_msgCount++;
+								if (id != null && (oldestMessageId == null || id < oldestMessageId)) oldestMessageId = id;
+								addToList(name, message, date, vip, color, decoration, journey_level || 0, prestige_level || 0, selected_chat_tag || '', all_tags || [], id);
 							});
+							if (_msgCount < HISTORY_PAGE_SIZE) noMoreOlder = true;
 							const hid = currentConversationId;
 							unreadConversationIds.delete(hid);
 							persistUnreadState();
@@ -859,7 +870,7 @@
 				li.textContent = '[' + formatChatTimestampForDisplay(date) + '] ' + name + ': ' + message;
 				list.appendChild(li);
 			}
-			function addToList(name, message, date, isVip, color, decoration, journey_level = 0, prestige_level = 0, selected_chat_tag = '', all_tags = []) {
+			function addToList(name, message, date, isVip, color, decoration, journey_level = 0, prestige_level = 0, selected_chat_tag = '', all_tags = [], id) {
 				const list = document.getElementById('message-list');
 				const d = new Date(date);
 				const dayKey = d.toDateString();
@@ -875,10 +886,84 @@
 				var li = document.createElement('li');
 				li.className = 'chat-message-line';
 				li.dataset.date = dayKey;
+				if (id != null) li.dataset.messageId = id;
 				const namePart = rosterNameHtml(name, isVip, journey_level, color, decoration, prestige_level, selected_chat_tag, all_tags);
 				li.innerHTML = '<span class="message-date">[' + escapeHtml(formatChatTimestampForDisplay(date)) + ']</span> ' + namePart + ' : ' + escapeHtml(message);
 				list.appendChild(li);
 			};
+
+			function prependOlderMessages(items) {
+				const list = document.getElementById('message-list');
+				const prevTop = list.scrollTop;
+				const prevHeight = list.scrollHeight;
+				const frag = document.createDocumentFragment();
+				let lastDay = null;
+				items.forEach((item) => {
+					const d = new Date(item.date);
+					const dayKey = d.toDateString();
+					if (item.kind === 'announcement') {
+						const li = document.createElement('li');
+						li.className = 'date-separator';
+						if (!Number.isNaN(d.getTime())) li.dataset.date = dayKey;
+						li.textContent = '[' + formatChatTimestampForDisplay(item.date) + '] ' + item.name + ': ' + item.message;
+						frag.appendChild(li);
+						lastDay = dayKey;
+						return;
+					}
+					if (dayKey !== lastDay) {
+						const sep = document.createElement('li');
+						sep.className = 'date-separator';
+						sep.dataset.date = dayKey;
+						sep.textContent = d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+						frag.appendChild(sep);
+						lastDay = dayKey;
+					}
+					const li = document.createElement('li');
+					li.className = 'chat-message-line';
+					li.dataset.date = dayKey;
+					if (item.id != null) li.dataset.messageId = item.id;
+					const namePart = rosterNameHtml(item.name, item.vip, item.journey_level || 0, item.color, item.decoration, item.prestige_level || 0, item.selected_chat_tag || '', item.all_tags || []);
+					li.innerHTML = '<span class="message-date">[' + escapeHtml(formatChatTimestampForDisplay(item.date)) + ']</span> ' + namePart + ' : ' + escapeHtml(item.message);
+					frag.appendChild(li);
+				});
+				const firstChild = list.firstChild;
+				list.insertBefore(frag, firstChild);
+				if (firstChild && firstChild.nodeType === 1 && firstChild.classList && firstChild.classList.contains('date-separator') && firstChild.dataset.date === lastDay) {
+					firstChild.remove();
+				}
+				list.scrollTop = list.scrollHeight - prevHeight + prevTop;
+			}
+
+			function loadOlderMessages() {
+				if (isLoadingOlder || noMoreOlder || !oldestMessageId) return;
+				isLoadingOlder = true;
+				const conv = currentConversationId;
+				const beforeId = oldestMessageId;
+				fetch('/api/conversations/' + encodeURIComponent(conv) + '/messages?beforeId=' + encodeURIComponent(beforeId) + '&limit=' + HISTORY_PAGE_SIZE, { credentials: 'include' })
+					.then((r) => (r.ok ? r.json() : Promise.reject(new Error('failed'))))
+					.then((payload) => {
+						if (conv !== currentConversationId) return;
+						const arr = (payload && payload.messages) || [];
+						const anns = (payload && payload.announcements) || [];
+						if (!arr.length && !anns.length) { noMoreOlder = true; return; }
+						const items = arr.concat(anns).sort((a, b) => {
+							const at = new Date(a.date).getTime() || 0;
+							const bt = new Date(b.date).getTime() || 0;
+							return at - bt;
+						});
+						prependOlderMessages(items);
+						let newOldest = oldestMessageId;
+						arr.forEach((m) => { if (m.id != null && (newOldest == null || m.id < newOldest)) newOldest = m.id; });
+						oldestMessageId = newOldest;
+						if (arr.length < HISTORY_PAGE_SIZE) noMoreOlder = true;
+					})
+					.catch(() => { })
+					.finally(() => { isLoadingOlder = false; });
+			}
+
+			document.getElementById('message-list').addEventListener('scroll', (e) => {
+				if (e.target.scrollTop <= 80) loadOlderMessages();
+			});
 
 			// admin / owner: announcements + chat admin button
 			function isPrivilegedUser() {

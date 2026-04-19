@@ -479,6 +479,71 @@ app.get('/api/conversations', (req, res) => {
     res.json({ conversations });
 });
 
+app.get('/api/conversations/:conversationId/messages', (req, res) => {
+    const nickname = req.signedCookies.chat_sid || null;
+    const conversationId = req.params.conversationId;
+    if (!canAccessConversation(conversationId, nickname)) {
+        return res.status(403).json({ error: 'not authorized' });
+    }
+    const beforeId = Number(req.query.beforeId);
+    const limit = Math.min(500, Math.max(1, Number(req.query.limit) || 150));
+    if (!Number.isFinite(beforeId) || beforeId <= 0) {
+        return res.status(400).json({ error: 'beforeId required' });
+    }
+    const rows = chatdb.prepare(`
+        SELECT m.id AS id, m.name, m.message, m.date, COALESCE(p.vip, 0) AS vip,
+            COALESCE(m.color, p.color, '#000000') AS color,
+            COALESCE(m.decoration, p.decoration, '') AS decoration,
+            COALESCE(p.journey_level, 0) AS journey_level,
+            COALESCE(p.prestige_level, 0) AS prestige_level,
+            COALESCE(p.selected_chat_tag, '') AS selected_chat_tag,
+            m.kind
+        FROM messages m
+        LEFT JOIN protected_names p ON LOWER(p.name) = LOWER(m.name)
+        WHERE m.conversation_id = ?
+          AND m.kind != 'announcement'
+          AND m.id < ?
+        ORDER BY m.id DESC
+        LIMIT ?
+    `).all(conversationId, beforeId, limit);
+    const messages = rows.map((row) => ({
+        ...row,
+        all_tags: computeAvailableChatTagsForUser(row.name, !!row.vip, row.journey_level, row.prestige_level),
+        selected_chat_tag: resolveSelectedChatTag(row.name, !!row.vip, row.journey_level, row.prestige_level, row.selected_chat_tag)
+    })).sort((a, b) => {
+        const aTime = new Date(a.date).getTime() || 0;
+        const bTime = new Date(b.date).getTime() || 0;
+        return aTime - bTime;
+    });
+    const beforeRow = chatdb.prepare('SELECT date FROM messages WHERE id = ?').get(beforeId);
+    const beforeMs = beforeRow ? (new Date(beforeRow.date).getTime() || 0) : 0;
+    const lowerMs = rows.length === limit && messages.length
+        ? (new Date(messages[0].date).getTime() || 0)
+        : 0;
+    const convCreatedRow = chatdb.prepare('SELECT created_at FROM conversations WHERE id = ?').get(conversationId);
+    const convCreatedMs = convCreatedRow && convCreatedRow.created_at
+        ? (new Date(convCreatedRow.created_at).getTime() || 0)
+        : 0;
+    const annRows = chatdb.prepare(`
+        SELECT a.author AS name, a.message, a.date, 0 AS vip,
+            '#000000' AS color, '' AS decoration, 0 AS journey_level, 0 AS prestige_level,
+            'announcement' AS kind, NULL AS conversationId,
+            a.scope AS _scope
+        FROM announcements a
+        WHERE a.scope = 'global'
+            OR (a.scope = 'public' AND ? = 1)
+            OR (a.scope = 'here' AND a.conversation_id = ?)
+    `).all(isPublicAnnouncementTarget(conversationId) ? 1 : 0, conversationId);
+    const announcements = annRows.filter((row) => {
+        const ts = new Date(row.date).getTime() || 0;
+        if (beforeMs && ts >= beforeMs) return false;
+        if (ts < lowerMs) return false;
+        if (row._scope === 'here') return true;
+        return ts >= convCreatedMs;
+    }).map(({ _scope, ...rest }) => rest);
+    res.json({ messages, announcements });
+});
+
 app.post('/api/conversations/:conversationId/mark-read', (req, res) => {
     const nickname = req.signedCookies.chat_sid || null;
     if (!nickname) return res.status(401).json({ error: 'not logged in' });
@@ -1264,7 +1329,7 @@ wss.on('connection', (ws, request) => {
     }
 
     const historyMessages = chatdb.prepare(`
-        SELECT m.name, m.message, m.date, COALESCE(p.vip, 0) AS vip, 
+        SELECT m.id AS id, m.name, m.message, m.date, COALESCE(p.vip, 0) AS vip, 
             COALESCE(m.color, p.color, '#000000') AS color, 
             COALESCE(m.decoration, p.decoration, '') AS decoration,
             COALESCE(p.journey_level, 0) AS journey_level,
@@ -1276,6 +1341,8 @@ wss.on('connection', (ws, request) => {
         LEFT JOIN protected_names p ON LOWER(p.name) = LOWER(m.name)
         WHERE m.conversation_id = ?
           AND m.kind != 'announcement'
+        ORDER BY m.id DESC
+        LIMIT 150
     `).all(ws.conversationId);
     const convCreatedRow = chatdb.prepare('SELECT created_at FROM conversations WHERE id = ?').get(ws.conversationId);
     const convCreatedMs = convCreatedRow && convCreatedRow.created_at
@@ -1291,9 +1358,17 @@ wss.on('connection', (ws, request) => {
             OR (a.scope = 'public' AND ? = 1)
             OR (a.scope = 'here' AND a.conversation_id = ?)
     `).all(isPublicAnnouncementTarget(ws.conversationId) ? 1 : 0, ws.conversationId);
+    const oldestLoadedMessageMs = historyMessages.length === 150
+        ? historyMessages.reduce((acc, m) => {
+            const t = new Date(m.date).getTime() || 0;
+            return acc === 0 || t < acc ? t : acc;
+        }, 0)
+        : 0;
     const historyAnnouncements = announcementRows.filter((row) => {
+        const ts = new Date(row.date).getTime() || 0;
+        if (ts < oldestLoadedMessageMs) return false;
         if (row._scope === 'here') return true;
-        return (new Date(row.date).getTime() || 0) >= convCreatedMs;
+        return ts >= convCreatedMs;
     }).map(({ _scope, ...rest }) => rest);
     const history = historyMessages.map((row) => ({
         ...row,
