@@ -289,6 +289,35 @@
 			let openConversationIds = ['general'];
 			let unreadConversationIds = new Set();
 			let lastReadMessageCount = {};
+			const draggableDivModule = import('/assets/javascript/draggable-div.js');
+			const openDraggableWindows = {};
+
+			async function openDraggableModal(key, title, modalEl, hostEl) {
+				if (!modalEl || !hostEl) return null;
+				if (openDraggableWindows[key] && openDraggableWindows[key].isConnected) return openDraggableWindows[key];
+				const existing = new Set(Array.from(document.querySelectorAll('[id^="div-"]')).map((el) => el.id));
+				const mod = await draggableDivModule;
+				mod.initDraggableDiv(title, modalEl, 'maximized');
+				const created = Array.from(document.querySelectorAll('[id^="div-"]')).find((el) => !existing.has(el.id)) || null;
+				if (created) {
+					const closeBtn = created.querySelector('#draggable-div-close');
+					if (closeBtn) {
+						closeBtn.addEventListener('click', () => {
+							if (modalEl && hostEl && !hostEl.contains(modalEl)) hostEl.appendChild(modalEl);
+							openDraggableWindows[key] = null;
+						}, { once: true });
+					}
+					openDraggableWindows[key] = created;
+				}
+				return created;
+			}
+
+			function closeDraggableModal(key, modalEl, hostEl) {
+				const win = openDraggableWindows[key];
+				if (win && win.isConnected) win.remove();
+				openDraggableWindows[key] = null;
+				if (modalEl && hostEl && !hostEl.contains(modalEl)) hostEl.appendChild(modalEl);
+			}
 
 			function lastReadPersistKey() {
 				return 'vodalus.convene.lastReadPerConv:' + encodeURIComponent(nickname || '__anon__');
@@ -681,6 +710,7 @@
 			// overlay for password prompts during login / registration
 			function promptPassword(messageText) {
 				const overlay = document.getElementById('password-modal-overlay');
+				const modal = document.getElementById('password-modal');
 				const messageEl = document.getElementById('password-modal-message');
 				const input = document.getElementById('password-modal-input');
 				const revealCheckbox = document.getElementById('password-modal-reveal');
@@ -692,21 +722,17 @@
 					function finish(value) {
 						if (resolved) return;
 						resolved = true;
-						overlay.style.display = 'none';
+						closeDraggableModal('password-modal', modal, overlay);
 						input.value = '';
 						input.type = 'password';
 						if (revealCheckbox) revealCheckbox.checked = false;
 						document.removeEventListener('keydown', onEscape);
-						overlay.removeEventListener('click', onOverlayClick);
 						input.removeEventListener('keydown', onPasswordKeydown);
 						resolve(value);
 					}
 
 					function onEscape(e) {
 						if (e.key === 'Escape') finish(null);
-					}
-					function onOverlayClick(e) {
-						if (e.target === overlay) finish(null);
 					}
 
 					function onPasswordKeydown(e) {
@@ -729,11 +755,8 @@
 					okBtn.onclick = () => finish(input.value);
 					cancelBtn.onclick = () => finish(null);
 					document.addEventListener('keydown', onEscape);
-					overlay.addEventListener('click', onOverlayClick);
 					input.addEventListener('keydown', onPasswordKeydown);
-
-					overlay.style.display = 'block';
-					input.focus();
+					openDraggableModal('password-modal', 'password', modal, overlay).then(() => input.focus());
 
 				});
 			}
@@ -1051,7 +1074,12 @@
 					row.appendChild(document.createTextNode(' ' + (c.label || c.id)));
 					list.appendChild(row);
 				});
-				document.getElementById('chat-directory-modal-overlay').style.display = 'block';
+				openDraggableModal(
+					'chat-directory-modal',
+					'available chats',
+					document.getElementById('chat-directory-modal'),
+					document.getElementById('chat-directory-modal-overlay')
+				);
 			}
 
 			// one-time: hark!, chat admin (new room / members), directory buttons
@@ -1068,7 +1096,7 @@
 
 				announcementsBtn.addEventListener('click', () => {
 					if (!isPrivilegedUser()) return;
-					announcementOverlay.style.display = 'block';
+					openDraggableModal('new-announcement-modal', 'announcement', document.getElementById('new-announcement-modal'), announcementOverlay);
 					announcementInput.value = '';
 					announcementScope.value = 'global';
 					announcementInput.focus();
@@ -1078,7 +1106,7 @@
 					const message = announcementInput.value.trim();
 					if (!message) return;
 					ws.send(JSON.stringify({ name: nickname, message, password, conversationId: currentConversationId, mode: 'announcement', scope: announcementScope.value, sendToAllChats: false }));
-					announcementOverlay.style.display = 'none';
+					closeDraggableModal('new-announcement-modal', document.getElementById('new-announcement-modal'), announcementOverlay);
 				});
 				announcementInput.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter') {
@@ -1087,7 +1115,7 @@
 					}
 				});
 				announcementCancel.addEventListener('click', () => {
-					announcementOverlay.style.display = 'none';
+					closeDraggableModal('new-announcement-modal', document.getElementById('new-announcement-modal'), announcementOverlay);
 				});
 
 				const newChatBtn = document.getElementById('new-chat-btn');
@@ -1162,7 +1190,7 @@
 				newChatBtn.addEventListener('click', () => {
 					if (!isPrivilegedUser()) return;
 					setChatAdminTab('new');
-					newChatOverlay.style.display = 'block';
+					openDraggableModal('new-chat-modal', 'chat admin', document.getElementById('new-chat-modal'), newChatOverlay);
 					newChatInput.value = '';
 					newChatMembersInput.value = '';
 					chatEditMembersInput.value = '';
@@ -1193,7 +1221,7 @@
 							return payload;
 						})
 						.then((payload) => {
-							newChatOverlay.style.display = 'none';
+							closeDraggableModal('new-chat-modal', document.getElementById('new-chat-modal'), newChatOverlay);
 							return loadConversations().then(() => {
 								if (payload && payload.conversation && payload.conversation.id) switchConversation(payload.conversation.id);
 							});
@@ -1267,7 +1295,7 @@
 					}
 				});
 				newChatCancel.addEventListener('click', () => {
-					newChatOverlay.style.display = 'none';
+					closeDraggableModal('new-chat-modal', document.getElementById('new-chat-modal'), newChatOverlay);
 				});
 
 				const openChatDirectoryBtn = document.getElementById('open-chat-directory-btn');
@@ -1291,7 +1319,7 @@
 						document.removeEventListener('keydown', newDmEscapeHandler);
 						newDmEscapeHandler = null;
 					}
-					newDMOverlay.style.display = 'none';
+					closeDraggableModal('new-dm-modal', document.getElementById('new-dm-modal'), newDMOverlay);
 				}
 
 				function submitNewDm() {
@@ -1333,7 +1361,7 @@
 						document.removeEventListener('keydown', newDmEscapeHandler);
 						newDmEscapeHandler = null;
 					}
-					newDMOverlay.style.display = 'block';
+					openDraggableModal('new-dm-modal', 'direct message', document.getElementById('new-dm-modal'), newDMOverlay);
 					if (newDMInput) {
 						newDMInput.value = '';
 						newDMInput.focus();
@@ -1345,9 +1373,6 @@
 				});
 				newDMOK.addEventListener('click', () => submitNewDm());
 				newDMCancel.addEventListener('click', () => closeNewDmModal());
-				newDMOverlay.addEventListener('click', (e) => {
-					if (e.target === newDMOverlay) closeNewDmModal();
-				});
 				if (newDMInput) {
 					newDMInput.addEventListener('keydown', (e) => {
 						if (e.key === 'Enter') {
@@ -1363,7 +1388,7 @@
 				chatDirectoryOk.addEventListener('click', () => {
 					const selected = Array.from(document.querySelectorAll('#chat-directory-list input[type="checkbox"]:checked')).map((el) => el.value);
 					if (!selected.length) {
-						chatDirectoryOverlay.style.display = 'none';
+						closeDraggableModal('chat-directory-modal', document.getElementById('chat-directory-modal'), chatDirectoryOverlay);
 						return;
 					}
 					const prevCurrent = currentConversationId;
@@ -1379,7 +1404,7 @@
 					currentConversationId = nextCurrent;
 					renderConversationTabs();
 					persistChatTabState();
-					chatDirectoryOverlay.style.display = 'none';
+					closeDraggableModal('chat-directory-modal', document.getElementById('chat-directory-modal'), chatDirectoryOverlay);
 					if (prevCurrent !== currentConversationId && ws && ws.readyState <= 1) {
 						suppressReconnect = true;
 						ws.close();
@@ -1387,7 +1412,7 @@
 					if (prevCurrent !== currentConversationId) connect();
 				});
 				chatDirectoryCancel.addEventListener('click', () => {
-					chatDirectoryOverlay.style.display = 'none';
+					closeDraggableModal('chat-directory-modal', document.getElementById('chat-directory-modal'), chatDirectoryOverlay);
 				});
 
 				chatTagBtn.addEventListener('click', () => {
@@ -1402,7 +1427,7 @@
 							chatTagList.innerHTML = '';
 							if (!tags.length) {
 								chatTagList.textContent = 'No tags available.';
-								chatTagOverlay.style.display = 'block';
+								openDraggableModal('chat-tag-modal', 'chat tag', document.getElementById('chat-tag-modal'), chatTagOverlay);
 								return;
 							}
 							tags.forEach((tag, idx) => {
@@ -1420,14 +1445,14 @@
 								row.appendChild(fake);
 								chatTagList.appendChild(row);
 							});
-							chatTagOverlay.style.display = 'block';
+							openDraggableModal('chat-tag-modal', 'chat tag', document.getElementById('chat-tag-modal'), chatTagOverlay);
 						})
 						.catch((err) => alert(err.message || 'could not load tags'));
 				});
 				chatTagOk.addEventListener('click', () => {
 					const checked = document.querySelector('#chat-tag-list input[name="chat-tag-selection"]:checked');
 					if (!checked) {
-						chatTagOverlay.style.display = 'none';
+						closeDraggableModal('chat-tag-modal', document.getElementById('chat-tag-modal'), chatTagOverlay);
 						return;
 					}
 					fetch('/api/chat-tag-preference', {
@@ -1442,7 +1467,7 @@
 							return payload;
 						})
 						.then(() => {
-							chatTagOverlay.style.display = 'none';
+							closeDraggableModal('chat-tag-modal', document.getElementById('chat-tag-modal'), chatTagOverlay);
 							refreshSidebarMemberList();
 							if (ws && ws.readyState <= 1) {
 								suppressReconnect = true;
@@ -1453,7 +1478,7 @@
 						.catch((err) => alert(err.message || 'failed to save chat tag'));
 				});
 				chatTagCancel.addEventListener('click', () => {
-					chatTagOverlay.style.display = 'none';
+					closeDraggableModal('chat-tag-modal', document.getElementById('chat-tag-modal'), chatTagOverlay);
 				});
 			}
 		</script>

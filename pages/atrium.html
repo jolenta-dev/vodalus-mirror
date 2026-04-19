@@ -65,7 +65,35 @@
     let atriumClockHandle = null;
     let atriumClockLoading = null;
     let atriumClockSeq = 0;
+    const draggableDivModule = import('/assets/javascript/draggable-div.js');
+    const openDraggableWindows = {};
 
+    async function openDraggableModal(key, title, modalEl, hostEl) {
+        if (!modalEl || !hostEl) return null;
+        if (openDraggableWindows[key] && openDraggableWindows[key].isConnected) return openDraggableWindows[key];
+        const existing = new Set(Array.from(document.querySelectorAll('[id^="div-"]')).map((el) => el.id));
+        const mod = await draggableDivModule;
+        mod.initDraggableDiv(title, modalEl, 'maximized');
+        const created = Array.from(document.querySelectorAll('[id^="div-"]')).find((el) => !existing.has(el.id)) || null;
+        if (created) {
+            const closeBtn = created.querySelector('#draggable-div-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    if (modalEl && hostEl && !hostEl.contains(modalEl)) hostEl.appendChild(modalEl);
+                    openDraggableWindows[key] = null;
+                }, { once: true });
+            }
+            openDraggableWindows[key] = created;
+        }
+        return created;
+    }
+
+    function closeDraggableModal(key, modalEl, hostEl) {
+        const win = openDraggableWindows[key];
+        if (win && win.isConnected) win.remove();
+        openDraggableWindows[key] = null;
+        if (modalEl && hostEl && !hostEl.contains(modalEl)) hostEl.appendChild(modalEl);
+    }
     function syncAtriumClockCursor() {
         const entrance = document.getElementById('entrance');
         if (!entrance) return;
@@ -105,6 +133,7 @@
 
     function promptPassword(messageText) {
         const overlay = document.getElementById('password-modal-overlay');
+        const modal = document.getElementById('password-modal');
         const messageEl = document.getElementById('password-modal-message');
         const input = document.getElementById('password-modal-input');
         const revealCheckbox = document.getElementById('password-modal-reveal');
@@ -116,21 +145,17 @@
             function finish(value) {
                 if (resolved) return;
                 resolved = true;
-                overlay.style.display = 'none';
+                closeDraggableModal('password-modal', modal, overlay);
                 input.value = '';
                 input.type = 'password';
                 if (revealCheckbox) revealCheckbox.checked = false;
                 document.removeEventListener('keydown', onEscape);
-                overlay.removeEventListener('click', onOverlayClick);
                 input.removeEventListener('keydown', onPasswordKeydown);
                 resolve(value);
             }
 
             function onEscape(e) {
                 if (e.key === 'Escape') finish(null);
-            }
-            function onOverlayClick(e) {
-                if (e.target === overlay) finish(null);
             }
             function onPasswordKeydown(e) {
                 if (e.key === 'Enter') {
@@ -152,11 +177,8 @@
             okBtn.onclick = () => finish(input.value);
             cancelBtn.onclick = () => finish(null);
             document.addEventListener('keydown', onEscape);
-            overlay.addEventListener('click', onOverlayClick);
             input.addEventListener('keydown', onPasswordKeydown);
-
-            overlay.style.display = 'block';
-            input.focus();
+            openDraggableModal('password-modal', 'password', modal, overlay).then(() => input.focus());
 
         });
     }
@@ -371,7 +393,7 @@
         const data = await response.json().catch(() => ({}));
         if (data.success) {
             alert('Colors and decorations submitted. Welcome to Autarchy.');
-            document.getElementById('password-modal-overlay').style.display = 'none';
+            closeDraggableModal('password-modal', document.getElementById('password-modal'), document.getElementById('password-modal-overlay'));
             document.getElementById('colors-decorations').style.display = 'none';
             document.getElementById('atrium-finished').style.display = 'block';
         } else {

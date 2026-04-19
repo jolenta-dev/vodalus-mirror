@@ -204,7 +204,7 @@
             moon.style.position = "fixed";
             var moonEw = 120;
             var moonEh = 120;
-            function startMoonToroidalDrift() {
+            function startMoonToroidalDrift() { // TODO: just make this bounce instead
                 var last = performance.now();
                 var angle = Math.random() * Math.PI * 2;
                 var spd = 1 + Math.random() * 12;

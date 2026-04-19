@@ -1026,9 +1026,10 @@ html.site-dim--dim #new-announcement-modal,
 html.site-dim--dim #chat-directory-modal,
 html.site-dim--dim #chat-tag-modal,
 html.site-dim--dim #new-dm-modal {
-    background: #9a7cb6 !important;
+    background: #1a0033 !important;
     border-color: aliceblue !important;
     color: aliceblue !important;
+    position: relative;
 }
 
 html.site-dim--dim #password-modal input[type="password"],

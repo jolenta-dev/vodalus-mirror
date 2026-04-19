@@ -151,6 +151,7 @@ html.site-dim--dim #password-modal {
     background: #9a7cb6 !important;
     border-color: aliceblue !important;
     color: aliceblue !important;
+    position: relative;
 }
 
 html.site-dim--dim #password-modal input[type="password"],
