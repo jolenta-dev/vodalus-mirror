@@ -187,6 +187,84 @@
         else go();
     }
 
+    function placeMoonAndSun() {
+        if (
+            document.documentElement.classList.contains("page-embed") ||
+            document.documentElement.classList.contains("chat-embed")
+        ) {
+            return;
+        }
+        function go() {
+            var field = document.getElementById("starfield");
+            if (!field) return;
+            var moon = document.createElement("div");
+            moon.className = "moon";
+            moon.setAttribute("aria-hidden", "true");
+            moon.innerHTML = "<img src='/assets/images/moon.svg' alt='moon' width='120px' height='120px'>";
+            moon.style.position = "fixed";
+            var moonEw = 120;
+            var moonEh = 120;
+            function startMoonToroidalDrift() {
+                var last = performance.now();
+                var angle = Math.random() * Math.PI * 2;
+                var spd = 1 + Math.random() * 12;
+                var vx = Math.cos(angle) * spd;
+                var vy = Math.sin(angle) * spd * 0.5;
+                var w = window.innerWidth;
+                var h = window.innerHeight;
+                var x = Math.random() * Math.max(1, w - moonEw);
+                var y = Math.random() * Math.max(1, h - moonEh);
+                moon.style.left = x + "px";
+                moon.style.top = y + "px";
+                function wrap() {
+                    w = window.innerWidth;
+                    h = window.innerHeight;
+                    while (x >= w) x -= w;
+                    while (x + moonEw <= 0) x += w;
+                    while (y >= h) y -= h;
+                    while (y + moonEh <= 0) y += h;
+                }
+                function onResize() {
+                    wrap();
+                    moon.style.left = x + "px";
+                    moon.style.top = y + "px";
+                }
+                function tick(now) {
+                    var dt = Math.min(0.05, (now - last) / 1000);
+                    last = now;
+                    x += vx * dt;
+                    y += vy * dt;
+                    wrap();
+                    moon.style.left = x + "px";
+                    moon.style.top = y + "px";
+                    requestAnimationFrame(tick);
+                }
+                window.addEventListener("resize", onResize);
+                requestAnimationFrame(tick);
+            }
+
+            var sun = document.createElement("div");
+            sun.className = "sun";
+            sun.setAttribute("aria-hidden", "true");
+            sun.innerHTML = "";
+            sun.style.borderRadius = "50%";
+            sun.style.width = "40px";
+            sun.style.height = "40px";
+            sun.style.backgroundColor = "red";
+            sun.style.position = "fixed";
+            sun.style.boxShadow = "0px 0px 10px red";
+            sun.style.top = Math.random() * 100 + "vh";
+            sun.style.left = Math.random() * 100 + "vw";
+            sun.style.transform = "translateY(-50%)";
+            field.appendChild(moon);
+            startMoonToroidalDrift();
+            field.appendChild(sun);
+        }
+        if (document.querySelector(".main")) go();
+        else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go);
+        else go();
+    }
+
     function runFooter() {
         var el = document.querySelector(".status[data-src]");
         function refreshStatusSnippet() {
@@ -257,16 +335,19 @@
                 loadNowPlaying();
                 runFooter();
                 createStars();
+                placeMoonAndSun();
             })
             .catch(function () {
                 setupMobileSidebarToggle();
                 runFooter();
                 createStars();
+                placeMoonAndSun();
             });
         return;
     }
 
     createStars();
+    placeMoonAndSun();
     setupMobileSidebarToggle();
     loadNowPlaying();
     runFooter();

@@ -316,6 +316,7 @@ html.site-dim--dim .main {
     margin-left: 180px;
     padding: 0px 0px;
     position: relative;
+    isolation: isolate;
 }
 
 #starfield {
@@ -323,6 +324,7 @@ html.site-dim--dim .main {
     inset: 0;
     overflow: hidden;
     pointer-events: none;
+    z-index: -1;
 }
 
 /* sidebar toggle (hidden desktop) */
