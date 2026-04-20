@@ -179,6 +179,7 @@ export function initDraggableDiv(header, content, state = 'minimized') {
             }
             pos3 = e.clientX;
             pos4 = e.clientY;
+            if (isIframe) content.style.pointerEvents = 'none';
             document.onmouseup = closeDragElement;
             document.onmousemove = elementDrag;
         }
@@ -198,6 +199,7 @@ export function initDraggableDiv(header, content, state = 'minimized') {
         function closeDragElement() {
             document.onmouseup = null;
             document.onmousemove = null;
+            if (isIframe) content.style.pointerEvents = '';
         }
 
         function toggleMinimize() {
@@ -288,6 +290,7 @@ export function initDraggableDiv(header, content, state = 'minimized') {
             let startW = element.offsetWidth;
             let startH = element.offsetHeight;
             element.style.transition = '';
+            if (isIframe) content.style.pointerEvents = 'none';
             function onMove(ev) {
                 ev.preventDefault();
                 element.style.width = Math.max(220, startW + ev.clientX - startX) + 'px';
@@ -296,6 +299,7 @@ export function initDraggableDiv(header, content, state = 'minimized') {
             function onUp() {
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
+                if (isIframe) content.style.pointerEvents = '';
             }
             document.addEventListener('mousemove', onMove);
             document.addEventListener('mouseup', onUp);
