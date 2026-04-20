@@ -70,8 +70,8 @@ export function initDraggableDiv(header, content, state = 'minimized') {
         display: 'flex',
         flexDirection: 'column',
         boxSizing: 'border-box',
-        maxWidth: 'min(512px, calc(100vw - 200px))',
-        maxHeight: '288px',
+        maxWidth: isIframe ? 'calc(100vw - 16px)' : 'min(512px, calc(100vw - 200px))',
+        maxHeight: isIframe ? 'calc(100vh - 16px)' : '288px',
     });
     Object.assign(draggableDivContent.style, {
         overflow: 'auto',
