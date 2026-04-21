@@ -151,6 +151,26 @@ app.get('/api/lastfm', (req, res) => {
   fetch(url).then(r => r.json()).then(data => res.json(data)).catch(() => res.status(500).json({ error: 'Last.fm unavailable' }));
 });
 
+// one shared quote per utc calendar day, pulled from botns.txt
+const botnsPath = path.join(__dirname, '..', 'assets', 'other', 'botns.txt');
+let cachedDailyQuote = { date: '', quote: '' };
+function getDailyQuote() {
+    const today = new Date().toISOString().split('T')[0];
+    if (cachedDailyQuote.date !== today) {
+        const quotes = fs.readFileSync(botnsPath, 'utf8').split('\n').map(s => s.trim()).filter(Boolean);
+        const quote = quotes.length ? quotes[Math.floor(Math.random() * quotes.length)] : '';
+        cachedDailyQuote = { date: today, quote };
+    }
+    return cachedDailyQuote;
+}
+app.get('/api/daily-quote', (req, res) => {
+    try {
+        res.json(getDailyQuote());
+    } catch (e) {
+        res.status(500).json({ error: 'failed to load daily quote' });
+    }
+});
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'chat.html')));
 
 // stuff for Katharine

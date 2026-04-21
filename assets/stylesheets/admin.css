@@ -1,3 +1,4 @@
+/* base boxes and tab containers -------------------------------------------------------------------------- */
 .box {
     width: 100%;
     height: 100%;
@@ -8,14 +9,8 @@
     box-sizing: border-box;
 }
 
-#sql-db-input {
-    width: 80%;
-    box-sizing: border-box;
-}
-
-#admin-dashboard-tabs {
-    width: 100%;
-    margin: 0 0 0 0;
+.tabcontent {
+    display: none;
 }
 
 .admin-dashboard-tabs {
@@ -25,6 +20,7 @@
     width: 100%;
 }
 
+/* tab links ----------------------------------------------------------------------------------------------- */
 .tablinks {
     flex: 1;
     padding: 0.5rem 1rem;
@@ -51,104 +47,7 @@
     z-index: 1;
 }
 
-.tabcontent {
-    display: none;
-}
-
-html.site-dim--dim .tablinks {
-    background: #5a5a5a;
-    border-color: #333;
-    color: #000000;
-}
-
-html.site-dim--dim .tablinks:hover {
-    background: #6a6a6a;
-}
-
-html.site-dim--dim .tablinks.active {
-    background: #737373;
-    font-weight: bold;
-}
-
-html.site-dim--dim.admin-page .box {
-    background-color: #9a7cb6;
-    border-color: aliceblue;
-}
-
-#sql-table-radios {
-    margin: 10px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
-
-#sql-table-radios input[type="radio"] {
-    margin-right: 5px;
-}
-
-#sql-table-radios label {
-    margin-right: 15px;
-    cursor: pointer;
-}
-
-#sql-db-output table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 10px 0;
-    font-size: 0.9em;
-}
-
-#sql-db-output th {
-    background: #333;
-    color: white;
-    padding: 8px;
-    text-align: left;
-}
-
-#sql-db-output td {
-    padding: 8px;
-    border: 1px solid #ddd;
-}
-
-#sql-db-output tbody tr:nth-child(even) {
-    background-color: #edebeb;
-}
-
-html.site-dim--dim #sql-db-output tbody tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.045);
-}
-
-html.site-dim--dim #sql-db-output tbody tr:nth-child(odd) {
-    background-color: rgba(0, 0, 0, 0.08);
-}
-
-#sql-db-output h4 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-#status-output {
-    margin-top: 10px;
-    padding: 10px;
-    font-weight: bold;
-}
-
-.chat-admin-public-option {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    width: fit-content;
-    max-width: 100%;
-}
-
-.chat-admin-public-option input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-    flex-shrink: 0;
-}
-
+/* chat admin controls ------------------------------------------------------------------------------------- */
 .chat-admin-tabs {
     display: flex;
     gap: 0.25rem;
@@ -173,9 +72,20 @@ html.site-dim--dim #sql-db-output tbody tr:nth-child(odd) {
     margin-bottom: 0.75rem;
 }
 
-#chat-admin-members-context {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.95rem;
+.chat-admin-public-option {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.chat-admin-public-option input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    flex-shrink: 0;
 }
 
 .chat-admin-members-label {
@@ -204,4 +114,102 @@ html.site-dim--dim #sql-db-output tbody tr:nth-child(odd) {
 
 .chat-admin-members-empty {
     color: #555;
+}
+
+/* dim theme class overrides ------------------------------------------------------------------------------- */
+html.site-dim--dim .tablinks {
+    background: #5a5a5a;
+    border-color: #333;
+    color: #000000;
+}
+
+html.site-dim--dim .tablinks:hover {
+    background: #6a6a6a;
+}
+
+html.site-dim--dim .tablinks.active {
+    background: #737373;
+    font-weight: bold;
+}
+
+html.site-dim--dim.admin-page .box {
+    background-color: #9a7cb6;
+    border-color: aliceblue;
+}
+
+/* id targeted single elements ----------------------------------------------------------------------------- */
+#admin-dashboard-tabs {
+    width: 100%;
+    margin: 0 0 0 0;
+}
+
+#sql-db-input {
+    width: 80%;
+    box-sizing: border-box;
+}
+
+#status-output {
+    margin-top: 10px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+#chat-admin-members-context {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+/* sql table radios ---------------------------------------------------------------------------------------- */
+#sql-table-radios {
+    margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+#sql-table-radios label {
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+#sql-table-radios input[type="radio"] {
+    margin-right: 5px;
+}
+
+/* sql db output ------------------------------------------------------------------------------------------- */
+#sql-db-output h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#sql-db-output table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+#sql-db-output th {
+    background: #333;
+    color: white;
+    padding: 8px;
+    text-align: left;
+}
+
+#sql-db-output td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+#sql-db-output tbody tr:nth-child(even) {
+    background-color: #edebeb;
+}
+
+/* dim theme id overrides ---------------------------------------------------------------------------------- */
+html.site-dim--dim #sql-db-output tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
+html.site-dim--dim #sql-db-output tbody tr:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.08);
 }

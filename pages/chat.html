@@ -253,8 +253,8 @@
 						safeDecoration +
 						'</span>';
 				}
-				const showVipChrome = isVip && n !== 'jolenta';
-				const nameColorClass = 'name-color' + (showVipChrome ? ' name-color--vip' : '');
+				const showVipColors = isVip && n !== 'jolenta';
+				const nameColorClass = 'name-color' + (showVipColors ? ' name-color--vip' : '');
 				return roleTag + '<span class="' + nameColorClass + '" style="color: ' + safeColor + ';">' + tagInsideNameColor + decoLead + '<span class="chat-name-hover">' + displayName + '<span class="chat-name-hover-box">' + tooltipHtml + '</span></span>' + decoTrail + '</span>';
 			}
 

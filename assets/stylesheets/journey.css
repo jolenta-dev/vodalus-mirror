@@ -1,4 +1,4 @@
-/* Split layout: journey beats above viewport midline; title + CTA below */
+/* split layout: beats above viewport midline; title + cta below ----------------------------------- */
 .journey-layout {
     display: flex;
     flex-direction: column;
@@ -17,6 +17,37 @@
     min-height: 0;
 }
 
+.journey-layout__midline {
+    flex-shrink: 0;
+    height: 1px;
+    width: min(90%, 36rem);
+    margin: 0 auto;
+    background: currentColor;
+    opacity: 0.3;
+}
+
+.journey-layout__below {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1rem 2rem;
+    min-height: 0;
+    /* shared scale: h1 = 100%, button = 70% */
+    font-size: clamp(1.35rem, 4.2vw, 2.1rem);
+}
+
+.journey-layout__below .journey-title {
+    margin: 0;
+    text-align: center;
+    font-size: 1em;
+    font-weight: inherit;
+    line-height: 1.25;
+}
+
+/* above-midline text ------------------------------------------------------------------------------ */
 .journey-subtitle {
     margin: 0;
     align-self: center;
@@ -46,6 +77,7 @@
     display: none;
 }
 
+/* beats list -------------------------------------------------------------------------------------- */
 #journey-list,
 #yesod-journey-list {
     list-style: none;
@@ -54,7 +86,6 @@
     width: 90%;
     max-width: 36rem;
     text-align: center;
-    /* Fill the upper panel and scroll when beats stack up (margin-top: auto broke flex shrink) */
     flex: 1 1 0;
     min-height: 0;
     overflow-x: hidden;
@@ -74,37 +105,7 @@
     word-break: break-word;
 }
 
-.journey-layout__midline {
-    flex-shrink: 0;
-    height: 1px;
-    width: min(90%, 36rem);
-    margin: 0 auto;
-    background: currentColor;
-    opacity: 0.3;
-}
-
-.journey-layout__below {
-    flex: 1 1 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.25rem 1rem 2rem;
-    min-height: 0;
-    /* Shared scale: h1 = 100%, button = 70% */
-    font-size: clamp(1.35rem, 4.2vw, 2.1rem);
-}
-
-.journey-layout__below .journey-title {
-    margin: 0;
-    text-align: center;
-    font-size: 1em;
-    font-weight: inherit;
-    line-height: 1.25;
-}
-
-/* Primary actions — match Atrium of Time / site-form-chrome buttons */
+/* primary actions — match atrium of time / site-form buttons -------------------------------------- */
 .main .journey-btn {
     display: inline-block;
     font-size: clamp(1.1rem, 2.8vw, 1.35rem);
@@ -122,19 +123,9 @@
     box-sizing: border-box;
 }
 
-html.site-dim--dim .main .journey-btn {
-    background-color: #a387be;
-    border-color: aliceblue;
-    color: aliceblue;
-}
-
 .main .journey-btn:hover {
     background-color: #d3d3d3;
     color: #000;
-}
-
-html.site-dim--dim .main .journey-btn:hover {
-    background-color: #dcc2f4;
 }
 
 .main .journey-btn:disabled {
@@ -142,11 +133,13 @@ html.site-dim--dim .main .journey-btn:hover {
     opacity: 0.85;
 }
 
-html.site-dim--dim .journey-layout__midline {
-    opacity: 0.45;
+.main .journey-btn.journey-btn--small {
+    font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+    padding: 0.45em 1em;
+    margin-top: 0.35rem;
 }
 
-/* Bottom tabs — match chat `.chat-tabs` / `.chat-tab` (conversation strip) */
+/* bottom tabs — match chat .chat-tabs / .chat-tab ------------------------------------------------- */
 .journey-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -195,28 +188,7 @@ html.site-dim--dim .journey-layout__midline {
     z-index: 1;
 }
 
-html.site-dim--dim .journey-tabs {
-    background-color: #1a0033;
-    border-color: aliceblue;
-}
-
-html.site-dim--dim .journey-tab {
-    border-right-color: #9a7cb6;
-    color: aliceblue;
-}
-
-html.site-dim--dim .journey-tab:hover {
-    background-color: #dcc2f4;
-}
-
-html.site-dim--dim .journey-tab--active {
-    background-color: #9a7cb6;
-}
-
-html.site-dim--dim .journey-tab:focus-visible {
-    outline-color: #222;
-}
-
+/* gate message ------------------------------------------------------------------------------------ */
 .journey-gate-msg {
     margin: 0;
     max-width: min(90%, 36rem);
@@ -230,6 +202,7 @@ html.site-dim--dim .journey-tab:focus-visible {
     display: none !important;
 }
 
+/* login panel ------------------------------------------------------------------------------------- */
 .journey-login-panel {
     display: flex;
     flex-direction: column;
@@ -261,14 +234,45 @@ html.site-dim--dim .journey-tab:focus-visible {
     border: 1px solid #000;
 }
 
-html.site-dim--dim .journey-login-field {
-    background-color: var(--site-dim-chat-panel, #0f001e);
+/* dark mode overrides ----------------------------------------------------------------------------- */
+html.site-dim--dim .journey-layout__midline {
+    opacity: 0.45;
+}
+
+html.site-dim--dim .main .journey-btn {
+    background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
 }
 
-.main .journey-btn.journey-btn--small {
-    font-size: clamp(0.95rem, 2.4vw, 1.1rem);
-    padding: 0.45em 1em;
-    margin-top: 0.35rem;
+html.site-dim--dim .main .journey-btn:hover {
+    background-color: #dcc2f4;
+}
+
+html.site-dim--dim .journey-tabs {
+    background-color: #1a0033;
+    border-color: aliceblue;
+}
+
+html.site-dim--dim .journey-tab {
+    border-right-color: #9a7cb6;
+    color: aliceblue;
+}
+
+html.site-dim--dim .journey-tab:hover {
+    background-color: #dcc2f4;
+}
+
+html.site-dim--dim .journey-tab--active {
+    background-color: #9a7cb6;
+}
+
+html.site-dim--dim .journey-tab:focus-visible {
+    outline-color: #222;
+}
+
+html.site-dim--dim .journey-login-field {
+    background-color: var(--site-dim-chat-panel, #0f001e);
+    border-color: aliceblue;
+    color: aliceblue;
 }

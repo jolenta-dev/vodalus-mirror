@@ -1,4 +1,4 @@
-/* Center atrium page sections similar to journey layout */
+/* section layout ---------------------------------------------------------------------------------- */
 .main #entrance,
 .main #atrium,
 .main #corridors,
@@ -13,7 +13,7 @@
     display: inline-block;
 }
 
-/* Keep form controls large and centered */
+/* form controls ----------------------------------------------------------------------------------- */
 .main #atrium input,
 .main #corridors input,
 .main #colors-decorations input {
@@ -23,6 +23,7 @@
     box-sizing: border-box;
 }
 
+/* primary buttons --------------------------------------------------------------------------------- */
 .main #enter-btn,
 .main #board-btn,
 .main #submit-btn,
@@ -53,6 +54,7 @@
     z-index: 250;
 }
 
+/* light mode button hover ------------------------------------------------------------------------- */
 html:not(.site-dim--dim) .main #enter-btn:hover,
 html:not(.site-dim--dim) .main #board-btn:hover,
 html:not(.site-dim--dim) .main #submit-btn:hover,
@@ -62,8 +64,8 @@ html:not(.site-dim--dim) .main #submit-colors-decorations-btn:hover {
     color: #000;
 }
 
+/* mobile overrides -------------------------------------------------------------------------------- */
 @media screen and (max-width: 600px) {
-
     .main #entrance,
     .main #atrium,
     .main #corridors,

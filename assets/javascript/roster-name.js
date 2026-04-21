@@ -89,9 +89,9 @@
                 "</span>";
         }
         
-        let showVipChrome = isVip && n !== "jolenta";
-        let vipTag = showVipChrome ? '<span class="message-vip">(VIP) </span>' : "";
-        let nameColorClass = "name-color" + (showVipChrome ? " name-color--vip" : "");
+        let showVipColors = isVip && n !== "jolenta";
+        let vipTag = showVipColors ? '<span class="message-vip">(VIP) </span>' : "";
+        let nameColorClass = "name-color" + (showVipColors ? " name-color--vip" : "");
         return (
             vipTag +
             roleTag +

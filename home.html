@@ -17,6 +17,19 @@
     <h1>"I sent my men to fetch the headsman, I perceive they succeeded."</h1>
     <h2>This month's theme: </h2>
     <div w3-include-html="/assets/html/theme-april26.html"></div>
+    <div id="daily-quote">
+        <h2 id="daily-quote-heading">Book of the New Sun Quote of the Day:</h2>
+        <i><h3 id="daily-quote-text"></h3></i>
+    </div>
+    <script>
+        fetch('/api/daily-quote')
+            .then((r) => (r.ok ? r.json() : Promise.reject()))
+            .then((data) => {
+                const dailyQuoteText = document.getElementById('daily-quote-text');
+                dailyQuoteText.textContent = data.quote;
+            })
+            .catch(() => { });
+    </script>
     <div class="gambling-leaderboard">
         <h2 style="text-align: left;">Gambling Leaderboard</h2>
         <div class="gambling-leaderboard-table-wrap">
