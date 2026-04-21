@@ -1,15 +1,15 @@
 (function () {
-	var mouseX = 0;
-	var mouseY = 0;
-	var instances = [];
+	let mouseX = 0;
+	let mouseY = 0;
+	let instances = [];
 
 	function tick() {
-		for (var i = 0; i < instances.length; i++) {
-			var s = instances[i];
+		for (let i = 0; i < instances.length; i++) {
+			let s = instances[i];
 			if (!s.following) continue;
-			var el = s.el;
-			var dcx = mouseX - s.anchorCx;
-			var dcy = mouseY - s.anchorCy;
+			let el = s.el;
+			let dcx = mouseX - s.anchorCx;
+			let dcy = mouseY - s.anchorCy;
 			dcx = Math.max(-s.maxDx, Math.min(s.maxDx, dcx));
 			dcy = Math.max(-s.maxDy, Math.min(s.maxDy, dcy));
 			s.curTx = dcx;
@@ -57,7 +57,7 @@
 	});
 
 	function attach(el) {
-		var s = {
+		let s = {
 			el: el,
 			following: false,
 			anchorCx: 0,
@@ -72,7 +72,7 @@
 		el.addEventListener("mouseenter", function (e) {
 			mouseX = e.clientX;
 			mouseY = e.clientY;
-			var r = el.getBoundingClientRect();
+			let r = el.getBoundingClientRect();
 			s.anchorCx = r.left + r.width / 2;
 			s.anchorCy = r.top + r.height / 2;
 			s.maxDx = el.offsetWidth * 0.1;

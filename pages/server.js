@@ -913,7 +913,7 @@ app.post('/api/register', async (req, res) => {
     const exists = chatdb.prepare('SELECT name FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
     if (exists) return res.status(409).json({ error: 'name already claimed. to reclaim, contact jolenta' });
     const hashed = await bcrypt.hash(password, 10);
-    chatdb.prepare('INSERT INTO protected_names (name, password) VALUES (?, ?)').run(name, hashed);
+    chatdb.prepare("INSERT INTO protected_names (name, password, color, decoration) VALUES (?, ?, '#000000', '')").run(name, hashed);
     res.json({ success: true });
 });
 

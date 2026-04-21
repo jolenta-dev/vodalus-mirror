@@ -407,6 +407,7 @@ html.site-dim--dim #input-message {
     border-color: aliceblue;
     color: aliceblue;
     border-radius: 5px 0px 0px 5px;
+    cursor: beam;
 }
 
 html.site-dim--dim #setup #input-name {

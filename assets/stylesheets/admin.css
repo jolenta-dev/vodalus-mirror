@@ -110,8 +110,16 @@ html.site-dim--dim.admin-page .box {
     border: 1px solid #ddd;
 }
 
-#sql-db-output tr:nth-child(even) {
-    background-color: #f9f9f9;
+#sql-db-output tbody tr:nth-child(even) {
+    background-color: #edebeb;
+}
+
+html.site-dim--dim #sql-db-output tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
+html.site-dim--dim #sql-db-output tbody tr:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.08);
 }
 
 #sql-db-output h4 {

@@ -401,7 +401,7 @@
 			function persistUnreadState() {
 				try {
 					localStorage.setItem(unreadPersistKey(), JSON.stringify([...unreadConversationIds]));
-					if (window.vodalusApplyConveneNavUnreadMarker) window.vodalusApplyConveneNavUnreadMarker();
+					if (window.applyConveneNavUnreadMarker) window.applyConveneNavUnreadMarker();
 				} catch (e) { /* quota / private mode */ }
 			}
 

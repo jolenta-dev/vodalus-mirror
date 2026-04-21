@@ -1,17 +1,18 @@
 (function () {
-    var unreadRefreshInFlight = false;
-    var unreadWatchersBound = false;
+    // unread trackers for tab headers, window headers, and sidebar --------------------------------------------
+    let unreadRefreshInFlight = false;
+    let unreadWatchersBound = false;
 
     function conveneUnreadSuffix(hasUnread) {
         return hasUnread ? " (*)" : "";
     }
 
     function draggableConveneHeaderEl() {
-        var panel = document.getElementById("draggable-div");
+        let panel = document.getElementById("draggable-div");
         if (!panel) return null;
-        var iframe = panel.querySelector("#draggable-div-content iframe");
+        let iframe = panel.querySelector("#draggable-div-content iframe");
         if (!iframe) return null;
-        var src = iframe.getAttribute("src") || iframe.src || "";
+        let src = iframe.getAttribute("src") || iframe.src || "";
         try {
             if (new URL(src, location.href).pathname !== "/chat") return null;
         } catch (e) {
@@ -21,11 +22,11 @@
     }
 
     function setConveneMarker(hasUnread) {
-        var link = document.querySelector('.sidenav a[href="/chat"]');
+        let link = document.querySelector('.sidenav a[href="/chat"]');
         if (link) link.textContent = "convene" + conveneUnreadSuffix(hasUnread);
-        var titleBase = (document.title || "").replace(/\s*\(\*\)\s*$/, "");
+        let titleBase = (document.title || "").replace(/\s*\(\*\)\s*$/, "");
         document.title = titleBase + conveneUnreadSuffix(hasUnread);
-        var hdr = draggableConveneHeaderEl();
+        let hdr = draggableConveneHeaderEl();
         if (hdr) {
             if (!hdr.dataset.conveneTitleBase) {
                 hdr.dataset.conveneTitleBase =
@@ -33,45 +34,6 @@
             }
             hdr.textContent = hdr.dataset.conveneTitleBase + conveneUnreadSuffix(hasUnread);
         }
-    }
-
-    function addWindowControls() {
-        if (document.documentElement.classList.contains("chat-embed")) return;
-        if ((window.location.pathname || "") !== "/chat") return;
-        if (document.getElementById("chat-window-controls")) return;
-
-        var wrap = document.createElement("div");
-        wrap.id = "chat-window-controls";
-        wrap.className = "window-controls";
-        wrap.setAttribute("aria-label", "Open journey or ship in a panel");
-        wrap.innerHTML =
-            '<button type="button" class="window-control-button" id="window-control-open-journey" data-draggable-src="/journey?embed=1" data-draggable-title="Journey">J</button>' +
-            '<button type="button" class="window-control-button" id="window-control-open-tzadkiels-ship" data-draggable-src="/tzadkiels-ship?embed=1" data-draggable-title="Tzadkiel\'s Ship">T</button>';
-        document.body.appendChild(wrap);
-
-        var opening = false;
-        wrap.addEventListener("click", function (e) {
-            var btn = e.target && e.target.closest && e.target.closest("button[data-draggable-src]");
-            if (!btn) return;
-            e.preventDefault();
-            e.stopPropagation();
-            if (document.getElementById("draggable-div") || opening) return;
-            opening = true;
-            var src = btn.getAttribute("data-draggable-src");
-            var title = btn.getAttribute("data-draggable-title") || "";
-            import("/assets/javascript/draggable-div.js")
-                .then(function (mod) {
-                    if (document.getElementById("draggable-div")) return;
-                    var frame = document.createElement("iframe");
-                    frame.src = src;
-                    frame.title = title;
-                    mod.initDraggableDiv(title, frame);
-                })
-                .catch(function () { })
-                .finally(function () {
-                    opening = false;
-                });
-        });
     }
 
     function refreshConveneUnreadMarker() {
@@ -83,8 +45,8 @@
                 return r.json();
             })
             .then(function (data) {
-                var conversations = data && Array.isArray(data.conversations) ? data.conversations : [];
-                var hasUnread = conversations.some(function (c) {
+                let conversations = data && Array.isArray(data.conversations) ? data.conversations : [];
+                let hasUnread = conversations.some(function (c) {
                     return Number(c && c.unreadChatCount) > 0;
                 });
                 setConveneMarker(hasUnread);
@@ -97,17 +59,58 @@
             });
     }
 
-    window.vodalusApplyConveneNavUnreadMarker = refreshConveneUnreadMarker;
+    window.applyConveneNavUnreadMarker = refreshConveneUnreadMarker;
 
+    // add the controls to open the journey and tzadkiel's ship windows ----------------------------------------
+    function addWindowControls() {
+        if (document.documentElement.classList.contains("chat-embed")) return;
+        if ((window.location.pathname || "") !== "/chat") return;
+        if (document.getElementById("chat-window-controls")) return;
+
+        let wrap = document.createElement("div");
+        wrap.id = "chat-window-controls";
+        wrap.className = "window-controls";
+        wrap.setAttribute("aria-label", "Open journey or ship in a panel");
+        wrap.innerHTML =
+            '<button type="button" class="window-control-button" id="window-control-open-journey" data-draggable-src="/journey?embed=1" data-draggable-title="Journey">J</button>' +
+            '<button type="button" class="window-control-button" id="window-control-open-tzadkiels-ship" data-draggable-src="/tzadkiels-ship?embed=1" data-draggable-title="Tzadkiel\'s Ship">T</button>';
+        document.body.appendChild(wrap);
+
+        let opening = false;
+        wrap.addEventListener("click", function (e) {
+            let btn = e.target && e.target.closest && e.target.closest("button[data-draggable-src]");
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (document.getElementById("draggable-div") || opening) return;
+            opening = true;
+            let src = btn.getAttribute("data-draggable-src");
+            let title = btn.getAttribute("data-draggable-title") || "";
+            import("/assets/javascript/draggable-div.js")
+                .then(function (mod) {
+                    if (document.getElementById("draggable-div")) return;
+                    let frame = document.createElement("iframe");
+                    frame.src = src;
+                    frame.title = title;
+                    mod.initDraggableDiv(title, frame);
+                })
+                .catch(function () { })
+                .finally(function () {
+                    opening = false;
+                });
+        });
+    }
+
+    // sidebar toggle for mobile --------------------------------------------------------------------------------
     function setupMobileSidebarToggle() {
-        var toggle = document.getElementById("sidebar-toggle");
-        var container = document.querySelector(".sidebar-container");
-        var sidenav = document.querySelector(".sidenav");
+        let toggle = document.getElementById("sidebar-toggle");
+        let container = document.querySelector(".sidebar-container");
+        let sidenav = document.querySelector(".sidenav");
         if (!toggle || !container) return;
 
-        var mobileQuery = window.matchMedia("(max-width: 600px)");
+        let mobileQuery = window.matchMedia("(max-width: 600px)");
 
-        var backdrop = document.createElement("div");
+        let backdrop = document.createElement("div");
         backdrop.className = "sidebar-backdrop";
         document.body.appendChild(backdrop);
 
@@ -129,7 +132,7 @@
 
         toggle.addEventListener("click", function () {
             if (!mobileQuery.matches) return;
-            var open = container.classList.toggle("is-open");
+            let open = container.classList.toggle("is-open");
             document.body.classList.toggle("sidebar-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
         });
@@ -138,7 +141,7 @@
 
         if (sidenav) {
             sidenav.addEventListener("click", function (e) {
-                var link = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+                let link = e.target && e.target.closest ? e.target.closest("a[href]") : null;
                 if (!link || !mobileQuery.matches) return;
                 closeSidebar();
             });
@@ -153,26 +156,28 @@
         syncState();
     }
 
+    // load the now playing widget --------------------------------------------------------------------------------
     function loadNowPlaying() {
-        var s = document.createElement("script");
+        let s = document.createElement("script");
         s.src = "/assets/javascript/nowplaying.js";
         (document.head || document.documentElement).appendChild(s);
     }
 
+    // create the starfield --------------------------------------------------------------------------------------
     function createStars() {
         function go() {
-            var field = document.getElementById("starfield");
+            let field = document.getElementById("starfield");
             if (!field) {
                 field = document.createElement("div");
                 field.id = "starfield";
                 field.setAttribute("aria-hidden", "true");
-                var main = document.querySelector(".main");
+                let main = document.querySelector(".main");
                 (main || document.body).insertBefore(field, (main || document.body).firstChild);
             }
-            for (var i = 0; i < 100; i++) {
-                var star = document.createElement("div");
+            for (let i = 0; i < 100; i++) {
+                let star = document.createElement("div");
                 star.className = "star";
-                var size = Math.random() * 3 + 1;
+                let size = Math.random() * 3 + 1;
                 star.style.width = size + "px";
                 star.style.height = size + "px";
                 star.style.position = "fixed";
@@ -187,6 +192,7 @@
         else go();
     }
 
+    // place the moon and sun -------------------------------------------------------------------------------------
     function placeMoonAndSun() {
         if (
             document.documentElement.classList.contains("page-embed") ||
@@ -195,32 +201,32 @@
             return;
         }
         function go() {
-            var field = document.getElementById("starfield");
+            let field = document.getElementById("starfield");
             if (!field) return;
-            var moon = document.createElement("div");
+            let moon = document.createElement("div");
             moon.className = "moon";
             moon.setAttribute("aria-hidden", "true");
             moon.innerHTML = "<img src='/assets/images/moon.svg' alt='moon' width='120px' height='120px'>";
             moon.style.position = "fixed";
-            var moonEw = 120;
-            var moonEh = 120;
+            let moonEw = 120;
+            let moonEh = 120;
             function startMoonDrift() {
-                var last = performance.now();
-                var angle = Math.random() * Math.PI * 2;
-                var spd = 1 + Math.random() * 12;
-                var vx = Math.cos(angle) * spd;
-                var vy = Math.sin(angle) * spd * 0.5;
-                var w = window.innerWidth;
-                var h = window.innerHeight;
-                var x = Math.random() * Math.max(1, w - moonEw);
-                var y = Math.random() * Math.max(1, h - moonEh);
+                let last = performance.now();
+                let angle = Math.random() * Math.PI * 2;
+                let spd = 1 + Math.random() * 12;
+                let vx = Math.cos(angle) * spd;
+                let vy = Math.sin(angle) * spd * 0.5;
+                let w = window.innerWidth;
+                let h = window.innerHeight;
+                let x = Math.random() * Math.max(1, w - moonEw);
+                let y = Math.random() * Math.max(1, h - moonEh);
                 moon.style.left = x + "px";
                 moon.style.top = y + "px";
                 function wrap() {
                     w = window.innerWidth;
                     h = window.innerHeight;
-                    var maxX = w - moonEw;
-                    var maxY = h - moonEh;
+                    let maxX = w - moonEw;
+                    let maxY = h - moonEh;
                     if (x > maxX) { x = maxX; vx = -Math.abs(vx); }
                     else if (x < 0) { x = 0; vx = Math.abs(vx); }
                     if (y > maxY) { y = maxY; vy = -Math.abs(vy); }
@@ -232,7 +238,7 @@
                     moon.style.top = y + "px";
                 }
                 function tick(now) {
-                    var dt = Math.min(0.05, (now - last) / 1000);
+                    let dt = Math.min(0.05, (now - last) / 1000);
                     last = now;
                     x += vx * dt;
                     y += vy * dt;
@@ -245,7 +251,7 @@
                 requestAnimationFrame(tick);
             }
 
-            var sun = document.createElement("div");
+            let sun = document.createElement("div");
             sun.className = "sun";
             sun.setAttribute("aria-hidden", "true");
             sun.innerHTML = "";
@@ -267,11 +273,12 @@
         else go();
     }
 
+    // run the actual footer ---------------------------------------------------------------------------------------------
     function runFooter() {
-        var el = document.querySelector(".status[data-src]");
+        let el = document.querySelector(".status[data-src]");
         function refreshStatusSnippet() {
             if (!el) return;
-            var src = el.getAttribute("data-src");
+            let src = el.getAttribute("data-src");
             if (!src) return;
             fetch(src, { cache: "no-store" })
                 .then(function (r) { return r.text(); })
@@ -280,20 +287,20 @@
         }
         refreshStatusSnippet();
 
-        var DIM_CLASS = "site-dim--dim";
-        var STORAGE_KEY = "siteDim";
-        var MOON_DIMMED_SRC = "/assets/icons/moon.png";
-        var MOON_NORMAL_SRC = "/assets/icons/moon-filled.png";
+        let DIM_CLASS = "site-dim--dim";
+        let STORAGE_KEY = "siteDim";
+        let MOON_DIMMED_SRC = "/assets/icons/moon.png";
+        let MOON_NORMAL_SRC = "/assets/icons/moon-filled.png";
 
         function syncDimIcon() {
-            var img = document.getElementById("toggle-dim-icon");
+            let img = document.getElementById("toggle-dim-icon");
             if (!img) return;
-            var dimmed = document.documentElement.classList.contains(DIM_CLASS);
+            let dimmed = document.documentElement.classList.contains(DIM_CLASS);
             img.src = dimmed ? MOON_DIMMED_SRC : MOON_NORMAL_SRC;
         }
 
         try {
-            var v = localStorage.getItem(STORAGE_KEY);
+            let v = localStorage.getItem(STORAGE_KEY);
             if (v === "0") {
                 document.documentElement.classList.remove(DIM_CLASS);
             } else {
@@ -303,10 +310,10 @@
 
         syncDimIcon();
 
-        var btn = document.getElementById("toggle-dim-btn");
+        let btn = document.getElementById("toggle-dim-btn");
         if (btn) {
             btn.addEventListener("click", function () {
-                var on = document.documentElement.classList.toggle(DIM_CLASS);
+                let on = document.documentElement.classList.toggle(DIM_CLASS);
                 syncDimIcon();
                 try {
                     localStorage.setItem(STORAGE_KEY, on ? "1" : "0");
@@ -326,8 +333,8 @@
         }
     }
 
-    var mount = document.getElementById("site-sidebar-mount");
-    var src = mount && mount.getAttribute("data-src");
+    let mount = document.getElementById("site-sidebar-mount");
+    let src = mount && mount.getAttribute("data-src");
     if (mount && src) {
         fetch(src, { cache: "no-store" })
             .then(function (r) { return r.text(); })

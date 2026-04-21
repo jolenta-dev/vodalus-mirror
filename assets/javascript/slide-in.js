@@ -1,5 +1,5 @@
 function initSlidingDiv(messageContent) {
-  var slidingDiv = document.createElement("div");
+  let slidingDiv = document.createElement("div");
   slidingDiv.id = "sliding-div";
   slidingDiv.textContent = messageContent;
 

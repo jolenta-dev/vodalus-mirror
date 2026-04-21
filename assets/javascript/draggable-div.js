@@ -310,5 +310,5 @@ export function initDraggableDiv(header, content, state = 'minimized') {
         }
         // 'maximized' and 'default' spawn expanded, no call needed
     }
-    if (window.vodalusApplyConveneNavUnreadMarker) window.vodalusApplyConveneNavUnreadMarker();
+    if (window.applyConveneNavUnreadMarker) window.applyConveneNavUnreadMarker();
 }
