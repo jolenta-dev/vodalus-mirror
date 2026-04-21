@@ -1,6 +1,6 @@
 export function initDraggableDiv(header, content, state = 'minimized') {
     let draggableDiv;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) { // TODO: how to make this reserve a spot for modals?
         let el = document.getElementById(`div-${i}`)
         if (el != null) {
             continue;
