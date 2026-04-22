@@ -598,12 +598,14 @@ li.rules {
 
 .chat-page #password-modal > button[type="button"]:first-of-type {
     margin-top: 0.5rem;
+    border-radius: 5px 0px 0px 5px;
 }
 
 .chat-page #new-announcement-modal select + button[type="button"],
 .chat-page #chat-directory-modal #chat-directory-list + button[type="button"],
 .chat-page #chat-tag-modal #chat-tag-list + button[type="button"] {
     margin-top: 0.5rem;
+    border-radius: 5px 0px 0px 5px;
 }
 
 .chat-page #new-chat-modal > #new-chat-modal-cancel {
@@ -906,7 +908,7 @@ html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab) {
     background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
-    /*! border-radius: 0px 5px 5px 0px; */
+    border-radius: 0px 5px 5px 0px;
 }
 
 html.site-dim--dim.chat-page button[type="button"]:not(.chat-tab):hover {
@@ -926,6 +928,7 @@ html.site-dim--dim #setup #input-name {
     background-color: #0f001e;
     border-color: aliceblue;
     color: aliceblue;
+    border-radius: 5px 0px 0px 5px;
 }
 
 /* dark mode chat admin (.chat-admin-tab uses same button styling as .chat-page button) ------------ */
@@ -983,6 +986,7 @@ html.site-dim--dim #new-dm-modal input {
     background: var(--site-dim-chat-panel, #0f001e) !important;
     border: 1px solid aliceblue !important;
     color: aliceblue !important;
+    border-radius: 5px;
 }
 
 html.site-dim--dim .new-dm-modal-actions button {

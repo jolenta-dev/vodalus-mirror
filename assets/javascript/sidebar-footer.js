@@ -264,9 +264,9 @@
             sun.style.top = Math.random() * 100 + "vh";
             sun.style.left = Math.random() * 100 + "vw";
             sun.style.transform = "translateY(-50%)";
+            field.appendChild(sun);
             field.appendChild(moon);
             startMoonDrift();
-            field.appendChild(sun);
         }
         if (document.querySelector(".main")) go();
         else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go);
