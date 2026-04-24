@@ -127,56 +127,56 @@ html.site-form #password-modal > button[type="button"]:first-of-type {
 }
 
 /* dark mode buttons ------------------------------------------------------------------------------- */
-html.site-dim--dim.site-form .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab),
-html.site-dim--dim.site-form #password-modal button[type="button"] {
+html.site-form .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab),
+html.site-form #password-modal button[type="button"] {
     background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
 }
 
-html.site-dim--dim.site-form .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover,
-html.site-dim--dim.site-form #password-modal button[type="button"]:hover {
+html.site-form .main button[type="button"]:not(.journey-btn):not(.journey-tab):not(.chat-tab):hover,
+html.site-form #password-modal button[type="button"]:hover {
     background-color: #dcc2f4;
 }
 
 /* dark mode inputs -------------------------------------------------------------------------------- */
-html.site-dim--dim.site-form .main input:not([type="checkbox"]):not([type="radio"]),
-html.site-dim--dim.site-form .main select,
-html.site-dim--dim.site-form #login-section input:not([type="checkbox"]):not([type="radio"]) {
+html.site-form .main input:not([type="checkbox"]):not([type="radio"]),
+html.site-form .main select,
+html.site-form #login-section input:not([type="checkbox"]):not([type="radio"]) {
     background-color: var(--site-dim-chat-panel, #0f001e);
     border-color: aliceblue;
     color: aliceblue;
 }
 
 /* dark mode admin tabs ---------------------------------------------------------------------------- */
-html.site-dim--dim.site-form.admin-page .tablinks {
+html.site-form.admin-page .tablinks {
     background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
 }
 
-html.site-dim--dim.site-form.admin-page .tablinks:hover {
+html.site-form.admin-page .tablinks:hover {
     background-color: #dcc2f4;
 }
 
-html.site-dim--dim.site-form.admin-page .tablinks.active {
+html.site-form.admin-page .tablinks.active {
     background-color: #a387be;
 }
 
 /* dark mode password modal ------------------------------------------------------------------------ */
-html.site-dim--dim #password-modal-overlay {
+html #password-modal-overlay {
     background: rgba(26, 0, 51, 0.78) !important;
 }
 
-html.site-dim--dim #password-modal {
+html #password-modal {
     background: #9a7cb6 !important;
     border-color: aliceblue !important;
     color: aliceblue !important;
     position: relative;
 }
 
-html.site-dim--dim #password-modal input[type="password"],
-html.site-dim--dim #password-modal input[type="text"] {
+html #password-modal input[type="password"],
+html #password-modal input[type="text"] {
     background: var(--site-dim-chat-panel, #0f001e) !important;
     border: 1px solid aliceblue !important;
     color: aliceblue !important;

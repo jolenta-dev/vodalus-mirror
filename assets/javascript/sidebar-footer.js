@@ -287,40 +287,6 @@
         }
         refreshStatusSnippet();
 
-        let DIM_CLASS = "site-dim--dim";
-        let STORAGE_KEY = "siteDim";
-        let MOON_DIMMED_SRC = "/assets/icons/moon.png";
-        let MOON_NORMAL_SRC = "/assets/icons/moon-filled.png";
-
-        function syncDimIcon() {
-            let img = document.getElementById("toggle-dim-icon");
-            if (!img) return;
-            let dimmed = document.documentElement.classList.contains(DIM_CLASS);
-            img.src = dimmed ? MOON_DIMMED_SRC : MOON_NORMAL_SRC;
-        }
-
-        try {
-            let v = localStorage.getItem(STORAGE_KEY);
-            if (v === "0") {
-                document.documentElement.classList.remove(DIM_CLASS);
-            } else {
-                document.documentElement.classList.add(DIM_CLASS);
-            }
-        } catch (e) { }
-
-        syncDimIcon();
-
-        let btn = document.getElementById("toggle-dim-btn");
-        if (btn) {
-            btn.addEventListener("click", function () {
-                let on = document.documentElement.classList.toggle(DIM_CLASS);
-                syncDimIcon();
-                try {
-                    localStorage.setItem(STORAGE_KEY, on ? "1" : "0");
-                } catch (e2) { }
-            });
-        }
-
         addWindowControls();
         refreshConveneUnreadMarker();
         if (!unreadWatchersBound) {

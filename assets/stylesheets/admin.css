@@ -117,22 +117,22 @@
 }
 
 /* dim theme class overrides ------------------------------------------------------------------------------- */
-html.site-dim--dim .tablinks {
+html .tablinks {
     background: #5a5a5a;
     border-color: #333;
     color: #000000;
 }
 
-html.site-dim--dim .tablinks:hover {
+html .tablinks:hover {
     background: #6a6a6a;
 }
 
-html.site-dim--dim .tablinks.active {
+html .tablinks.active {
     background: #737373;
     font-weight: bold;
 }
 
-html.site-dim--dim.admin-page .box {
+html.admin-page .box {
     background-color: #9a7cb6;
     border-color: aliceblue;
 }
@@ -206,10 +206,10 @@ html.site-dim--dim.admin-page .box {
 }
 
 /* dim theme id overrides ---------------------------------------------------------------------------------- */
-html.site-dim--dim #sql-db-output tbody tr:nth-child(even) {
+html #sql-db-output tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.045);
 }
 
-html.site-dim--dim #sql-db-output tbody tr:nth-child(odd) {
+html #sql-db-output tbody tr:nth-child(odd) {
     background-color: rgba(0, 0, 0, 0.08);
 }

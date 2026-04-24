@@ -235,43 +235,43 @@
 }
 
 /* dark mode overrides ----------------------------------------------------------------------------- */
-html.site-dim--dim .journey-layout__midline {
+html .journey-layout__midline {
     opacity: 0.45;
 }
 
-html.site-dim--dim .main .journey-btn {
+html .main .journey-btn {
     background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
 }
 
-html.site-dim--dim .main .journey-btn:hover {
+html .main .journey-btn:hover {
     background-color: #dcc2f4;
 }
 
-html.site-dim--dim .journey-tabs {
+html .journey-tabs {
     background-color: #1a0033;
     border-color: aliceblue;
 }
 
-html.site-dim--dim .journey-tab {
+html .journey-tab {
     border-right-color: #9a7cb6;
     color: aliceblue;
 }
 
-html.site-dim--dim .journey-tab:hover {
+html .journey-tab:hover {
     background-color: #dcc2f4;
 }
 
-html.site-dim--dim .journey-tab--active {
+html .journey-tab--active {
     background-color: #9a7cb6;
 }
 
-html.site-dim--dim .journey-tab:focus-visible {
+html .journey-tab:focus-visible {
     outline-color: #222;
 }
 
-html.site-dim--dim .journey-login-field {
+html .journey-login-field {
     background-color: var(--site-dim-chat-panel, #0f001e);
     border-color: aliceblue;
     color: aliceblue;

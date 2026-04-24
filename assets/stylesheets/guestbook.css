@@ -189,49 +189,49 @@ tbody tr:nth-child(even) {
 }
 
 /* dim theme compose form -------------------------------------------------------------------------- */
-html.site-dim--dim .guestbook-compose input {
+html .guestbook-compose input {
     background-color: var(--site-dim-chat-panel, #0f001e);
     border-color: aliceblue;
     color: aliceblue;
 }
 
-html.site-dim--dim .guestbook-compose button[type="button"] {
+html .guestbook-compose button[type="button"] {
     background-color: #a387be;
     border-color: aliceblue;
     color: aliceblue;
 }
 
-html.site-dim--dim .guestbook-compose button[type="button"]:hover {
+html .guestbook-compose button[type="button"]:hover {
     background-color: #dcc2f4;
 }
 
 /* dim theme name table ---------------------------------------------------------------------------- */
-html.site-dim--dim #name-table th,
-html.site-dim--dim #name-table td {
+html #name-table th,
+html #name-table td {
     border: 1px solid #5c5c5c;
     color: #eaeaea;
 }
 
-html.site-dim--dim #name-table thead th {
+html #name-table thead th {
     background: rgba(255, 255, 255, 0.07);
     color: #f4f4f4;
     font-weight: normal;
 }
 
-html.site-dim--dim #name-table tbody tr:nth-child(even) {
+html #name-table tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.045);
 }
 
-html.site-dim--dim #name-table tbody tr:nth-child(odd) {
+html #name-table tbody tr:nth-child(odd) {
     background-color: rgba(0, 0, 0, 0.08);
 }
 
 /* dim theme roster owner combos ------------------------------------------------------------------- */
-html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
+html #name-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: #b8d8f0;
 }
 
-html.site-dim--dim #name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
+html #name-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 

@@ -54,16 +54,6 @@
     z-index: 250;
 }
 
-/* light mode button hover ------------------------------------------------------------------------- */
-html:not(.site-dim--dim) .main #enter-btn:hover,
-html:not(.site-dim--dim) .main #board-btn:hover,
-html:not(.site-dim--dim) .main #submit-btn:hover,
-html:not(.site-dim--dim) .main #prestige-btn:hover,
-html:not(.site-dim--dim) .main #corridors-btn:hover,
-html:not(.site-dim--dim) .main #submit-colors-decorations-btn:hover {
-    color: #000;
-}
-
 /* mobile overrides -------------------------------------------------------------------------------- */
 @media screen and (max-width: 600px) {
     .main #entrance,

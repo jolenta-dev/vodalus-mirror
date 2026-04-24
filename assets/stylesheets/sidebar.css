@@ -328,38 +328,16 @@ hr.rounded {
     display: none;
 }
 
-/* dim toggle: desktop fab, mobile in-stack -------------------------------------------------------- */
-#toggle-dim-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    margin: 0;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    line-height: 0;
-    z-index: 1000;
-    box-shadow: none;
-}
-
-#toggle-dim-btn img {
-    display: block;
-    width: 20px;
-    height: 20px;
-    filter: invert(1);
-}
-
-/* dark mode surface ------------------------------------------------------------------------------- */
-html.site-dim--dim {
+/* surface --------------------------------------------------------------------------------------- */
+html {
     background-color: var(--site-dim-bg);
 }
 
-html.site-dim--dim body {
+html body {
     background-color: transparent;
 }
 
-html.site-dim--dim .main {
+.main {
     background-color: var(--site-dim-bg);
     min-height: 100vh;
     min-height: 100dvh;
@@ -394,14 +372,6 @@ html.page-embed .main {
 
 /* mobile (max-width: 600px) ----------------------------------------------------------------------- */
 @media screen and (max-width: 600px) {
-    #toggle-dim-btn {
-        position: static;
-        z-index: auto;
-        padding: 4px;
-        background: transparent;
-        border-radius: 0;
-    }
-
     .main { padding: 0 8px 0 calc(8vw + 8px); }
 
     .sidebar-container {
@@ -490,15 +460,3 @@ html.page-embed .main {
     }
 }
 
-/* desktop dim toggle fab -------------------------------------------------------------------------- */
-@media screen and (min-width: 601px) {
-    #toggle-dim-btn {
-        position: fixed;
-        bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-        right: max(1rem, env(safe-area-inset-right, 0px));
-        z-index: 200;
-        padding: 0.55rem;
-        background: rgba(17, 17, 17, 0.88);
-        border-radius: 999px;
-    }
-}
