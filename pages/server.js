@@ -109,6 +109,27 @@ if (!protectedNameColumns.some(c => c.name === 'clicker_count')) {
     chatdb.exec("ALTER TABLE protected_names ADD COLUMN clicker_count INTEGER DEFAULT 0");
 }
 
+/** canonical protected_names.name for botanic clicker #1; null if no scores */
+let clickerTagHolderCanonical = null;
+function refreshClickerTagHolderCache() {
+    const rows = chatdb
+        .prepare(
+            'SELECT name FROM protected_names WHERE clicker_count > 0 ORDER BY clicker_count DESC, name COLLATE NOCASE ASC'
+        )
+        .all();
+    clickerTagHolderCanonical = rows[0] ? rows[0].name : null;
+}
+refreshClickerTagHolderCache();
+setInterval(refreshClickerTagHolderCache, 1000 * 60);
+
+function nameHoldsClickerChatTag(name) {
+    if (!clickerTagHolderCanonical || !name) return false;
+    return String(name).trim().toLowerCase() === String(clickerTagHolderCanonical).trim().toLowerCase();
+}
+
+/* leaderboard-derived chat tag labels — add new ids here and in tagToSpanHtml (pages/chat.html) + roster-name.js */
+const CHAT_TAG_CARPAL_TUNNEL = 'CARPAL TUNNEL';
+
 function computeAvailableChatTagsForUser(name, vip, journeyLevel, prestigeLevel) {
     const tags = [];
     const lower = String(name || '').trim().toLowerCase();
@@ -128,6 +149,7 @@ function computeAvailableChatTagsForUser(name, vip, journeyLevel, prestigeLevel)
     else if (jl === 3) tags.push('LVL 3 GAMBLER');
     else if (jl >= 4) tags.push('AUTARCH');
     if (jl >= 5 || pl > 0) tags.push('MASTER GAMBLER');
+    if (nameHoldsClickerChatTag(name)) tags.push(CHAT_TAG_CARPAL_TUNNEL);
     return tags;
 }
 
@@ -715,7 +737,7 @@ app.get('/api/chat-tag-preference', (req, res) => {
     if (!row) return res.status(404).json({ error: 'only registered names can set chat tag preference' });
     const tags = computeAvailableChatTagsForUser(row.name, !!row.vip, row.journey_level, row.prestige_level);
     const selected = resolveSelectedChatTag(row.name, !!row.vip, row.journey_level, row.prestige_level, row.selected_chat_tag);
-    res.json({ tags, selected });
+    res.json({ tags, selected, clicker_tag_holder: clickerTagHolderCanonical });
 });
 
 app.post('/api/chat-tag-preference', (req, res) => {
@@ -1105,6 +1127,7 @@ app.post('/api/clicker/update-count', async (req, res) => {
         }
     }
     chatdb.prepare('UPDATE protected_names SET clicker_count = ? WHERE LOWER(name) = LOWER(?)').run(nextCount, name);
+    refreshClickerTagHolderCache();
     res.json({ success: true, clicker_count: nextCount, name: row.name });
 });
 
@@ -1123,7 +1146,8 @@ app.post('/api/clicker/get-global-counts', async (req, res) => {
         vip: !!r.vip,
         color: r.color ? r.color : '#000000',
         decoration: r.decoration != null ? String(r.decoration) : '',
-        clicker_count: r.clicker_count != null ? Number(r.clicker_count) : 0
+        clicker_count: r.clicker_count != null ? Number(r.clicker_count) : 0,
+        holds_clicker_tag: nameHoldsClickerChatTag(r.name)
     }));
     res.json({ global_counts: globalCounts });
 });
@@ -1613,7 +1637,15 @@ app.get('/api/me', (req, res) => {
     const prestige_level = pnRow && pnRow.prestige_level != null ? Number(pnRow.prestige_level) : 0;
     const tags = computeAvailableChatTagsForUser(nickname, vip, journey_level || 0, prestige_level);
     const selected_chat_tag = resolveSelectedChatTag(nickname, vip, journey_level || 0, prestige_level, pnRow ? pnRow.selected_chat_tag : '');
-    res.json({ nickname, journey_level, vip, prestige_level, tags, selected_chat_tag });
+    res.json({
+        nickname,
+        journey_level,
+        vip,
+        prestige_level,
+        tags,
+        selected_chat_tag,
+        clicker_tag_holder: clickerTagHolderCanonical
+    });
 });
 
 // One-time token so the browser WebSocket can attach a session even if the
@@ -1738,7 +1770,8 @@ app.get('/api/names', (req, res) => {
             journey_level: p && p.journey_level != null ? Number(p.journey_level) : 0,
             prestige_level: p && p.prestige_level != null ? Number(p.prestige_level) : 0,
             color: p && p.color ? p.color : '#000000',
-            decoration: p && p.decoration != null ? String(p.decoration) : ''
+            decoration: p && p.decoration != null ? String(p.decoration) : '',
+            holds_clicker_tag: nameHoldsClickerChatTag(r.name)
         };
     });
     res.json(names);
@@ -1748,7 +1781,18 @@ app.post('/api/names', (req, res) => {
     const { name, website, note } = req.body;
     if (!name) return res.status(400).json({ error: 'no name given' });
     guestdb.prepare('INSERT INTO names (name, website, note) VALUES (?, ?, ?)').run(name, website, note);
-    res.json({ success: true });
+    const p = chatdb
+        .prepare('SELECT vip, journey_level, prestige_level, color, decoration FROM protected_names WHERE LOWER(name) = LOWER(?)')
+        .get(name);
+    res.json({
+        success: true,
+        vip: p ? !!p.vip : false,
+        journey_level: p && p.journey_level != null ? Number(p.journey_level) : 0,
+        prestige_level: p && p.prestige_level != null ? Number(p.prestige_level) : 0,
+        color: p && p.color ? p.color : '#000000',
+        decoration: p && p.decoration != null ? String(p.decoration) : '',
+        holds_clicker_tag: nameHoldsClickerChatTag(name)
+    });
 });
 
 // server start

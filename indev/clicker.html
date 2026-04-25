@@ -1,0 +1,149 @@
+<!--- this file is only here as a refrence for testing features. it is not used at all in prod.-->
+
+<html>
+    <div id="click-area-wrapper">
+  <div id="total-wrapper">
+    <div id="total-display">Total:&nbsp;<div id="count">0</div></div>
+  </div>
+  <div id="button-wrapper">
+    <button id="button">button</button>
+  </div>
+</div>
+
+<div id="menu-area-wrapper">
+  <button id="upgrade1">increase click - <span id="upgrade1-cost"></span> (lvl. <span id="upgrade1-level"></span>)</button>
+  <button id="upgrade2">passive income - <span id="upgrade2-cost"></span> (lvl. <span id="upgrade2-level"></span>)</button>
+</div>
+</html>
+
+<style>
+    #click-area-wrapper {
+  width: 50%;
+  float: left;
+}
+
+#total-display {
+  display: flex;
+  justify-content: center;
+}
+
+#button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#button {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  margin: 10em;
+}
+
+/* ----------------------------------------- */
+#menu-area-wrapper {
+  width: 50%;
+  float: right;
+}
+
+button {
+  width: 100%;
+  padding: 20px;
+}
+</style>
+
+<script>
+    let count = 0;
+let increasePerClick = 1;
+let perSecond = 0;
+
+let totalTracker = document.getElementById("count");
+let button = document.getElementById("button");
+
+button.addEventListener("click", function() {
+  count = count + increasePerClick
+  totalTracker.innerHTML = ''
+  totalTracker.innerHTML += `${count}`
+})
+
+let upgrades = [];
+
+for (let i = 1; i < 100; i++) {
+  upgrades[i] = document.getElementById(`upgrade${i}`);
+}
+
+let upgradeCost = [];
+
+for (let i = 1; i < 100; i++) {
+  upgradeCost[i] = document.getElementById(`upgrade${i}-cost`) 
+}
+
+let upgradeLevel = [];
+
+for (let i = 1; i < 100; i++) {
+  upgradeLevel[i] = document.getElementById(`upgrade${i}-level`)
+  if (upgradeLevel[i] != null) {
+    upgradeLevel[i].innerHTML = "1";
+  }
+}
+
+// upgrade 1 block ----------------------------------
+upgradeCost[1].innerHTML = "20";
+
+upgrades[1].addEventListener("click", function() {
+  let currentCount = count;
+  let currentCost = upgradeCost[1].innerHTML;
+  
+  if (currentCount >= currentCost) {
+    increasePerClick++;
+    upgradeLevel[1].innerHTML++;
+    newCount = currentCount - currentCost;
+    count = newCount;
+    totalTracker.innerHTML = `${newCount}`;
+    newCost = Math.round(currentCost * 2.5);
+    upgradeCost[1].innerHTML = `${newCost}`;
+  } else {
+    return;
+  }
+})
+
+// upgrade 2 block ---------------------------------
+upgradeCost[2].innerHTML = "50"
+
+upgrades[2].addEventListener("click", function() {
+  let currentCount = count;
+  let currentCost = upgradeCost[2].innerHTML;
+  
+  if (currentCount >= currentCost) {
+    perSecond++;
+    upgradeLevel[2].innerHTML++;
+    newCount = currentCount - currentCost;
+    count = newCount;
+    totalTracker.innerHTML = `${newCount}`;
+    newCost = Math.round(currentCost * 5);
+    upgradeCost[2].innerHTML = `${newCost}`;
+  } else {
+    return;
+  }
+})
+
+// run the passive skills ---------------------------------------
+function addPassive() {
+  count += perSecond;
+  totalTracker.innerHTML = `${count}`
+}
+
+setInterval(addPassive, 1000);
+
+// for the buttons to be greyed out when unaffordable ----------------------------------
+function unaffordableButtons() {
+  for (i = 1; i < 100; i++) {
+    if (upgradeCost[i] != null && upgradeCost[i].innerHTML > count) {
+      upgrades[i].style.opacity = "30%";
+    } else {
+      upgrades[i].style.opacity = "100%";
+  }
+}
+}
+
+setInterval(unaffordableButtons, 100);
+</script>

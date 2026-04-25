@@ -9,6 +9,10 @@
   justify-content: center;
 }
 
+#total-display h1 {
+  margin: 0;
+}
+
 #button-wrapper {
   display: flex;
   justify-content: center;
@@ -19,6 +23,15 @@
   height: 300px;
   border-radius: 50%;
   margin: 10em;
+  margin-top: 2em;
+  background-color: #a387be;
+  color: aliceblue;
+  border: 2px solid aliceblue;
+  font-size: 2em;
+}
+
+#button:hover {
+  background-color: #dcc2f4;
 }
 
 /* right side----------------------------------------- */
@@ -30,4 +43,14 @@
 #menu-area-wrapper button {
   width: 100%;
   padding: 20px;
+  margin: 0.2em;
+  border-radius: 50px;
+  border: 2px solid aliceblue;
+  background-color: #a387be;
+  color: aliceblue;
+  font-size: 2em;
+}
+
+#menu-area-wrapper button:hover {
+  background-color: #dcc2f4;
 }

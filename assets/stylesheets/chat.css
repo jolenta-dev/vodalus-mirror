@@ -345,6 +345,14 @@ ul .name-color .message-journey-5-plus {
     font-weight: bold;
 }
 
+ul .name-color .message-carpal-tunnel {
+    background-image: radial-gradient(circle, darkgray, purple, blueviolet);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
 ul .name-color .message-prestige-tag {
     display: inline-block;
     font-weight: bold;
@@ -387,13 +395,13 @@ ul .message-admin {
     font-weight: bold;
 }
 
-ul .message-admin + .name-color .message-name {
+ul .message-admin+.name-color .message-name {
     color: #add8e6;
     font-weight: bold;
     font-style: normal;
 }
 
-ul .message-vip + .name-color .message-name {
+ul .message-vip+.name-color .message-name {
     font-weight: bold;
 }
 
@@ -457,12 +465,28 @@ li.rules {
     font-weight: bold;
 }
 
+.name-color .message-carpal-tunnel {
+    background-image: radial-gradient(circle, darkgray, purple, blueviolet);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
 .message-journey-1,
 .message-journey-2,
 .message-journey-3,
 .message-journey-4,
 .message-journey-5-plus {
     color: inherit;
+    font-weight: bold;
+}
+
+.message-carpal-tunnel {
+    background-image: radial-gradient(circle, darkgray, purple, blueviolet);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
     font-weight: bold;
 }
 
@@ -588,27 +612,27 @@ li.rules {
 }
 
 /* modal action button spacing (merge borders for adjacent action pairs) --------------------------- */
-.chat-page #password-modal button[type="button"] + button[type="button"],
-.chat-page #new-announcement-modal button[type="button"] + button[type="button"],
-.chat-page #chat-tag-modal button[type="button"] + button[type="button"],
-.chat-page #new-dm-modal .new-dm-modal-actions button[type="button"] + button[type="button"] {
+.chat-page #password-modal button[type="button"]+button[type="button"],
+.chat-page #new-announcement-modal button[type="button"]+button[type="button"],
+.chat-page #chat-tag-modal button[type="button"]+button[type="button"],
+.chat-page #new-dm-modal .new-dm-modal-actions button[type="button"]+button[type="button"] {
     margin-left: -5px;
     border-left: none;
 }
 
-.chat-page #password-modal > button[type="button"]:first-of-type {
+.chat-page #password-modal>button[type="button"]:first-of-type {
     margin-top: 0.5rem;
     border-radius: 5px 0px 0px 5px;
 }
 
-.chat-page #new-announcement-modal select + button[type="button"],
-.chat-page #chat-directory-modal #chat-directory-list + button[type="button"],
-.chat-page #chat-tag-modal #chat-tag-list + button[type="button"] {
+.chat-page #new-announcement-modal select+button[type="button"],
+.chat-page #chat-directory-modal #chat-directory-list+button[type="button"],
+.chat-page #chat-tag-modal #chat-tag-list+button[type="button"] {
     margin-top: 0.5rem;
     border-radius: 5px 0px 0px 5px;
 }
 
-.chat-page #new-chat-modal > #new-chat-modal-cancel {
+.chat-page #new-chat-modal>#new-chat-modal-cancel {
     margin-top: 0.75rem;
 }
 
@@ -790,7 +814,8 @@ ul.chat-admin-members-ul li.member-list-entry {
     opacity: 1;
 }
 
-#window-control-open-journey, #window-control-open-tzadkiels-ship {
+#window-control-open-journey,
+#window-control-open-tzadkiels-ship {
     border-radius: 5px;
 }
 
@@ -846,7 +871,7 @@ html.chat-embed .sidebar-container {
     display: none !important;
 }
 
-html.chat-embed #chat > h1 {
+html.chat-embed #chat>h1 {
     display: none !important;
 }
 
@@ -1005,18 +1030,53 @@ html .new-dm-modal-actions button:hover {
 
 /* mobile portrait (narrow sidebar, redraw chat window) -------------------------------------------- */
 @media (max-width: 600px) {
-    .chat-page .main { margin-left: 0; }
-    #chat { display: flex; flex-direction: column; }
-    .chat-with-sidebar { flex-direction: column; gap: 0.5rem; margin: 0 8px 8px 8px; width: auto; }
-    .chat-primary { flex: none; width: 100%; max-width: 100%; }
+    .chat-page .main {
+        margin-left: 0;
+    }
+
+    #chat {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-with-sidebar {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 0 8px 8px 8px;
+        width: auto;
+    }
+
+    .chat-primary {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+    }
+
     .member-list-aside {
         flex: none;
         width: 100%;
         max-width: 100%;
         max-height: 7rem;
     }
-    .box { flex: none; max-height: 45vh; width: auto; margin: 0 0 8px 0; max-width: 100%; display: flex; flex-direction: column; overflow: hidden; }
-    .box ul { flex: 1; min-height: 0; height: auto; overflow-y: scroll; }
+
+    .box {
+        flex: none;
+        max-height: 45vh;
+        width: auto;
+        margin: 0 0 8px 0;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .box ul {
+        flex: 1;
+        min-height: 0;
+        height: auto;
+        overflow-y: scroll;
+    }
+
     .chat-compose {
         margin: 8px 0;
     }
@@ -1111,6 +1171,7 @@ html .new-dm-modal-actions button:hover {
     .chat-tab__close {
         opacity: 0;
     }
+
     .chat-tab:hover .chat-tab__close,
     .chat-tab:focus-within .chat-tab__close {
         opacity: 1;

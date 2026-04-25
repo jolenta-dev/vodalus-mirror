@@ -124,6 +124,14 @@ tbody tr:nth-child(even) {
     font-weight: bold;
 }
 
+#name-table td.guestbook-name-cell .name-color .message-carpal-tunnel {
+    background-image: radial-gradient(circle, darkgray, purple, blueviolet);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
 #name-table td.guestbook-name-cell .name-color .message-prestige-tag {
     display: inline-block;
     font-weight: bold;

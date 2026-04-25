@@ -36,6 +36,7 @@
             </script>
         </div>
         <div id="home-right-wrapper">
+            <script src="/assets/javascript/roster-name.js"></script>
             <div class="clicker-leaderboard">
                 <h2><u>Botanic Gardens Leaderboard</u></h2>
                 <div class="home-leaderboard-table-wrap">
@@ -69,7 +70,8 @@
                                     item.journey_level != null ? item.journey_level : 0,
                                     item.color,
                                     item.decoration,
-                                    item.prestige_level != null ? item.prestige_level : 0
+                                    item.prestige_level != null ? item.prestige_level : 0,
+                                    !!item.holds_clicker_tag
                                 );
                                 const tdCount = document.createElement('td');
                                 tdCount.textContent = String(item.clicker_count);
@@ -96,7 +98,6 @@
                         <tbody id="gambling-leaderboard-body"></tbody>
                     </table>
                 </div>
-                <script src="/assets/javascript/roster-name.js"></script>
                 <script>
                     fetch('/api/gambling-leaderboard')
                         .then((r) => (r.ok ? r.json() : Promise.reject()))

@@ -49,11 +49,11 @@
 
 			fetch('/api/names')
 				.then(r => r.json())
-				.then(names => names.forEach(({ name, date, website, note, vip, journey_level, prestige_level, color, decoration }) => {
+				.then(names => names.forEach(({ name, date, website, note, vip, journey_level, prestige_level, color, decoration, holds_clicker_tag }) => {
 					const nameCells = document.querySelectorAll('#name-table-body tr td:nth-child(2)');
 					const key = (name || '').toLowerCase();
 					if (Array.from(nameCells).some(cell => guestbookNameKey(cell) === key)) return;
-					addToList(name, date, website, note, { vip, journey_level, prestige_level, color, decoration });
+					addToList(name, date, website, note, { vip, journey_level, prestige_level, color, decoration, holds_clicker_tag });
 				}));
 
 			document.getElementById('add-btn').addEventListener('click', newName);
@@ -128,7 +128,8 @@
 									journey_level: body.journey_level,
 									prestige_level: body.prestige_level,
 									color: body.color,
-									decoration: body.decoration
+									decoration: body.decoration,
+									holds_clicker_tag: body.holds_clicker_tag
 								});
 								document.getElementById('input-name').value = '';
 								document.getElementById('input-website').value = '';
@@ -161,7 +162,8 @@
 						meta.journey_level != null ? meta.journey_level : 0,
 						meta.color,
 						meta.decoration,
-						meta.prestige_level != null ? meta.prestige_level : 0
+						meta.prestige_level != null ? meta.prestige_level : 0,
+						!!meta.holds_clicker_tag
 					);
 				} else {
 					tdName.textContent = name || '';
@@ -180,7 +182,8 @@
 				journey_level: 4,
 				prestige_level: 7,
 				color: '#c71585',
-				decoration: ''
+				decoration: '',
+				holds_clicker_tag: false
 			});
 		</script>
 </div>

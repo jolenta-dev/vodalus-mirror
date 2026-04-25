@@ -161,6 +161,9 @@
 				return ' style="background-image: linear-gradient(90deg, ' + stops.join(', ') + '); -webkit-background-clip: text; background-clip: text; color: transparent;"';
 			}
 
+			/* canonical botanic clicker #1; set from /api/me and /api/chat-tag-preference */
+			let clickerTagHolder = null;
+
 			function getAvailableTags(name, isVip, journeyLevel, prestigeLevel) {
 				const tags = [];
 				const n = String(name || '').trim().toLowerCase();
@@ -180,6 +183,7 @@
 				else if (jl === 3) tags.push('LVL 3 GAMBLER');
 				else if (jl >= 4) tags.push('AUTARCH');
 				if (jl >= 5 || pl > 0) tags.push('MASTER GAMBLER');
+				if (clickerTagHolder && n === String(clickerTagHolder).trim().toLowerCase()) tags.push('CARPAL TUNNEL');
 				return tags;
 			}
 
@@ -197,6 +201,7 @@
 				if (t === 'LVL 3 GAMBLER') return '<span class="message-journey-3"' + lvlStyle('#ff3db2') + '>(LVL 3 GAMBLER) </span>';
 				if (t === 'AUTARCH') return '<span class="message-journey-4">(AUTARCH) </span>';
 				if (t === 'MASTER GAMBLER') return '<span class="message-master-gambler">(MASTER GAMBLER) </span>';
+				if (t === 'CARPAL TUNNEL') return '<span class="message-carpal-tunnel">(CARPAL TUNNEL) </span>';
 				if (t.startsWith('PRESTIGE ')) {
 					const m = t.match(/^PRESTIGE\s+(\d+)$/);
 					const pl = m ? Number(m[1]) : (Number(prestigeLevel) || 0);
@@ -842,7 +847,10 @@
 					return Promise.reject(new Error('not logged in'));
 				})
 				.then(data => {
-					if (data && data.nickname) submitName(data.nickname);
+					if (data && data.nickname) {
+						if (data.clicker_tag_holder != null) clickerTagHolder = data.clicker_tag_holder;
+						submitName(data.nickname);
+					}
 				})
 				.catch(() => { });
 
@@ -1508,6 +1516,7 @@
 							return payload;
 						})
 						.then((payload) => {
+							if (payload.clicker_tag_holder !== undefined) clickerTagHolder = payload.clicker_tag_holder;
 							const tags = Array.isArray(payload.tags) ? payload.tags : [];
 							chatTagList.innerHTML = '';
 							if (!tags.length) {

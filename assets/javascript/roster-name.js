@@ -32,7 +32,7 @@
         return "";
     }
 
-    function rosterNameHtml(name, isVip, journeyLevel, color, decoration, prestigeLevel) {
+    function rosterNameHtml(name, isVip, journeyLevel, color, decoration, prestigeLevel, holdsClickerTag) {
         let n = String(name || "").trim().toLowerCase();
         let roleTag =
             n === "jolenta"
@@ -64,6 +64,8 @@
                 : "";
         let masterGamblerTag =
             jl >= 5 || pl > 0 ? '<span class="message-master-gambler">(MASTER GAMBLER) </span>' : "";
+        let carpalTunnelTag =
+            holdsClickerTag ? '<span class="message-carpal-tunnel">(CARPAL TUNNEL) </span>' : "";
         let nameText = n === "jolenta" ? "⋆.˚" + escapeHtml(name) : escapeHtml(name);
         let displayName =
             n === "jolenta"
@@ -103,6 +105,7 @@
             prestigeTag +
             journeyTag +
             masterGamblerTag +
+            carpalTunnelTag +
             decoLead +
             displayName +
             decoTrail +
