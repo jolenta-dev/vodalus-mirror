@@ -44,14 +44,11 @@
             </div>
 
             <div id="menu-area-wrapper">
-                <button id="upgrade1">increase click - <span id="upgrade1-cost"></span> (lvl. <span
-                        id="upgrade1-level"></span>) (current: <span id="upgrade1-current"></span>)</button>
-                <button id="upgrade2">passive income - <span id="upgrade2-cost"></span> (lvl. <span
-                        id="upgrade2-level"></span>) (current: <span id="upgrade2-current"></span>)</button>
-                <button id="upgrade3">auto click faster - <span id="upgrade3-cost"></span> (lvl. <span
-                        id="upgrade3-level"></span>) (current: <span id="upgrade3-current"></span>)</button>
-                <button id="upgrade4">hold to click - <span id="upgrade4-cost"></span> (lvl. <span
-                        id="upgrade4-level"></span>) (current: <span id="upgrade4-current"></span>)</button>
+                <button id="upgrade1">LVL. <span id="upgrade1-level"></span> increase click (+ 1 per click)- <span id="upgrade1-cost"></span> (current: <span id="upgrade1-current"></span>)</button>
+                <button id="upgrade2">LVL. <span id="upgrade2-level"></span> passive income (+ 1 click per second) - <span id="upgrade2-cost"></span> (current: <span id="upgrade2-current"></span>)</button>
+                <button id="upgrade3">LVL. <span id="upgrade3-level"></span> auto click faster (halve the time between clicks) - <span id="upgrade3-cost"></span> (current: <span id="upgrade3-current"></span>)</button>
+                <button id="upgrade4">LVL. <span id="upgrade4-level"></span> hold to click (unlock -> -100ms between clicks)- <span id="upgrade4-cost"></span> (current: <span id="upgrade4-current"></span>)</button>
+                <button id="upgrade5">LVL. <span id="upgrade5-level"></span> explosions (unlock -> +10% chance & x1.5 explosion quantity) - <span id="upgrade5-cost"></span> (current: <span id="upgrade5-current"></span>)</button>
             </div>
         </div>
         <div id="password-modal-overlay" style="display: none;">
@@ -70,6 +67,8 @@
     let increasePerClick = 1;
     let perSecond = 0;
     let autoClickInterval = 1000;
+    let explosionChance = 0;
+    let explosionQuantity = 0;
     let holdToClick = false;
     let holdToClickInterval = 1000;
     let buttonHeld = false;
@@ -95,6 +94,11 @@
     }
     function botanicUpgradeCost4(purchases) {
         let c = 50000;
+        for (let i = 0; i < purchases; i++) c = Math.round(c * 10);
+        return c;
+    }
+    function botanicUpgradeCost5(purchases) {
+        let c = 100000;
         for (let i = 0; i < purchases; i++) c = Math.round(c * 10);
         return c;
     }
@@ -264,7 +268,11 @@
             current.textContent = `not unlocked`;
         }
     }
-
+    function renderUpgrade5Current() {
+        const current = document.getElementById(`upgrade5-current`);
+        if (current) current.textContent = `${explosionChance * 100}% chance to explode for ${formatUsNumber(explosionQuantity)} clicks`;
+    }
+    
     // upgrade 1 block (click power) ----------------------------------
     upgradeCost[1].textContent = formatUsNumber(20);
     const baseCost1 = 20;
@@ -349,12 +357,50 @@
         if (currentCount >= currentCost && currentCost >= baseCost4 && !holdToClick) {
             holdToClick = true;
             holdToClickInterval = 1000;
-        } else if (currentCount >= currentCost && currentCost >= baseCost4 && holdToClick) {
+            upgradeLevel[4].innerHTML++;
+        } else if (currentCount >= currentCost && currentCost >= baseCost4 && holdToClick && holdToClickInterval > 100) {
             holdToClickInterval -= 100;
+            upgradeLevel[4].innerHTML++;
+        } else if (currentCount >= currentCost && currentCost >= baseCost4 && holdToClick && holdToClickInterval <= 100) {
+            holdToClickInterval -= 1;
+            upgradeLevel[4].innerHTML++;
         } else {
             return;
         }
         renderUpgrade4Current();
+    });
+
+    // upgrade 5 block (explosions) --------------------------------------------
+    upgradeCost[5].textContent = formatUsNumber(100000);
+    const baseCost5 = 100000;
+    renderUpgrade5Current();
+    
+    upgrades[5].addEventListener("click", function () {
+        let currentCount = count;
+        let currentCost = readDisplayNumber(upgradeCost[5]);
+
+        if (currentCount >= currentCost && currentCost >= baseCost5) {
+            if (explosionChance <= 0.7) {
+                explosionChance += 0.1;
+            } else {
+                explosionChance += 0.01;
+            }
+            if (upgradeLevel[5].innerHTML == 1) {
+                explosionQuantity = 1000;
+            } else {
+                explosionQuantity *= 1.5;
+            }
+            upgradeLevel[5].innerHTML++;
+            renderUpgrade5Current();
+            newCount = currentCount - currentCost;
+            count = newCount;
+            totalTracker.textContent = formatUsNumber(newCount);
+            newCost = Math.round(currentCost * 10);
+            upgradeCost[5].textContent = formatUsNumber(newCost);
+            schedulePersistClicker();
+        } else {
+            return;
+        }
     });
 
     // run the passive skills ---------------------------------------
@@ -371,6 +417,9 @@
     function holdAndClick() {
         if (holdToClick) {
             count = count + increasePerClick;
+            if (Math.random() < explosionChance) {
+                count += explosionQuantity;
+            }
             totalTracker.textContent = formatUsNumber(count);
             schedulePersistClicker();
             mainButton.style.animation = 'none';
@@ -390,6 +439,16 @@
 
     mainButton.addEventListener("mouseleave", function () {
         buttonHeld = false;
+    });
+    mainButton.addEventListener("click", function () {
+        if (Math.random() < explosionChance) {
+            count += explosionQuantity;
+            totalTracker.textContent = formatUsNumber(count);
+            schedulePersistClicker();
+            mainButton.style.animation = 'none';
+            mainButton.offsetHeight;
+            mainButton.style.animation = 'clickAnim 0.3s forwards';
+        }
     });
 
     setInterval(function () {
