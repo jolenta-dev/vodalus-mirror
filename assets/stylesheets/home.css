@@ -19,16 +19,32 @@
     border-radius: 25px;
     border: 3px solid aliceblue;
     background-color: rgba(15, 0, 29, 0.3);
+    padding: 1em;
+    max-height: 90vh;
+    overflow: scroll;
 }
 
 #home-left-wrapper {
     display: flex;
     flex-direction: column;
     float: left;
-    width: 69%;
+    width: 65%;
     border-radius: 25px;
     border: 3px solid aliceblue;
     background-color: rgba(15, 0, 29, 0.3);
+    max-height: 90vh;
+    overflow: scroll;
+}
+
+@media (max-width: 1024px) {
+    #home-right-wrapper {
+        float: top;
+        width: 100%;
+    }
+    #home-left-wrapper {
+        float: bottom;
+        width: 100%;
+    }
 }
 
 
@@ -76,7 +92,7 @@ h2 {
 /* leaderboard table ------------------------------------------------------------------------------- */
 .home-leaderboard-table {
     table-layout: fixed;
-    width: 90%;
+    width: 100%;
     max-width: 60rem;
     margin: 10px auto;
     border-collapse: collapse;
