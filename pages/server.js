@@ -75,7 +75,8 @@ chatdb.exec(`
       color TEXT DEFAULT '#c71585',
       decoration TEXT DEFAULT '⋆˙⟡',
       journey_level INTEGER DEFAULT 0,
-      prestige_level INTEGER DEFAULT 0
+      prestige_level INTEGER DEFAULT 0,
+      clicker_count INTEGER DEFAULT 0
     );
   
     CREATE TABLE IF NOT EXISTS journey_phrases (
@@ -103,6 +104,9 @@ if (!protectedNameColumns.some(c => c.name === 'prestige_level')) {
 }
 if (!protectedNameColumns.some(c => c.name === 'selected_chat_tag')) {
     chatdb.exec("ALTER TABLE protected_names ADD COLUMN selected_chat_tag TEXT DEFAULT ''");
+}
+if (!protectedNameColumns.some(c => c.name === 'clicker_count')) {
+    chatdb.exec("ALTER TABLE protected_names ADD COLUMN clicker_count INTEGER DEFAULT 0");
 }
 
 function computeAvailableChatTagsForUser(name, vip, journeyLevel, prestigeLevel) {
@@ -1063,6 +1067,65 @@ app.post('/api/colors_decoration', async (req, res) => {
     }
     chatdb.prepare('UPDATE protected_names SET color = ?, decoration = ? WHERE LOWER(name) = LOWER(?)').run(color, decoration, name);
     res.json({ success: true });
+});
+
+// clicker api endpoints for SQL db manipulation
+app.post('/api/clicker/count', async (req, res) => {
+    const { name, password } = req.body || {};
+    if (!name) return res.status(400).json({ error: 'name is required' });
+    const row = chatdb.prepare('SELECT name, password, clicker_count FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+    if (!row) return res.status(404).json({ error: 'name not found' });
+    const sid = (req.signedCookies.chat_sid || '').toLowerCase();
+    const nameMatchesCookie = sid && sid === String(row.name || '').toLowerCase();
+    if (!nameMatchesCookie) {
+        if (!row.password || !password || !(await bcrypt.compare(password, row.password))) {
+            return res.status(401).json({ error: 'wrong password for nickname' });
+        }
+    }
+    const clickerCount = row.clicker_count != null ? Number(row.clicker_count) : 0;
+    res.json({ clicker_count: clickerCount, name: row.name });
+});
+
+app.post('/api/clicker/update-count', async (req, res) => {
+    const { name, password, newCount } = req.body || {};
+    if (!name || newCount === undefined || newCount === null) {
+        return res.status(400).json({ error: 'name and newCount are required' });
+    }
+    const nextCount = Number(newCount);
+    if (!Number.isFinite(nextCount) || nextCount < 0 || !Number.isInteger(nextCount)) {
+        return res.status(400).json({ error: 'newCount must be a non-negative integer' });
+    }
+    const row = chatdb.prepare('SELECT name, password, clicker_count FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+    if (!row) return res.status(404).json({ error: 'name not found' });
+    const sid = (req.signedCookies.chat_sid || '').toLowerCase();
+    const nameMatchesCookie = sid && sid === String(row.name || '').toLowerCase();
+    if (!nameMatchesCookie) {
+        if (!row.password || !password || !(await bcrypt.compare(password, row.password))) {
+            return res.status(401).json({ error: 'wrong password for nickname' });
+        }
+    }
+    chatdb.prepare('UPDATE protected_names SET clicker_count = ? WHERE LOWER(name) = LOWER(?)').run(nextCount, name);
+    res.json({ success: true, clicker_count: nextCount, name: row.name });
+});
+
+app.post('/api/clicker/get-global-counts', async (req, res) => {
+    const rows = chatdb
+        .prepare(
+            `SELECT name, journey_level, prestige_level, vip, color, decoration, clicker_count
+             FROM protected_names WHERE clicker_count > 0
+             ORDER BY clicker_count DESC, name COLLATE NOCASE ASC`
+        )
+        .all();
+    const globalCounts = rows.map((r) => ({
+        name: r.name,
+        journey_level: r.journey_level != null ? Number(r.journey_level) : 0,
+        prestige_level: r.prestige_level != null ? Number(r.prestige_level) : 0,
+        vip: !!r.vip,
+        color: r.color ? r.color : '#000000',
+        decoration: r.decoration != null ? String(r.decoration) : '',
+        clicker_count: r.clicker_count != null ? Number(r.clicker_count) : 0
+    }));
+    res.json({ global_counts: globalCounts });
 });
 
 // manual announcements endpoint (privileged users only)

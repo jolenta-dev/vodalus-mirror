@@ -1,12 +1,65 @@
+/* home page blocks --------------------------------------------------------------------------------- */
+#home-header-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 30%;
+    border-radius: 25px;
+    border: 3px solid aliceblue;
+    background-color: rgba(15, 0, 29, 0.3);
+    margin-bottom: 3em;
+}
+
+#home-right-wrapper {
+    display: flex;
+    flex-direction: column;
+    float: right;
+    width: 30%;
+    align-items: end;
+    border-radius: 25px;
+    border: 3px solid aliceblue;
+    background-color: rgba(15, 0, 29, 0.3);
+}
+
+#home-left-wrapper {
+    display: flex;
+    flex-direction: column;
+    float: left;
+    width: 69%;
+    border-radius: 25px;
+    border: 3px solid aliceblue;
+    background-color: rgba(15, 0, 29, 0.3);
+}
+
+
 /* element base ------------------------------------------------------------------------------------ */
 h2 {
     text-align: center;
 }
 
+/* update notes ------------------------------------------------------------------------------------ */
+.update-notes-wrapper {
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    background-color: rgba(15, 0, 29, 0.3);
+    padding: 1em;
+    margin: 1em;
+}
+
+.update-notes-wrapper h2 {
+    text-decoration: underline;
+}
+
 /* wrapper ----------------------------------------------------------------------------------------- */
-.gambling-leaderboard-table-wrap {
+.home-leaderboard-table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+#home-right-wrapper .gambling-leaderboard > h2,
+#home-right-wrapper .clicker-leaderboard > h2 {
+    text-align: left;
 }
 
 /* daily quote ------------------------------------------------------------------------------------- */
@@ -21,7 +74,7 @@ h2 {
 }
 
 /* leaderboard table ------------------------------------------------------------------------------- */
-#gambling-leaderboard-table {
+.home-leaderboard-table {
     table-layout: fixed;
     width: 90%;
     max-width: 60rem;
@@ -30,80 +83,80 @@ h2 {
     margin: 10px 0;
 }
 
-#gambling-leaderboard-table th,
-#gambling-leaderboard-table td {
+.home-leaderboard-table th,
+.home-leaderboard-table td {
     padding: 0.6em;
     vertical-align: middle;
 }
 
-#gambling-leaderboard-table th:first-child,
-#gambling-leaderboard-table td:first-child {
+.home-leaderboard-table th:first-child,
+.home-leaderboard-table td:first-child {
     text-align: left;
     width: 72%;
 }
 
-#gambling-leaderboard-table th:last-child,
-#gambling-leaderboard-table td:last-child {
+.home-leaderboard-table th:last-child,
+.home-leaderboard-table td:last-child {
     text-align: right;
     width: 28%;
 }
 
-#gambling-leaderboard-table tbody tr:nth-child(even) {
+.home-leaderboard-table tbody tr:nth-child(even) {
     background-color: #edebeb;
 }
 
 /* roster name cell -------------------------------------------------------------------------------- */
-#gambling-leaderboard-table td.guestbook-name-cell {
+.home-leaderboard-table td.guestbook-name-cell {
     line-height: 1.45;
     white-space: normal;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-name {
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-name {
     color: inherit;
     font-style: italic;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-vip {
+.home-leaderboard-table td.guestbook-name-cell .message-vip {
     color: purple;
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .name-color--vip .message-name {
+.home-leaderboard-table td.guestbook-name-cell .name-color--vip .message-name {
     color: inherit;
     font-style: italic;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-vip + .name-color .message-name {
+.home-leaderboard-table td.guestbook-name-cell .message-vip + .name-color .message-name {
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-admin {
+.home-leaderboard-table td.guestbook-name-cell .message-admin {
     color: blueviolet;
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-admin + .name-color .message-name,
-#gambling-leaderboard-table td.guestbook-name-cell .message-vip + .message-admin + .name-color .message-name {
+.home-leaderboard-table td.guestbook-name-cell .message-admin + .name-color .message-name,
+.home-leaderboard-table td.guestbook-name-cell .message-vip + .message-admin + .name-color .message-name {
     color: #add8e6;
     font-style: normal;
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-journey-1,
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-journey-2,
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-journey-3,
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-journey-4,
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-journey-5-plus {
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-journey-1,
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-journey-2,
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-journey-3,
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-journey-4,
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-journey-5-plus {
     color: inherit;
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .name-color .message-prestige-tag {
+.home-leaderboard-table td.guestbook-name-cell .name-color .message-prestige-tag {
     display: inline-block;
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-master-gambler {
+.home-leaderboard-table td.guestbook-name-cell .message-master-gambler {
     background-image: linear-gradient(to left, pink, red, yellow, orange);
     background-clip: text;
     -webkit-background-clip: text;
@@ -111,7 +164,7 @@ h2 {
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-owner {
+.home-leaderboard-table td.guestbook-name-cell .message-owner {
     background-image: linear-gradient(to left, violet, indigo, pink, red);
     background-clip: text;
     -webkit-background-clip: text;
@@ -119,9 +172,9 @@ h2 {
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-the-house,
-#gambling-leaderboard-table td.leaderboard-house-level .message-the-house,
-#gambling-leaderboard-table td.leaderboard-prestige-level .message-the-house {
+.home-leaderboard-table td.guestbook-name-cell .message-the-house,
+.home-leaderboard-table td.leaderboard-house-level .message-the-house,
+.home-leaderboard-table td.leaderboard-prestige-level .message-the-house {
     background-image: linear-gradient(to left, orangered, red, maroon, red, orangered);
     background-clip: text;
     -webkit-background-clip: text;
@@ -129,9 +182,9 @@ h2 {
     font-weight: bold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell .message-the-archon,
-#gambling-leaderboard-table td.leaderboard-house-level .message-the-archon,
-#gambling-leaderboard-table td.leaderboard-prestige-level .message-the-archon {
+.home-leaderboard-table td.guestbook-name-cell .message-the-archon,
+.home-leaderboard-table td.leaderboard-house-level .message-the-archon,
+.home-leaderboard-table td.leaderboard-prestige-level .message-the-archon {
     background-image: linear-gradient(45deg, skyblue, white, skyblue, white, skyblue);
     background-clip: text;
     -webkit-background-clip: text;
@@ -140,58 +193,58 @@ h2 {
 }
 
 /* roster owner combos ----------------------------------------------------------------------------- */
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: lightblue;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-4,
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-5-plus {
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-4,
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-journey-5-plus {
     color: lightpink;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name::before {
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name::before {
     content: "⏾";
     color: gold;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail {
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail {
     color: lightpink;
 }
 
-#gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail-gold {
+.home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name-tail-gold {
     color: gold;
 }
 
 /* dim theme table --------------------------------------------------------------------------------- */
-html #gambling-leaderboard-table th,
-html #gambling-leaderboard-table td {
+html .home-leaderboard-table th,
+html .home-leaderboard-table td {
     border: 1px solid #5c5c5c;
     color: #eaeaea;
 }
 
-html #gambling-leaderboard-table thead th {
+html .home-leaderboard-table thead th {
     background: rgba(255, 255, 255, 0.07);
     color: #f4f4f4;
     font-weight: normal;
 }
 
-html #gambling-leaderboard-table tbody tr:nth-child(even) {
+html .home-leaderboard-table tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.045);
 }
 
-html #gambling-leaderboard-table tbody tr:nth-child(odd) {
+html .home-leaderboard-table tbody tr:nth-child(odd) {
     background-color: rgba(0, 0, 0, 0.08);
 }
 
 /* dim theme roster owner combos ------------------------------------------------------------------- */
-html #gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
+html .home-leaderboard-table td.guestbook-name-cell:has(.message-owner):not(:has(.message-the-house)):not(:has(.message-the-archon)) .name-color .message-name {
     color: #b8d8f0;
 }
 
-html #gambling-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
+html .home-leaderboard-table td.guestbook-name-cell:has(.message-owner):is(:has(.message-the-house), :has(.message-the-archon)) .name-color .message-name {
     color: lightpink;
 }
