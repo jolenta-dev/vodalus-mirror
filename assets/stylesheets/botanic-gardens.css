@@ -30,6 +30,10 @@
   font-size: 2em;
 }
 
+html.page-embed #button {
+  margin: 0;
+}
+
 #button:hover {
   background-color: #dcc2f4;
   animation-name: hoverAnim;

@@ -1223,23 +1223,23 @@ app.post('/api/clicker/update-count', async (req, res) => {
             return res.status(401).json({ error: 'wrong password for nickname' });
         }
     }
-    let levels10 = parseBotanicUpgradeLevels(body);
-    if (!levels10) {
-        const b = chatdb
-            .prepare(
-                `SELECT upgrade1_level, upgrade2_level, upgrade3_level, upgrade4_level, upgrade5_level, upgrade6_level, upgrade7_level, upgrade8_level, upgrade9_level, upgrade10_level
-                 FROM botanic_gardens_saves WHERE name = ?`
-            )
-            .get(row.name);
-        if (b) {
-            levels10 = [];
-            for (let i = 1; i <= 10; i++) {
-                const v = b[`upgrade${i}_level`];
-                levels10.push(v != null ? Number(v) || 0 : 0);
-            }
-        } else {
-            levels10 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
+    const incomingLevels10 = parseBotanicUpgradeLevels(body);
+    const b = chatdb
+        .prepare(
+            `SELECT upgrade1_level, upgrade2_level, upgrade3_level, upgrade4_level, upgrade5_level, upgrade6_level, upgrade7_level, upgrade8_level, upgrade9_level, upgrade10_level
+             FROM botanic_gardens_saves WHERE name = ?`
+        )
+        .get(row.name);
+    const currentLevels10 = [];
+    for (let i = 1; i <= 10; i++) {
+        const v = b ? b[`upgrade${i}_level`] : 0;
+        currentLevels10.push(v != null ? Number(v) || 0 : 0);
+    }
+    const levels10 = incomingLevels10 || currentLevels10;
+    const upgradesChanged = !!incomingLevels10 && incomingLevels10.some((v, i) => v !== currentLevels10[i]);
+
+    if (nextCount < row.clicker_count && !upgradesChanged) {
+        return res.status(400).json({ error: 'newCount must be greater than current or show change in upgrades.' });
     }
     chatdb.prepare('UPDATE protected_names SET clicker_count = ? WHERE LOWER(name) = LOWER(?)').run(nextCount, name);
     upsertBotanicGardensSave(row.name, nextCount, levels10);

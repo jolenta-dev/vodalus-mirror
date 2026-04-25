@@ -71,6 +71,13 @@ export function initDraggableDiv(header, content, state = 'minimized') {
     // iframes have no intrinsic size, so keep them pinned to the legacy default
     document.body.appendChild(draggableDiv);
 
+    let iframeW = '512px';
+    let iframeH = '288px';
+    if (isIframe && /botanic-gardens/i.test(content.getAttribute('src') || content.src || '')) {
+        iframeW = '1000px';
+        iframeH = '500px';
+    }
+
     Object.assign(draggableDivHeaderText.style, {
         fontSize: '16px',
         fontWeight: 'bold',
@@ -84,8 +91,8 @@ export function initDraggableDiv(header, content, state = 'minimized') {
     Object.assign(draggableDiv.style, {
         position: 'absolute',
         zIndex: '9',
-        width: isIframe ? '512px' : 'auto',
-        height: isIframe ? '288px' : 'auto',
+        width: isIframe ? iframeW : 'auto',
+        height: isIframe ? iframeH : 'auto',
         backgroundColor: '#f1f1f1',
         textAlign: 'center',
         border: '1px solid #d3d3d3',
@@ -299,7 +306,45 @@ export function initDraggableDiv(header, content, state = 'minimized') {
             headerBar.style.cursor = 'move';
         }
         draggableDivClose.addEventListener('click', () => {
-            element.remove();
+            function removePanel() {
+                element.remove();
+            }
+            if (
+                isIframe &&
+                content instanceof HTMLIFrameElement &&
+                content.contentWindow
+            ) {
+                let src = content.getAttribute('src') || content.src || '';
+                if (/botanic-gardens/i.test(src)) {
+                    let finished = false;
+                    function onFlushDone(ev) {
+                        if (ev.source !== content.contentWindow) return;
+                        if (!ev.data || ev.data.type !== 'vodalus-botanic-flush-done') return;
+                        finished = true;
+                        window.removeEventListener('message', onFlushDone);
+                        removePanel();
+                    }
+                    window.addEventListener('message', onFlushDone);
+                    try {
+                        content.contentWindow.postMessage(
+                            { type: 'vodalus-botanic-flush' },
+                            location.origin
+                        );
+                    } catch (err) {
+                        window.removeEventListener('message', onFlushDone);
+                        removePanel();
+                        return;
+                    }
+                    window.setTimeout(function () {
+                        if (!finished) {
+                            window.removeEventListener('message', onFlushDone);
+                            removePanel();
+                        }
+                    }, 4000);
+                    return;
+                }
+            }
+            removePanel();
         });
         draggableDivMinimize.addEventListener('click', () => {
             toggleMinimize();
