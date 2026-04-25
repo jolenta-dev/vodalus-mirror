@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (new URLSearchParams(location.search).get('embed') === '1')
+            document.documentElement.classList.add('page-embed');
+    </script>
     <title>Botanic Gardens</title>
     <link rel="stylesheet" href="/assets/stylesheets/chat.css">
     <link rel="stylesheet" href="/assets/stylesheets/site-controls.css">
@@ -64,6 +68,24 @@
     let sessionName = null;
     let persistClickerTimer = null;
     let clickerHydrated = false;
+
+    function botanicUpgradeCost1(purchases) {
+        let c = 20;
+        for (let i = 0; i < purchases; i++) c = Math.round(c * 2.5);
+        return c;
+    }
+    function botanicUpgradeCost2(purchases) {
+        let c = 50;
+        for (let i = 0; i < purchases; i++) c = Math.round(c * 5);
+        return c;
+    }
+    function botanicSaveLevelsPayload() {
+        const o = {};
+        o.upgrade1_level = Math.max(0, increasePerClick - 1);
+        o.upgrade2_level = Math.max(0, perSecond);
+        for (let i = 3; i <= 10; i++) o['upgrade' + i + '_level'] = 0;
+        return o;
+    }
 
     const draggableDivModule = import('/assets/javascript/draggable-div.js');
     const openDraggableWindows = {};
@@ -148,7 +170,7 @@
     }
 
     let totalTracker = document.getElementById("count");
-    let button = document.getElementById("button");
+    let mainButton = document.getElementById("button");
 
     function schedulePersistClicker() {
         if (!sessionName || !clickerHydrated) return;
@@ -159,12 +181,19 @@
         }, 2000);
     }
 
-    button.addEventListener("click", function () {
+    mainButton.addEventListener("click", function () {
         count = count + increasePerClick
         totalTracker.innerHTML = ''
         totalTracker.innerHTML += `${count}`
         schedulePersistClicker();
+        mainButton.style.animation = 'none';
+        mainButton.offsetHeight;
+        mainButton.style.animation = 'clickAnim 0.3s forwards';
     })
+
+    mainButton.addEventListener("animationend", function () {
+        mainButton.style.animation = '';
+    });
 
     let upgrades = [];
 
@@ -235,7 +264,14 @@
         count += perSecond;
         totalTracker.innerHTML = `${count}`
         schedulePersistClicker();
-    }
+        mainButton.style.animation = 'none';
+        mainButton.offsetHeight;
+        mainButton.style.animation = 'clickAnim 0.3s forwards';
+    };
+
+    mainButton.addEventListener("animationend", function () {
+        mainButton.style.animation = '';
+    });
 
     setInterval(addPassive, 1000);
 
@@ -289,6 +325,16 @@
                 const n = data.clicker_count != null ? Number(data.clicker_count) : 0;
                 count = Number.isFinite(n) ? n : 0;
                 totalTracker.innerHTML = String(count);
+                const u1 = data.upgrade1_level != null ? Number(data.upgrade1_level) : 0;
+                const u2 = data.upgrade2_level != null ? Number(data.upgrade2_level) : 0;
+                const p1 = Number.isFinite(u1) && u1 >= 0 ? Math.floor(u1) : 0;
+                const p2 = Number.isFinite(u2) && u2 >= 0 ? Math.floor(u2) : 0;
+                increasePerClick = 1 + p1;
+                perSecond = p2;
+                if (upgradeLevel[1]) upgradeLevel[1].innerHTML = String(p1 + 1);
+                if (upgradeLevel[2]) upgradeLevel[2].innerHTML = String(p2 + 1);
+                if (upgradeCost[1]) upgradeCost[1].innerHTML = String(botanicUpgradeCost1(p1));
+                if (upgradeCost[2]) upgradeCost[2].innerHTML = String(botanicUpgradeCost2(p2));
                 clickerHydrated = true;
             })
             .catch((e) => console.error(e));
@@ -300,7 +346,7 @@
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: sessionName, newCount: count })
+            body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload()))
         })
             .then((r) => r.json())
             .then((data) => {
@@ -317,7 +363,7 @@
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: sessionName, newCount: count }),
+            body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload())),
             keepalive: true
         }).catch(() => { });
     }

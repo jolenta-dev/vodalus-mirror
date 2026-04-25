@@ -70,10 +70,11 @@
         let wrap = document.createElement("div");
         wrap.id = "chat-window-controls";
         wrap.className = "window-controls";
-        wrap.setAttribute("aria-label", "Open journey or ship in a panel");
+        wrap.setAttribute("aria-label", "Open journey, ship, or botanic gardens in a panel");
         wrap.innerHTML =
             '<button type="button" class="window-control-button" id="window-control-open-journey" data-draggable-src="/journey?embed=1" data-draggable-title="Journey">J</button>' +
-            '<button type="button" class="window-control-button" id="window-control-open-tzadkiels-ship" data-draggable-src="/tzadkiels-ship?embed=1" data-draggable-title="Tzadkiel\'s Ship">T</button>';
+            '<button type="button" class="window-control-button" id="window-control-open-tzadkiels-ship" data-draggable-src="/tzadkiels-ship?embed=1" data-draggable-title="Tzadkiel\'s Ship">T</button>' +
+            '<button type="button" class="window-control-button" id="window-control-open-botanic-gardens" data-draggable-src="/botanic-gardens?embed=1" data-draggable-title="Botanic Gardens">B</button>';
         document.body.appendChild(wrap);
 
         let opening = false;
@@ -82,13 +83,12 @@
             if (!btn) return;
             e.preventDefault();
             e.stopPropagation();
-            if (document.getElementById("draggable-div") || opening) return;
+            if (opening) return;
             opening = true;
             let src = btn.getAttribute("data-draggable-src");
             let title = btn.getAttribute("data-draggable-title") || "";
             import("/assets/javascript/draggable-div.js")
                 .then(function (mod) {
-                    if (document.getElementById("draggable-div")) return;
                     let frame = document.createElement("iframe");
                     frame.src = src;
                     frame.title = title;

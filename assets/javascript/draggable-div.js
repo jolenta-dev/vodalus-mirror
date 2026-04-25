@@ -1,10 +1,35 @@
 export function initDraggableDiv(header, content, state = 'minimized') {
+    if (content instanceof HTMLIFrameElement) {
+        let src = content.getAttribute('src') || content.src || '';
+        if (/botanic-gardens/i.test(src)) {
+            for (const w of document.querySelectorAll('[id^="div-"]')) {
+                let iframe = w.querySelector('#draggable-div-content iframe');
+                if (!iframe) continue;
+                let isrc = iframe.getAttribute('src') || iframe.src || '';
+                if (!/botanic-gardens/i.test(isrc)) continue;
+                let maxZ = 9;
+                for (const o of document.querySelectorAll('[id^="div-"]')) {
+                    let z = parseInt(o.style.zIndex, 10);
+                    if (Number.isFinite(z)) maxZ = Math.max(maxZ, z);
+                }
+                w.style.zIndex = String(maxZ + 1);
+                content.remove();
+                return;
+            }
+        }
+    }
     let draggableDiv;
-    for (let i = 0; i < 5; i++) { // TODO: how to make this reserve a spot for modals?
-        let el = document.getElementById(`div-${i}`)
-        if (el != null) {
-            continue;
-        } else {
+    const isIframe = content instanceof HTMLIFrameElement;
+    const slotOrder = isIframe ? [0, 1, 2, 3, 4] : [4, 0, 1, 2, 3];
+    for (const i of slotOrder) {
+        if (document.getElementById(`div-${i}`) != null) continue;
+        draggableDiv = document.createElement('div');
+        draggableDiv.id = `div-${i}`;
+        break;
+    }
+    if (!draggableDiv && !isIframe) {
+        for (let i = 5; i < 64; i++) {
+            if (document.getElementById(`div-${i}`) != null) continue;
             draggableDiv = document.createElement('div');
             draggableDiv.id = `div-${i}`;
             break;
@@ -44,7 +69,6 @@ export function initDraggableDiv(header, content, state = 'minimized') {
         });
     }
     // iframes have no intrinsic size, so keep them pinned to the legacy default
-    const isIframe = content instanceof HTMLIFrameElement;
     document.body.appendChild(draggableDiv);
 
     Object.assign(draggableDivHeaderText.style, {

@@ -92,6 +92,23 @@ chatdb.exec(`
       PRIMARY KEY (user_name, conversation_id),
       FOREIGN KEY (conversation_id) REFERENCES conversations(id)
     );
+
+    CREATE TABLE IF NOT EXISTS botanic_gardens_saves (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL,
+      clicker_count INTEGER NOT NULL DEFAULT 0,
+      upgrade1_level INTEGER NOT NULL DEFAULT 0,
+      upgrade2_level INTEGER NOT NULL DEFAULT 0,
+      upgrade3_level INTEGER NOT NULL DEFAULT 0,
+      upgrade4_level INTEGER NOT NULL DEFAULT 0,
+      upgrade5_level INTEGER NOT NULL DEFAULT 0,
+      upgrade6_level INTEGER NOT NULL DEFAULT 0,
+      upgrade7_level INTEGER NOT NULL DEFAULT 0,
+      upgrade8_level INTEGER NOT NULL DEFAULT 0,
+      upgrade9_level INTEGER NOT NULL DEFAULT 0,
+      upgrade10_level INTEGER NOT NULL DEFAULT 0,
+      FOREIGN KEY (name) REFERENCES protected_names(name)
+    );
   `);
 chatdb.prepare("INSERT OR IGNORE INTO conversations (id, type, label) VALUES ('general', 'room', 'general')").run();
 const announcementColumns = chatdb.prepare("PRAGMA table_info(announcements)").all();
@@ -107,6 +124,54 @@ if (!protectedNameColumns.some(c => c.name === 'selected_chat_tag')) {
 }
 if (!protectedNameColumns.some(c => c.name === 'clicker_count')) {
     chatdb.exec("ALTER TABLE protected_names ADD COLUMN clicker_count INTEGER DEFAULT 0");
+}
+chatdb.exec('CREATE UNIQUE INDEX IF NOT EXISTS botanic_gardens_saves_name_u ON botanic_gardens_saves(name)');
+
+function parseBotanicUpgradeLevels(body) {
+    const out = [];
+    for (let i = 1; i <= 10; i++) {
+        const key = `upgrade${i}_level`;
+        const raw = body && body[key];
+        if (raw === undefined || raw === null) return null;
+        const n = Number(raw);
+        if (!Number.isFinite(n) || !Number.isInteger(n) || n < 0 || n > 1e9) return null;
+        out.push(n);
+    }
+    return out;
+}
+
+function upsertBotanicGardensSave(canonicalName, clickerCount, levels10) {
+    chatdb
+        .prepare(
+            `INSERT INTO botanic_gardens_saves (name, clicker_count, upgrade1_level, upgrade2_level, upgrade3_level, upgrade4_level, upgrade5_level, upgrade6_level, upgrade7_level, upgrade8_level, upgrade9_level, upgrade10_level)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON CONFLICT(name) DO UPDATE SET
+               clicker_count = excluded.clicker_count,
+               upgrade1_level = excluded.upgrade1_level,
+               upgrade2_level = excluded.upgrade2_level,
+               upgrade3_level = excluded.upgrade3_level,
+               upgrade4_level = excluded.upgrade4_level,
+               upgrade5_level = excluded.upgrade5_level,
+               upgrade6_level = excluded.upgrade6_level,
+               upgrade7_level = excluded.upgrade7_level,
+               upgrade8_level = excluded.upgrade8_level,
+               upgrade9_level = excluded.upgrade9_level,
+               upgrade10_level = excluded.upgrade10_level`
+        )
+        .run(
+            canonicalName,
+            clickerCount,
+            levels10[0],
+            levels10[1],
+            levels10[2],
+            levels10[3],
+            levels10[4],
+            levels10[5],
+            levels10[6],
+            levels10[7],
+            levels10[8],
+            levels10[9]
+        );
 }
 
 /** canonical protected_names.name for botanic clicker #1; null if no scores */
@@ -1095,7 +1160,24 @@ app.post('/api/colors_decoration', async (req, res) => {
 app.post('/api/clicker/count', async (req, res) => {
     const { name, password } = req.body || {};
     if (!name) return res.status(400).json({ error: 'name is required' });
-    const row = chatdb.prepare('SELECT name, password, clicker_count FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
+    const row = chatdb
+        .prepare(
+            `SELECT p.name AS name, p.password AS password, p.clicker_count AS clicker_count,
+                    COALESCE(b.upgrade1_level, 0) AS upgrade1_level,
+                    COALESCE(b.upgrade2_level, 0) AS upgrade2_level,
+                    COALESCE(b.upgrade3_level, 0) AS upgrade3_level,
+                    COALESCE(b.upgrade4_level, 0) AS upgrade4_level,
+                    COALESCE(b.upgrade5_level, 0) AS upgrade5_level,
+                    COALESCE(b.upgrade6_level, 0) AS upgrade6_level,
+                    COALESCE(b.upgrade7_level, 0) AS upgrade7_level,
+                    COALESCE(b.upgrade8_level, 0) AS upgrade8_level,
+                    COALESCE(b.upgrade9_level, 0) AS upgrade9_level,
+                    COALESCE(b.upgrade10_level, 0) AS upgrade10_level
+             FROM protected_names p
+             LEFT JOIN botanic_gardens_saves b ON b.name = p.name
+             WHERE LOWER(p.name) = LOWER(?)`
+        )
+        .get(name);
     if (!row) return res.status(404).json({ error: 'name not found' });
     const sid = (req.signedCookies.chat_sid || '').toLowerCase();
     const nameMatchesCookie = sid && sid === String(row.name || '').toLowerCase();
@@ -1105,11 +1187,26 @@ app.post('/api/clicker/count', async (req, res) => {
         }
     }
     const clickerCount = row.clicker_count != null ? Number(row.clicker_count) : 0;
-    res.json({ clicker_count: clickerCount, name: row.name });
+    const payload = {
+        clicker_count: clickerCount,
+        name: row.name,
+        upgrade1_level: Number(row.upgrade1_level) || 0,
+        upgrade2_level: Number(row.upgrade2_level) || 0,
+        upgrade3_level: Number(row.upgrade3_level) || 0,
+        upgrade4_level: Number(row.upgrade4_level) || 0,
+        upgrade5_level: Number(row.upgrade5_level) || 0,
+        upgrade6_level: Number(row.upgrade6_level) || 0,
+        upgrade7_level: Number(row.upgrade7_level) || 0,
+        upgrade8_level: Number(row.upgrade8_level) || 0,
+        upgrade9_level: Number(row.upgrade9_level) || 0,
+        upgrade10_level: Number(row.upgrade10_level) || 0
+    };
+    res.json(payload);
 });
 
 app.post('/api/clicker/update-count', async (req, res) => {
-    const { name, password, newCount } = req.body || {};
+    const body = req.body || {};
+    const { name, password, newCount } = body;
     if (!name || newCount === undefined || newCount === null) {
         return res.status(400).json({ error: 'name and newCount are required' });
     }
@@ -1126,7 +1223,26 @@ app.post('/api/clicker/update-count', async (req, res) => {
             return res.status(401).json({ error: 'wrong password for nickname' });
         }
     }
+    let levels10 = parseBotanicUpgradeLevels(body);
+    if (!levels10) {
+        const b = chatdb
+            .prepare(
+                `SELECT upgrade1_level, upgrade2_level, upgrade3_level, upgrade4_level, upgrade5_level, upgrade6_level, upgrade7_level, upgrade8_level, upgrade9_level, upgrade10_level
+                 FROM botanic_gardens_saves WHERE name = ?`
+            )
+            .get(row.name);
+        if (b) {
+            levels10 = [];
+            for (let i = 1; i <= 10; i++) {
+                const v = b[`upgrade${i}_level`];
+                levels10.push(v != null ? Number(v) || 0 : 0);
+            }
+        } else {
+            levels10 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        }
+    }
     chatdb.prepare('UPDATE protected_names SET clicker_count = ? WHERE LOWER(name) = LOWER(?)').run(nextCount, name);
+    upsertBotanicGardensSave(row.name, nextCount, levels10);
     refreshClickerTagHolderCache();
     res.json({ success: true, clicker_count: nextCount, name: row.name });
 });

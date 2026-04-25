@@ -32,6 +32,27 @@
 
 #button:hover {
   background-color: #dcc2f4;
+  animation-name: hoverAnim;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes hoverAnim {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 0.9;
+  }
+}
+
+@keyframes clickAnim {
+  from{ 
+    scale: 0.9;
+  }
+  to {
+    scale: 1;
+  }
 }
 
 /* right side----------------------------------------- */
@@ -49,6 +70,7 @@
   background-color: #a387be;
   color: aliceblue;
   font-size: 2em;
+  font-family: "Nedar", ui-serif, Georgia, "Times New Roman", serif;
 }
 
 #menu-area-wrapper button:hover {
