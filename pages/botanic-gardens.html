@@ -45,7 +45,7 @@
 
             <div id="menu-area-wrapper">
                 <button id="upgrade1">LVL. <span id="upgrade1-level"></span> increase click (+ 1 per click)- <span id="upgrade1-cost"></span> (current: <span id="upgrade1-current"></span>)</button>
-                <button id="upgrade2">LVL. <span id="upgrade2-level"></span> passive income (+ 1 click per second) - <span id="upgrade2-cost"></span> (current: <span id="upgrade2-current"></span>)</button>
+                <button id="upgrade2">LVL. <span id="upgrade2-level"></span> passive income (+ 1 click per interval) - <span id="upgrade2-cost"></span> (current: <span id="upgrade2-current"></span>)</button>
                 <button id="upgrade3">LVL. <span id="upgrade3-level"></span> auto click faster (halve the time between clicks) - <span id="upgrade3-cost"></span> (current: <span id="upgrade3-current"></span>)</button>
                 <button id="upgrade4">LVL. <span id="upgrade4-level"></span> hold to click (unlock -> -100ms between clicks)- <span id="upgrade4-cost"></span> (current: <span id="upgrade4-current"></span>)</button>
                 <button id="upgrade5">LVL. <span id="upgrade5-level"></span> explosions (unlock -> +10% chance & x1.5 explosion quantity) - <span id="upgrade5-cost"></span> (current: <span id="upgrade5-current"></span>)</button>
@@ -63,9 +63,16 @@
     </div>
 </body>
 <script>
+
+    /* TODOS:
+    - change progression to look more like CC
+    - change upgrade info to hover messages
+    - prestige/ascension????
+    - FRONTEND PASS (duh)
+    */
     let count = 0;
     let increasePerClick = 1;
-    let perSecond = 0;
+    let perTick = 0;
     let autoClickInterval = 1000;
     let explosionChance = 0;
     let explosionQuantity = 0;
@@ -105,7 +112,7 @@
     function botanicSaveLevelsPayload() {
         const o = {};
         o.upgrade1_level = Math.max(0, increasePerClick - 1);
-        o.upgrade2_level = Math.max(0, perSecond);
+        o.upgrade2_level = Math.max(0, perTick);
         for (let i = 3; i <= 5; i++) {
             const displayed = upgradeLevel[i] ? Number(upgradeLevel[i].innerHTML) : 1;
             o['upgrade' + i + '_level'] = Math.max(0, (Number.isFinite(displayed) ? displayed : 1) - 1);
@@ -255,9 +262,9 @@
         const current = document.getElementById(`upgrade1-current`);
         if (current) current.textContent = `${formatUsNumber(increasePerClick)} / click`;
     }
-    function renderPerSecondCurrent() {
+    function renderUpgrade2Current() {
         const current = document.getElementById(`upgrade2-current`);
-        if (current) current.textContent = `${formatUsNumber(perSecond)} / second`;
+        if (current) current.textContent = `${formatUsNumber(perTick)} / ${autoClickInterval}ms`;
     }
     function renderUpgrade3Current() {
         const current = document.getElementById(`upgrade3-current`);
@@ -304,16 +311,16 @@
     // upgrade 2 block (passive income) ---------------------------------
     upgradeCost[2].textContent = formatUsNumber(50);
     const baseCost2 = 50;
-    renderPerSecondCurrent();
+    renderUpgrade2Current();
 
     upgrades[2].addEventListener("click", function () {
         let currentCount = count;
         let currentCost = readDisplayNumber(upgradeCost[2]);
 
         if (currentCount >= currentCost && currentCost >= baseCost2) {
-            perSecond++;
+            perTick++;
             upgradeLevel[2].innerHTML++;
-            renderPerSecondCurrent();
+            renderUpgrade2Current();
             newCount = currentCount - currentCost;
             count = newCount;
             totalTracker.textContent = formatUsNumber(newCount);
@@ -336,6 +343,7 @@
 
         if (currentCount >= currentCost && currentCost >= baseCost3) {
             autoClickInterval /= 2;
+            restartPassiveTimer();
             upgradeLevel[3].innerHTML++;
             renderUpgrade3Current();
             newCount = currentCount - currentCost;
@@ -421,14 +429,21 @@
 
     // run the passive skills ---------------------------------------
     function addPassive() {
-        if (perSecond <= 0) return;
-        count += perSecond;
+        if (perTick <= 0) return;
+        count += perTick;
         totalTracker.textContent = formatUsNumber(count)
         schedulePersistClicker();
         mainButton.style.animation = 'none';
         mainButton.offsetHeight;
         mainButton.style.animation = 'clickAnim 0.3s forwards';
+        showClickAddition("button");
     };
+
+    let passiveTimer = null;
+    function restartPassiveTimer() {
+        clearInterval(passiveTimer);
+        passiveTimer = setInterval(addPassive, autoClickInterval);
+    }
 
     function holdAndClick() {
         if (holdToClick) {
@@ -456,8 +471,11 @@
     mainButton.addEventListener("mouseleave", function () {
         buttonHeld = false;
     });
+    let explosionResult = false;
     mainButton.addEventListener("click", function () {
-        if (Math.random() < explosionChance) {
+        explosionSeed = Math.random();
+        if (explosionSeed < explosionChance) {
+            explosionResult = true;
             count += explosionQuantity;
             totalTracker.textContent = formatUsNumber(count);
             schedulePersistClicker();
@@ -480,7 +498,7 @@
         mainButton.style.animation = '';
     });
 
-    setInterval(addPassive, autoClickInterval);
+    restartPassiveTimer();
 
     // for the buttons to be greyed out when unaffordable ----------------------------------
     function unaffordableButtons() {
@@ -495,6 +513,58 @@
     }
 
     setInterval(unaffordableButtons, 100);
+
+    // to show little numbers when each click adds to the total ----------------------------------
+    // first, we get the position of the mouse
+    function getMousePos(ev) {
+        if (!ev) return { x: 0, y: 0 };
+        return { x: ev.clientX, y: ev.clientY };
+    }
+
+    // then, create the actual numbers
+    function showClickAddition(locationOfAddition, ev) {
+        const buttonWrapper = document.getElementById("button-wrapper");
+        const clickAddition = document.createElement("div");
+        clickAddition.classList.add("click-addition");
+        if (explosionResult) {
+            clickAddition.textContent = `+${formatUsNumber((increasePerClick + explosionQuantity))}`;
+            explosionResult = false;
+        } else {
+            clickAddition.textContent = `+${formatUsNumber(increasePerClick)}`;
+        }
+        if (locationOfAddition == "mouse") {
+            const p = getMousePos(ev);
+            clickAddition.style.left = p.x + "px";
+            clickAddition.style.top = p.y + "px";
+        } else if (locationOfAddition == "button") {
+            const r = mainButton.getBoundingClientRect();
+            clickAddition.style.left = (r.left + r.width / 2) + "px";
+            clickAddition.style.top = r.top + "px";
+        } else {
+            console.error("Invalid location for click addition");
+        }
+        // personally i love doing css via js
+        clickAddition.style.zIndex = "1000";
+        clickAddition.style.color = "aliceblue";
+        clickAddition.style.fontSize = "2em";
+        clickAddition.style.position = "absolute";
+        clickAddition.style.animation = "clickAdditionAnim 5s forwards";
+        clickAddition.style.cursor = "default";
+        clickAddition.style.userSelect = "none";
+        clickAddition.style.pointerEvents = "none";
+        clickAddition.style.webkitUserSelect = "none";
+        clickAddition.style.webkitTapHighlightColor = "transparent";
+        clickAddition.style.webkitTouchCallout = "none";
+        clickAddition.style.webkitUserSelect = "none";
+        clickAddition.style.webkitTapHighlightColor = "transparent";
+        clickAddition.style.webkitTouchCallout = "none";
+        document.body.appendChild(clickAddition);
+        setTimeout(() => {
+            clickAddition.remove();
+        }, 5000);
+    }
+
+    mainButton.addEventListener("click", (e) => showClickAddition("mouse", e));
 
     // login ---------------------------------------------------------------------------------
     function enterGardens(name) {
@@ -536,27 +606,41 @@
                 const u2 = data.upgrade2_level != null ? Number(data.upgrade2_level) : 0;
                 const u3 = data.upgrade3_level != null ? Number(data.upgrade3_level) : 0;
                 const u4 = data.upgrade4_level != null ? Number(data.upgrade4_level) : 0;
+                const u5 = data.upgrade5_level != null ? Number(data.upgrade5_level) : 0;
                 const p1 = Number.isFinite(u1) && u1 >= 0 ? Math.floor(u1) : 0;
                 const p2 = Number.isFinite(u2) && u2 >= 0 ? Math.floor(u2) : 0;
                 const p3 = Number.isFinite(u3) && u3 >= 0 ? Math.floor(u3) : 0;
                 const p4 = Number.isFinite(u4) && u4 >= 0 ? Math.floor(u4) : 0;
+                const p5 = Number.isFinite(u5) && u5 >= 0 ? Math.floor(u5) : 0;
                 increasePerClick = 1 + p1;
-                perSecond = p2;
-                renderPerSecondCurrent();
+                perTick = p2;
                 autoClickInterval = Math.max(50, Math.floor(1000 / Math.pow(2, p3)));
+                restartPassiveTimer();
+                renderUpgrade2Current();
                 holdToClick = p4 > 0;
                 holdToClickInterval = Math.max(50, 1000 - Math.max(0, p4 - 1) * 100);
+                explosionChance = 0;
+                explosionQuantity = 0;
+                for (let i = 0; i < p5; i++) {
+                    if (explosionChance <= 0.7) explosionChance += 0.1;
+                    else explosionChance += 0.01;
+                    if (i === 0) explosionQuantity = 1000;
+                    else explosionQuantity *= 1.5;
+                }
                 renderUpgrade1Current();
                 renderUpgrade3Current();
                 renderUpgrade4Current();
+                renderUpgrade5Current();
                 if (upgradeLevel[1]) upgradeLevel[1].innerHTML = String(p1 + 1);
                 if (upgradeLevel[2]) upgradeLevel[2].innerHTML = String(p2 + 1);
                 if (upgradeLevel[3]) upgradeLevel[3].innerHTML = String(p3 + 1);
                 if (upgradeLevel[4]) upgradeLevel[4].innerHTML = String(p4 + 1);
+                if (upgradeLevel[5]) upgradeLevel[5].innerHTML = String(p5 + 1);
                 if (upgradeCost[1]) upgradeCost[1].textContent = formatUsNumber(botanicUpgradeCost1(p1));
                 if (upgradeCost[2]) upgradeCost[2].textContent = formatUsNumber(botanicUpgradeCost2(p2));
                 if (upgradeCost[3]) upgradeCost[3].textContent = formatUsNumber(botanicUpgradeCost3(p3));
                 if (upgradeCost[4]) upgradeCost[4].textContent = formatUsNumber(botanicUpgradeCost4(p4));
+                if (upgradeCost[5]) upgradeCost[5].textContent = formatUsNumber(botanicUpgradeCost5(p5));
                 clickerHydrated = true;
             })
             .catch((e) => console.error(e));
