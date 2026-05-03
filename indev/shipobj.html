@@ -1,0 +1,153 @@
+<!--- frankly, i hate this thing and i don't want to finish it, but it's so close to being done that i want to ruminate on that-->
+<body>
+</body>
+<style>
+    body {
+  background-color: purple;
+}
+
+#sail-wrapper {
+  transform: rotate3d (0, 0, 1, 20deg);
+}
+
+.sail-piece {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  background-color: midnightblue;
+  border: 3px solid white;
+}
+
+#sail-piece-1 {
+  transform: rotate(180deg);
+  width: 50px;
+  height: 50px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+#sail-piece-2 {
+  transform: translateY(3.5em) rotate(90deg);
+  width: 50px;
+  height: 50px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+#sail-piece-3 {
+  transform: translateX(3.5em) rotate(-90deg);
+  width: 50px;
+  height: 50px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+#sail-piece-4 {
+  transform: translateX(3.5em) translateY(3.5em);
+  width: 50px;
+  height: 50px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.ship-body {
+  background-color: slategray;
+}
+
+#ship-body-top {
+  transform: translateX(2.4em) translateY(7em);
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  border-radius: 50% 50% 0 0;
+  border-left: 3px solid white;
+  border-right: 3px solid white;
+}
+
+#ship-body-bottom {
+  transform: translateX(1.8em) translateY(8.5em);
+  position: absolute;
+  height: 20px;
+  width: 50px;
+  border-radius: 30%;
+  border-left: 3px solid white;
+  border-right: 3px solid white;
+  border-bottom: 3px solid white;
+}
+</style>
+
+<script>
+    function initShip() {
+  // get all the ship pieces added
+  const shipWrapper = document.createElement(`ship-wrapper`);
+  shipWrapper.id = `ship-wrapper`;
+  document.body.appendChild(shipWrapper);
+  
+  const sailWrapper = document.createElement(`sail-wrapper`);
+  sailWrapper.id = "sail-wrapper";
+  document.getElementById(`ship-wrapper`).appendChild(sailWrapper);
+  let sailPiece = [];
+  for (i = 0; i < 5; i++) {
+    sailPiece[i] = document.createElement(`sail-piece-${i}`);
+    sailPiece[i].id = `sail-piece-${i}`;
+    sailPiece[i].textContent = ``;
+    sailPiece[i].classList.add(`sail-piece`);
+    document.getElementById("sail-wrapper").appendChild(sailPiece[i]);
+    }
+  
+  const shipBodyWrapper = document.createElement(`ship-body-wrapper`);
+  shipBodyWrapper.id = "ship-body-wrapper";
+  document.getElementById(`ship-wrapper`).appendChild(shipBodyWrapper);
+  
+  const shipBodyBottom = document.createElement(`ship-body-bottom`);
+  const shipBodyTop = document.createElement(`ship-body-top`)
+  shipBodyBottom.id = `ship-body-bottom`;
+  shipBodyTop.id = `ship-body-top`;
+  shipBodyTop.classList.add(`ship-body`);
+  shipBodyBottom.classList.add(`ship-body`);
+  document.getElementById("ship-body-wrapper").appendChild(shipBodyBottom);
+  document.getElementById("ship-body-wrapper").appendChild(shipBodyTop);
+  
+  // actually move the ship
+  let moonEw = 200;
+            let moonEh = 200;
+            function startShipFlight() {
+                let last = performance.now();
+                let angle = Math.random() * Math.PI * 2;
+                let spd = 1 + Math.random() * 12;
+                let vx = Math.cos(angle) * spd;
+                let vy = Math.sin(angle) * spd * 0.5;
+                let w = window.innerWidth;
+                let h = window.innerHeight;
+                let x = Math.random() * Math.max(1, w - moonEw);
+                let y = Math.random() * Math.max(1, h - moonEh);
+                moon.style.left = x + "px";
+                moon.style.top = y + "px";
+  function wrap() {
+                    w = window.innerWidth;
+                    h = window.innerHeight;
+                    let maxX = w - moonEw;
+                    let maxY = h - moonEh;
+                    if (x > maxX) { x = maxX; vx = -Math.abs(vx); }
+                    else if (x < 0) { x = 0; vx = Math.abs(vx); }
+                    if (y > maxY) { y = maxY; vy = -Math.abs(vy); }
+                    else if (y < 0) { y = 0; vy = Math.abs(vy); }
+                }
+                function onResize() {
+                    wrap();
+                    moon.style.left = x + "px";
+                    moon.style.top = y + "px";
+                }
+                function tick(now) {
+                    let dt = Math.min(0.05, (now - last) / 1000);
+                    last = now;
+                    x += vx * dt;
+                    y += vy * dt;
+                    wrap();
+                    moon.style.left = x + "px";
+                    moon.style.top = y + "px";
+                    requestAnimationFrame(tick);
+                }
+                window.addEventListener("resize", onResize);
+                requestAnimationFrame(tick);
+}
+
+initShip();
+
+</script>

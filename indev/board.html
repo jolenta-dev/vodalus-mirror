@@ -1,0 +1,151 @@
+<body>
+    <div id="board-wrapper">
+    </div>
+</body>
+<style>
+    #board-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .row-wrapper {
+        flex-direction: row;
+        display: flex;
+    }
+
+    .cell {
+        border: 1px solid black;
+        width: 100px;
+        height: 100px;
+        text-align: right;
+    }
+
+    .alive {
+        background-color: black;
+    }
+
+    .dead {
+        background-color: white;
+    }
+</style>
+<script>
+    function initGameBoard() {
+
+        // create the nested arrays for the game state
+        const size = 8;
+        const gameBoard = Array.from({ length: size }, () =>
+            Array.from({ length: size }, () => 0));
+        console.log(gameBoard);
+
+        // do the shennanigans to make the HTML objects
+        const boardWrapper = document.getElementById("board-wrapper");
+        let rowWrapper = []
+        let letters = ["A", "B", "C", "D", "E", "F", "G", "H"]; // i feel really clever for this and just want to note that
+        for (let i = 0; i < size; i++) {
+            // create the row wrappers
+            rowWrapper[i] = document.createElement(`row-wrapper-${i}`);
+            rowWrapper[i].id = `row-wrapper-${i}`;
+            rowWrapper[i].classList.add('row-wrapper');
+            boardWrapper.appendChild(rowWrapper[i])
+            for (let j = size - 1; j >= 0; j--) {
+                // create the cells within
+                gameBoard[i][j] = document.createElement(`cell-${i}-${j}`);
+                gameBoard[i][j].id = `cell-${i}-${j}`
+                gameBoard[i][j].classList.add('cell')
+                gameBoard[i][j].textContent = `${letters[i]}${(j + 1)}`;
+                rowWrapper[i].appendChild(gameBoard[i][j]);
+                // add the click toggle
+                gameBoard[i][j].addEventListener("click", function toggleState() {
+                    if (gameBoard[i][j].classList.contains('alive')) {
+                        gameBoard[i][j].classList.remove("alive");
+                        gameBoard[i][j].classList.add("dead");
+                    } else {
+                        gameBoard[i][j].classList.remove("dead");
+                        gameBoard[i][j].classList.add("alive");
+                    }
+                });
+            }
+        }
+
+        //add a way to toggle the sim
+        document.addEventListener('keydown', (e) => { if (e.key === " ") toggleSimulation() });
+        let active = false;
+        let runningInterval = "";
+        function toggleSimulation() {
+            if (!active) {
+                runningInterval = setInterval(runSimulation, 1000);
+                active = true;
+            } else {
+                active = false;
+                clearInterval(runningInterval);
+                return
+            }
+        }
+
+        // do the actual sim
+        let generation = 0;
+        function runSimulation() {
+            generation++;
+            console.log(`generation: ${generation}`);
+
+            const nextAlive = Array.from({ length: size }, () => Array(size).fill(false));
+            const valueShifts = [-1, 0, 1];
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    let liveNeighbors = 0;
+                    for (let k = 0; k < 3; k++) {
+                        for (let l = 0; l < 3; l++) {
+                            if (k === 1 && l === 1) continue;
+                            const ni = i + valueShifts[k];
+                            const nj = j + valueShifts[l];
+                            if (ni < 0 || ni >= size || nj < 0 || nj >= size) continue;
+                            if (gameBoard[ni][nj].classList.contains("alive")) liveNeighbors++;
+                        }
+                    }
+                    const alive = gameBoard[i][j].classList.contains("alive");
+                    if (alive) {
+                        nextAlive[i][j] = liveNeighbors === 2 || liveNeighbors === 3;
+                    } else {
+                        nextAlive[i][j] = liveNeighbors === 3;
+                    }
+                }
+            }
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const cell = gameBoard[i][j];
+                    if (nextAlive[i][j]) {
+                        cell.classList.remove("dead");
+                        cell.classList.add("alive");
+                    } else {
+                        cell.classList.remove("alive");
+                        cell.classList.add("dead");
+                    }
+                }
+            }
+        }
+    }
+
+
+    initGameBoard();
+</script>
+
+<!--- thinking section
+
+ideas for things in the game:
+1. pick 3 rougelike shop
+2. map to follow on runs? or just one board at a time?
+3. multiplayer/CPU?
+4. items to reward
+
+a river flows downhill
+tides rise on set intervals of turns
+cascasing events
+encroachment of ice
+
+
+
+
+
+-->

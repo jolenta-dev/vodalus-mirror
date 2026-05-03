@@ -225,6 +225,7 @@ hr.rounded {
     inset: 0;
     background-color: black;
     transform: translate(-8px, 8px);
+    border-radius: 0px 4px 20% / 90% 1px;
 }
 
 .sidenav a {
