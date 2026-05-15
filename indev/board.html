@@ -27,95 +27,185 @@
     </div>
 </body>
 <script>
+  function getRandomSignedInt() {
+  return Math.random() * 2 - 1;
+}
 
-  function addAnimation(body : any) : void { // adds the keyframes without importing a new CSS <fieldset>
-    if (!dynamicStyles) {
-      dynamicStyles = document.createElement(tagName: 'style');
-      dynamicStyles.type = 'text/css';
-      document.head.appendChild(dynamicStyles);
+function floatTile(el, isDragging) {
+  let startTime = null;
+  let fromX = 0, fromY = 0;
+  let toX = getRandomSignedInt() * 5, toY = getRandomSignedInt() * 5;
+  const duration = 1000;
+
+  function step(timestamp) {
+    if (isDragging()) return requestAnimationFrame(step);
+    if (!startTime) startTime = timestamp;
+    let progress = (timestamp - startTime) / duration;
+
+    if (progress >= 1) {
+      fromX = toX; fromY = toY;
+      toX = getRandomSignedInt() * 5;
+      toY = getRandomSignedInt() * 5;
+      startTime = timestamp - ((progress - 1) * duration);
+      progress = (timestamp - startTime) / duration;
     }
 
-    dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
+    const t = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+    el.style.transform = `translate(${fromX + (toX - fromX) * t}px, ${fromY + (toY - fromY) * t}px)`;
+    requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
+function toggleCellState(cell) {
+  if (cell.classList.contains('alive')) {
+    cell.classList.remove('alive');
+    cell.classList.add('dead');
+  } else {
+    cell.classList.remove('dead');
+    cell.classList.add('alive');
+  }
+}
+
+function setupShopTilePointerDrag(tile, setPauseFloat) {
+  let startPointerX, startPointerY, startLeft, startTop;
+
+  function positionTile(e) {
+    tile.style.left = (startLeft + e.clientX - startPointerX) + 'px';
+    tile.style.top = (startTop + e.clientY - startPointerY) + 'px';
+  }
+
+  function cellAtPointer(x, y) {
+    tile.style.visibility = 'hidden';
+    const cell = document.elementFromPoint(x, y)?.closest('.cell');
+    tile.style.visibility = '';
+    return cell;
+  }
+
+  function finishDragUI() {
+    tile.classList.remove('shop-tile--dragging');
+    tile.style.cursor = '';
+    tile.style.pointerEvents = '';
+    setPauseFloat(false);
+  }
+
+  function animateTileReturn(onComplete) {
+    tile.classList.add('shop-tile--returning');
+    requestAnimationFrame(() => {
+      tile.style.left = startLeft + 'px';
+      tile.style.top = startTop + 'px';
+    });
+    const onTransitionEnd = (ev) => {
+      if (ev.target !== tile || ev.propertyName !== 'left') return;
+      tile.removeEventListener('transitionend', onTransitionEnd);
+      tile.classList.remove('shop-tile--returning');
+      onComplete();
+    };
+    tile.addEventListener('transitionend', onTransitionEnd);
+  }
+
+  function endDrag(e, applyDrop) {
+    tile.removeEventListener('pointermove', onPointerMove);
+    tile.removeEventListener('pointerup', onPointerUp);
+    tile.removeEventListener('pointercancel', onPointerCancel);
+    if (tile.hasPointerCapture(e.pointerId)) {
+      tile.releasePointerCapture(e.pointerId);
     }
-
-
-    function initGameBoard() {
-
-        // create the nested arrays for the game state
-        const size = 12;
-        const gameBoard = Array.from({ length: size }, () =>
-            Array.from({ length: size }, () => 0));
-        console.log(gameBoard);
-
-        // do the shennanigans to make the HTML objects
-        const boardWrapper = document.getElementById("board-wrapper");
-        let rowWrapper = []
-        let letters = ["A", "B", "C", "D", "E", "F", "G", "H"]; // i feel really clever for this and just want to note that
-        for (let i = 0; i < size; i++) {
-            // create the row wrappers
-            rowWrapper[i] = document.createElement(`row-wrapper-${i}`);
-            rowWrapper[i].id = `row-wrapper-${i}`;
-            rowWrapper[i].classList.add('row-wrapper');
-            boardWrapper.appendChild(rowWrapper[i])
-            for (let j = size - 1; j >= 0; j--) {
-                // create the cells within
-                gameBoard[i][j] = document.createElement(`cell-${i}-${j}`);
-                gameBoard[i][j].id = `cell-${i}-${j}`
-                gameBoard[i][j].classList.add('cell')
-                //gameBoard[i][j].textContent = `${letters[i]}${(j + 1)}`;
-                let stateSeed = Math.random();
-                if (stateSeed > 0.5) {
-                    gameBoard[i][j].classList.add('alive');
-                } else {
-                    gameBoard[i][j].classList.add('dead');
-                }
-                rowWrapper[i].appendChild(gameBoard[i][j]);
-                // add the click toggle
-                gameBoard[i][j].addEventListener("click", function toggleState() {
-                    if (gameBoard[i][j].classList.contains('alive')) {
-                        gameBoard[i][j].classList.remove("alive");
-                        gameBoard[i][j].classList.add("dead");
-                    } else {
-                        gameBoard[i][j].classList.remove("dead");
-                        gameBoard[i][j].classList.add("alive");
-                    }
-                });
-            }
-        }
-    }
-    initGameBoard();
-
-
-    // shop handling
-    function initShop(items) { // this is where i wish i was using typescript and could type items as int....
-
-      let shopTiles = [];
-
-      let tiles = [
-      "tile1",
-      "tile2",
-      "tile3",
-      "tile4",
-      "tile5",
-      "tile6",
-      "tile7",
-      "tile8",
-      ]
-
-      for (let i = 0; i < items; i++) {
-        shopTiles[i] = document.createElement(`shop-tile-${i}`);
-        shopTiles[i].id = `shop-tile-${i}`;
-        shopTiles[i].classList.add('shop-tile');
-        let randomTile = tiles[Math.floor(Math.random() * tiles.length)];
-        shopTiles[i].textContent = `${randomTile}`; // doubt this will work
-        document.getElementById("shop-tiles-wrapper").appendChild(shopTiles[i]);
-        // TODO: let's make it so the tiles react on hover by floating around (balatro like) and let's also make it so they can be dragged onto the board
-        // to do the dragging properly we'll also need the tiles to be removed when one is grabbed
-        // no idea how we'll do board drop in without adding some kind of listener to every cell???
+    if (applyDrop) {
+      const target = cellAtPointer(e.clientX, e.clientY);
+      if (target) {
+        toggleCellState(target);
+        finishDragUI();
+        tile.remove();
+        return;
       }
     }
+    animateTileReturn(finishDragUI);
+  }
 
-    document.getElementById("trigger-shop-btn").addEventListener('click', () => initShop(3));
+  function onPointerMove(e) {
+    positionTile(e);
+  }
+
+  function onPointerUp(e) {
+    endDrag(e, true);
+  }
+
+  function onPointerCancel(e) {
+    endDrag(e, false);
+  }
+
+  tile.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || tile.classList.contains('shop-tile--returning')) return;
+    e.preventDefault();
+    setPauseFloat(true);
+    tile.setPointerCapture(e.pointerId);
+    tile.classList.add('shop-tile--dragging');
+    tile.style.cursor = 'grabbing';
+    tile.style.transform = 'translate(0px, 0px)';
+    tile.style.pointerEvents = 'none';
+    startPointerX = e.clientX;
+    startPointerY = e.clientY;
+    startLeft = parseInt(tile.style.left, 10) || 0;
+    startTop = parseInt(tile.style.top, 10) || 0;
+    tile.addEventListener('pointermove', onPointerMove);
+    tile.addEventListener('pointerup', onPointerUp);
+    tile.addEventListener('pointercancel', onPointerCancel);
+  });
+}
+
+function initGameBoard() {
+  const size = 12;
+  const gameBoard = Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => 0));
+  console.log(gameBoard);
+
+  const boardWrapper = document.getElementById("board-wrapper");
+  let rowWrapper = [];
+  for (let i = 0; i < size; i++) {
+    rowWrapper[i] = document.createElement(`row-wrapper-${i}`);
+    rowWrapper[i].id = `row-wrapper-${i}`;
+    rowWrapper[i].classList.add('row-wrapper');
+    boardWrapper.appendChild(rowWrapper[i]);
+    for (let j = size - 1; j >= 0; j--) {
+      gameBoard[i][j] = document.createElement(`cell-${i}-${j}`);
+      gameBoard[i][j].id = `cell-${i}-${j}`;
+      gameBoard[i][j].classList.add('cell');
+      let stateSeed = Math.random();
+      if (stateSeed > 0.5) {
+        gameBoard[i][j].classList.add('alive');
+      } else {
+        gameBoard[i][j].classList.add('dead');
+      }
+      rowWrapper[i].appendChild(gameBoard[i][j]);
+      gameBoard[i][j].addEventListener("click", () => toggleCellState(gameBoard[i][j]));
+    }
+  }
+}
+initGameBoard();
+
+function initShop(items) {
+  let shopTiles = [];
+  let tiles = ["tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8"];
+
+  for (let i = 0; i < items; i++) {
+    shopTiles[i] = document.createElement(`shop-tile-${i}`);
+    shopTiles[i].id = `shop-tile-${i}`;
+    shopTiles[i].classList.add('shop-tile');
+    let randomTile = tiles[Math.floor(Math.random() * tiles.length)];
+    shopTiles[i].textContent = `${randomTile}`;
+    shopTiles[i].style.left = `${i * 100}px`;
+    document.getElementById("shop-tiles-wrapper").appendChild(shopTiles[i]);
+    let pauseFloat = false;
+    floatTile(shopTiles[i], () => pauseFloat);
+    setupShopTilePointerDrag(shopTiles[i], (active) => {
+      if (active !== undefined) pauseFloat = active;
+    });
+  }
+}
+
+document.getElementById("trigger-shop-btn").addEventListener('click', () => initShop(3));
 </script>
 
 <!--- thinking section

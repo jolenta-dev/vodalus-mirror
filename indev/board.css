@@ -44,13 +44,25 @@
 }
 
 #shop-tiles-wrapper {
-  position: absolute;
+  position: fixed;
   top: 50vh;
   left: 50vw;
+  overflow: visible;
 }
-
 .shop-tile {
   background-color: #654321;
-  padding: 50%;
+  padding: 10px;
   margin: 5px;
+  display: inline-block;
+  position: absolute;
+  cursor: grab;
+  touch-action: none;
+}
+
+.shop-tile--dragging {
+  z-index: 10000;
+}
+
+.shop-tile--returning {
+  transition: left 0.75s ease-out, top 0.75s ease-out;
 }
