@@ -115,9 +115,11 @@ function setupShopTilePointerDrag(tile, setPauseFloat) {
     if (applyDrop) {
       const target = cellAtPointer(e.clientX, e.clientY);
       if (target) {
+        const shopTilesWrapper = document.getElementById("shop-tiles-wrapper");
         toggleCellState(target);
         finishDragUI();
         tile.remove();
+        shopTilesWrapper.remove();
         return;
       }
     }
@@ -188,6 +190,11 @@ initGameBoard();
 function initShop(items) {
   let shopTiles = [];
   let tiles = ["tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8"];
+  if (!document.getElementById("shop-tiles-wrapper")) {
+    shopTilesWrapper = document.createElement('shop-tiles-wrapper');
+    shopTilesWrapper.id = 'shop-tiles-wrapper';
+    document.body.appendChild(shopTilesWrapper);
+  }
 
   for (let i = 0; i < items; i++) {
     shopTiles[i] = document.createElement(`shop-tile-${i}`);
