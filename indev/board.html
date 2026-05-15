@@ -19,17 +19,18 @@
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
     <script src="/assets/javascript/sidebar-footer.js"></script>
     <div id="simulation-controls-wrapper">
-        <button id="toggle-simulation-btn">Toggle Simulation</button>
-        <div id="generation-display">Generation: 0</div>
+        <button id="trigger-shop-btn">Trigger Shop</button>
     </div>
     <div id="board-wrapper">
+    </div>
+    <div id="shop-tiles-wrapper">
     </div>
 </body>
 <script>
     function initGameBoard() {
 
         // create the nested arrays for the game state
-        const size = 75;
+        const size = 12;
         const gameBoard = Array.from({ length: size }, () =>
             Array.from({ length: size }, () => 0));
         console.log(gameBoard);
@@ -69,70 +70,40 @@
                 });
             }
         }
+    }
+    initGameBoard();
 
-        //add a way to toggle the sim
-        document.getElementById("toggle-simulation-btn").addEventListener('click', toggleSimulation);
-        let active = false;
-        let runningInterval = "";
-        function toggleSimulation() {
-            if (!active) {
-                runningInterval = setInterval(runSimulation, 500);
-                active = true;
-            } else {
-                active = false;
-                clearInterval(runningInterval);
-                return
-            }
-        }
 
-        // do the actual sim
-        let generation = 0;
-        function runSimulation() {
-            generation++;
-            document.getElementById("generation-display").textContent = `Generation: ${generation}`;
-            console.log(`generation: ${generation}`);
+    // shop handling
+    function initShop(items) { // this is where i wish i was using typescript and could type items as int....
 
-            const nextAlive = Array.from({ length: size }, () => Array(size).fill(false));
-            const valueShifts = [-1, 0, 1];
+      let shopTiles = [];
 
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
-                    let liveNeighbors = 0;
-                    for (let k = 0; k < 3; k++) {
-                        for (let l = 0; l < 3; l++) {
-                            if (k === 1 && l === 1) continue;
-                            const ni = i + valueShifts[k];
-                            const nj = j + valueShifts[l];
-                            if (ni < 0 || ni >= size || nj < 0 || nj >= size) continue;
-                            if (gameBoard[ni][nj].classList.contains("alive")) liveNeighbors++;
-                        }
-                    }
-                    const alive = gameBoard[i][j].classList.contains("alive");
-                    if (alive) {
-                        nextAlive[i][j] = liveNeighbors === 2 || liveNeighbors === 3;
-                    } else {
-                        nextAlive[i][j] = liveNeighbors === 3;
-                    }
-                }
-            }
+      let tiles = [
+      "tile1",
+      "tile2",
+      "tile3",
+      "tile4",
+      "tile5",
+      "tile6",
+      "tile7",
+      "tile8",
+      ]
 
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
-                    const cell = gameBoard[i][j];
-                    if (nextAlive[i][j]) {
-                        cell.classList.remove("dead");
-                        cell.classList.add("alive");
-                    } else {
-                        cell.classList.remove("alive");
-                        cell.classList.add("dead");
-                    }
-                }
-            }
-        }
+      for (let i = 0; i < items; i++) {
+        shopTiles[i] = document.createElement(`shop-tile-${i}`);
+        shopTiles[i].id = `shop-tile-${i}`;
+        shopTiles[i].classList.add('shop-tile');
+        let randomTile = tiles[Math.floor(Math.random() * tiles.length)];
+        shopTiles[i].textContent = `${randomTile}`; // doubt this will work
+        document.getElementById("shop-tiles-wrapper").appendChild(shopTiles[i]);
+        // TODO: let's make it so the tiles react on hover by floating around (balatro like) and let's also make it so they can be dragged onto the board
+        // to do the dragging properly we'll also need the tiles to be removed when one is grabbed
+        // no idea how we'll do board drop in without adding some kind of listener to every cell???
+      }
     }
 
-
-    initGameBoard();
+    document.getElementById("trigger-shop-btn").addEventListener('click', () => initShop(3));
 </script>
 
 <!--- thinking section

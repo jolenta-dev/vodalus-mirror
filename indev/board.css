@@ -17,7 +17,7 @@
     margin-right: 100px;
 }
 
-#toggle-simulation-btn {
+#trigger-shop-btn {
     display: flex;
     float: right;
     margin-right: 100px;
@@ -30,8 +30,8 @@
 
 .cell {
     border: 1px solid black;
-    width: 10px;
-    height: 10px;
+    width: 60px;
+    height: 60px;
     text-align: right;
 }
 
@@ -41,4 +41,16 @@
 
 .dead {
     background-color: white;
+}
+
+#shop-tiles-wrapper {
+  position: absolute;
+  top: 50vh;
+  left: 50vw;
+}
+
+.shop-tile {
+  background-color: #654321;
+  padding: 50%;
+  margin: 5px;
 }
