@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="admin-page site-form" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/pages/admin/admin.css">
+    <link rel="stylesheet" href="/assets/stylesheets/site-controls.css">
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+</head>
+
+<body>
+<div w3-include-html="/assets/html/pointer-orbit.html"></div>
+
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <div class="main">
+        <h1>Admin Dashboard</h1>
+        <div id="admin-dashboard-container" class="admin-dashboard-container" style="display: none;">
+            <!---tab links-->
+            <div class="admin-dashboard-tabs">
+                <button class="tablinks" onclick="openTab(event, 'Chat')">Chat</button>
+                <button class="tablinks" onclick="openTab(event, 'Status')">Status</button>
+                <button class="tablinks" onclick="openTab(event, 'SQL')">SQL DBs</button>
+            </div>
+            <div class="box">
+                <!--tab content-->
+                <div id="Chat" class="tabcontent" style="display: block;">
+                    <h3>Katharine controls</h3>
+                    <h3>Announcement controls</h3>
+                    <p>create a new announcement</p>
+                    <input type="text" id="new-announcement-input" placeholder="new announcement">
+                    <select id="new-announcement-scope-input">
+                        <option value="global">global</option>
+                        <option value="public">public</option>
+                        <option value="here">here</option>
+                    </select>
+                    <select id="new-announcement-chat-input" style="display: none;">
+                        <option value="">Select a chat...</option>
+                    </select>
+                    <button id="new-announcement-button" type="button">create announcement</button>
+                    <br>
+
+                    <h3>Chat admin</h3>
+                    <div class="chat-admin-tabs" role="tablist" style="margin-bottom: 10px;">
+                        <button type="button" class="chat-admin-tab chat-admin-tab--active" id="chat-admin-tab-new">New
+                            chat</button>
+                        <button type="button" class="chat-admin-tab" id="chat-admin-tab-members">Members</button>
+                    </div>
+                    <div id="chat-admin-panel-new" class="chat-admin-panel">
+                        <input id="new-chat-modal-input" placeholder="new chat name (not needed for a 2-person DM)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <input id="new-chat-members-input"
+                            placeholder="other members (comma separated; registered only)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <label class="chat-admin-public-option" for="new-chat-modal-public"><input type="checkbox"
+                                id="new-chat-modal-public"> public</label>
+                        <br>
+                        <button id="new-chat-modal-ok" type="button">create</button>
+                    </div>
+                    <div id="chat-admin-panel-members" class="chat-admin-panel" style="display: none;">
+                        <p>Select a chat to manage:</p>
+                        <select id="chat-admin-members-select" style="width: 100%; margin-bottom: 10px;">
+                            <option value="">Select a chat...</option>
+                        </select>
+                        <p id="chat-admin-members-context" style="font-weight: bold;"></p>
+                        <p class="chat-admin-members-label">Current members</p>
+                        <div id="chat-admin-members-list" class="chat-admin-members-list" aria-live="polite"
+                            style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 50px;"></div>
+                        <label class="chat-admin-field-label" for="chat-edit-members-input">Add</label>
+                        <input id="chat-edit-members-input" placeholder="registered users (comma separated)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <button id="chat-edit-members-ok" type="button">add members</button>
+                        <br>
+                        <label class="chat-admin-field-label" for="chat-remove-members-input">Remove</label>
+                        <input id="chat-remove-members-input" placeholder="names to remove (comma separated)"
+                            style="width: 100%; box-sizing: border-box; margin-bottom: 8px;">
+                        <button id="chat-remove-members-ok" type="button">remove members</button>
+                    </div>
+                    <br>
+
+                    <h3>Reset password controls</h3>
+                    <p>reset a user's password</p>
+                    <input type="text" id="reset-password-username-input" placeholder="username">
+                    <input type="text" id="reset-password-newpassword-input" placeholder="new password">
+                    <button id="reset-password-button" type="button">reset password</button>
+                </div>
+                <div id="Status" class="tabcontent" style="display: none;">
+                    <h3>Status</h3>
+                    <p>edit the status</p>
+                    <input type="text" id="status-input" placeholder="new status">
+                    <button id="status-button" type="button">set status</button>
+                    <p id="status-output"></p>
+                    <!--do a funny bit of having this set the status and do status monitoring-->
+                </div>
+                <div id="SQL" class="tabcontent" style="display: none;">
+                    <h3>SQL DBs</h3>
+                    <div id="sql-table-radios"></div>
+                    <br>
+                    <div class="sql-builder">
+                        <label>Command:</label>
+                        <select id="sql-command-type">
+                            <option value="SELECT">SELECT</option>
+                            <option value="UPDATE">UPDATE</option>
+                            <option value="INSERT">INSERT INTO</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+
+                        <div id="sql-select-builder" class="sql-command-builder">
+                            <input type="text" id="sql-select-columns" placeholder="columns (e.g., * or name, date)"
+                                style="width: 300px;">
+                            <span>FROM</span>
+                            <span id="sql-select-table" class="table-name-display"></span>
+                            <input type="text" id="sql-select-where" placeholder="WHERE clause (optional, e.g., id = 1)"
+                                style="width: 300px;">
+                        </div>
+
+                        <div id="sql-update-builder" class="sql-command-builder" style="display: none;">
+                            <span id="sql-update-table" class="table-name-display"></span>
+                            <span>SET</span>
+                            <input type="text" id="sql-update-set" placeholder="column = 'value', column2 = 'value2'"
+                                style="width: 300px;">
+                            <span>WHERE</span>
+                            <input type="text" id="sql-update-where" placeholder="id = 1" style="width: 200px;">
+                        </div>
+
+                        <div id="sql-insert-builder" class="sql-command-builder" style="display: none;">
+                            <span id="sql-insert-table" class="table-name-display"></span>
+                            <input type="text" id="sql-insert-columns" placeholder="(column1, column2)"
+                                style="width: 200px;">
+                            <span>VALUES</span>
+                            <input type="text" id="sql-insert-values" placeholder="('value1', 'value2')"
+                                style="width: 200px;">
+                        </div>
+
+                        <div id="sql-delete-builder" class="sql-command-builder" style="display: none;">
+                            <span>FROM</span>
+                            <span id="sql-delete-table" class="table-name-display"></span>
+                            <span>WHERE</span>
+                            <input type="text" id="sql-delete-where" placeholder="id = 1" style="width: 200px;">
+                        </div>
+                    </div>
+
+                    <div class="sql-preview">
+                        <label>Preview:</label>
+                        <code id="sql-preview-text">SELECT * FROM table_name</code>
+                    </div>
+
+                    <button id="sql-db-button" type="button">execute</button>
+                    <div id="sql-db-output"></div>
+
+                    <details style="margin-top: 20px;">
+                        <summary style="cursor: pointer; font-weight: bold;">SQL Syntax Reference</summary>
+                        <p style="margin-top: 10px;">
+                            <code>SELECT * FROM table_name;</code><br>
+                            <code>UPDATE table_name SET column_name = 'value' WHERE column_name = 'value';</code><br>
+                            <code>INSERT INTO table_name (column_name, column_name) VALUES ('value', 'value');</code><br>
+                            <code>DELETE FROM table_name WHERE column_name = 'value';</code>
+                        </p>
+                    </details>
+                </div>
+                <script>
+                    function openTab(evt, tabName) {
+                        var i, tabcontent, tablinks
+                        tabcontent = document.getElementsByClassName("tabcontent");
+                        for (i = 0; i < tabcontent.length; i++) {
+                            tabcontent[i].style.display = "none";
+                        }
+                        tablinks = document.getElementsByClassName("tablinks");
+                        for (i = 0; i < tablinks.length; i++) {
+                            tablinks[i].className = tablinks[i].className.replace(" active", "");
+                        }
+                        document.getElementById(tabName).style.display = "block";
+                        evt.currentTarget.className += " active";
+                    }
+                </script>
+            </div>
+        </div>
+        <div id="login-section">
+            <h2>Admin Login</h2>
+            <input id="login-name-input" placeholder="name">
+            <input type="password" id="login-password-input" placeholder="password">
+            <label><input type="checkbox" id="login-reveal">reveal password</label>
+            <button id="login-button" type="button">login</button>
+        </div>
+    </div>
+    <script src="/pages/admin/admin.js"></script>
+<script src="/assets/javascript/include-html.js"></script>
+
+</body>
+</html>

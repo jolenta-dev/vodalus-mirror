@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if (new URLSearchParams(location.search).get('embed') === '1')
+      document.documentElement.classList.add('page-embed');
+  </script>
+  <title>Journey</title>
+  <link rel="stylesheet" href="/pages/journey/journey.css">
+  <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+</head>
+
+<body>
+  <div w3-include-html="/assets/html/pointer-orbit.html"></div>
+
+  <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+  <script src="/assets/javascript/sidebar-footer.js"></script>
+  <script src="/assets/javascript/journey-typed-line.js"></script>
+  <div class="main">
+    <div class="journey-layout">
+      <div class="journey-layout__above">
+        <h2 class="journey-subtitle">Journey Attempts: <span id="journey-attempts">0</span></h2>
+        <p id="journey-attempts-note" class="journey-attempts-note" role="status" aria-live="polite"></p>
+        <ul id="journey-list"></ul>
+      </div>
+      <div class="journey-layout__midline" aria-hidden="true"></div>
+      <div class="journey-layout__below">
+        <h1 id="journey-title" class="journey-title">The road to Thrax is long, torturer.</h1>
+        <p id="journey-gate-msg" class="journey-gate-msg" role="status" aria-live="polite" hidden></p>
+        <div id="journey-login-panel" class="journey-login-panel" hidden>
+          <p class="journey-login-intro">Please login to attempt this journey.</p>
+          <input id="journey-login-name" class="journey-login-field" placeholder="nickname" autocomplete="username">
+          <input id="journey-login-password" class="journey-login-field" type="password" placeholder="password (if set)"
+            autocomplete="current-password">
+          <button type="button" id="journey-login-btn" class="journey-btn journey-btn--small">Log in</button>
+        </div>
+        <button id="journey-btn" class="journey-btn" name="journey-btn" type="button">Begin your journey.</button>
+        <nav class="journey-tabs" role="tablist" aria-label="Journey paths">
+          <button type="button" class="journey-tab journey-tab--active" data-journey="1" role="tab" aria-selected="true"
+            id="journey-tab-1">I - Nessus</button>
+          <button type="button" class="journey-tab" data-journey="2" role="tab" aria-selected="false"
+            id="journey-tab-2">II — Saltus and beyond</button>
+          <button type="button" class="journey-tab" data-journey="3" role="tab" aria-selected="false"
+            id="journey-tab-3">III — Thrax</button>
+          <button type="button" class="journey-tab" data-journey="4" role="tab" aria-selected="false"
+            id="journey-tab-4">IV — Autarchy</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    if (!document.documentElement.classList.contains('page-embed')) {
+      import('/assets/javascript/draggable-div.js').then(function (mod) {
+        var frame = document.createElement('iframe');
+        frame.src = '/chat?embed=1';
+        frame.title = 'Convene';
+        mod.initDraggableDiv('Convene', frame);
+      });
+    }
+  </script>
+
+  <script src="/pages/journey/journey.js"></script>
+  <script src="/assets/javascript/include-html.js"></script>
+
+</body>
+
+</html>

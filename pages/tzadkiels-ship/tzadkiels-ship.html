@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="site-form ship-page" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (new URLSearchParams(location.search).get('embed') === '1')
+            document.documentElement.classList.add('page-embed');
+    </script>
+    <title>Tzadkiel's Ship</title>
+    <link rel="stylesheet" href="/pages/atrium/atrium.css"> <!--- i don't know why this was done this way, but i will likely never fix it...--->
+    <link rel="stylesheet" href="/pages/journey/journey.css">
+    <link rel="stylesheet" href="/assets/stylesheets/site-controls.css">
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+    <style>
+        #password-modal-overlay {
+            z-index: 10000;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div w3-include-html="/assets/html/pointer-orbit.html"></div>
+
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <script src="/assets/javascript/journey-typed-line.js"></script>
+    <div class="main">
+        <div id="board-ship" class="ship-board-setup">
+            <h1>Tzadkiel's Ship has arrived at the House Absolute, Lictor.</h1>
+            <h3>Speak your name to board.</h3>
+            <input id="name-input" placeholder="your name">
+            <button id="board-btn" type="button">board the ship</button>
+        </div>
+        <div id="password-modal-overlay">
+            <div id="password-modal">
+                <p id="password-modal-message"></p>
+                <input type="password" id="password-modal-input" placeholder="Password">
+                <label><input type="checkbox" id="password-modal-reveal">Reveal</label>
+                <button id="password-modal-ok" type="button">Join</button>
+                <button id="password-modal-cancel" type="button">Cancel</button>
+            </div>
+        </div>
+        <div id="ship" style="display: none;">
+            <div class="journey-layout">
+                <div class="journey-layout__above">
+                    <h2 class="journey-subtitle">Journey Attempts: <span id="journey-attempts">0</span></h2>
+                    <ul id="yesod-journey-list"></ul>
+                </div>
+                <div class="journey-layout__midline" aria-hidden="true"></div>
+                <div class="journey-layout__below">
+                    <h1 class="journey-title">You board the ship, but the journey to Yesod is long and fraught with
+                        adversaries.</h1>
+                    <button id="yesod-journey-btn" class="journey-btn" type="button">Begin your journey.</button>
+                </div>
+            </div>
+            <script type="module">
+                if (!document.documentElement.classList.contains('page-embed')) {
+                    import('/assets/javascript/draggable-div.js').then(function (mod) {
+                        var frame = document.createElement('iframe');
+                        frame.src = '/chat?embed=1';
+                        frame.title = 'Convene';
+                        mod.initDraggableDiv('Convene', frame);
+                    });
+                }
+            </script>
+            <script src="/pages/tzadkiels-ship/tzadkiels-ship.js"></script>
+        </div>
+    </div>
+    <script src="/assets/javascript/include-html.js"></script>
+
+</body>
+
+</html>

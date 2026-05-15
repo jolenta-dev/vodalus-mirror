@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Guestbook</title>
+	<link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+	<link rel="stylesheet" href="/pages/guestbook/guestbook.css">
+</head>
+
+<body>
+<div w3-include-html="/assets/html/pointer-orbit.html"></div>
+
+<div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+<script src="/assets/javascript/sidebar-footer.js"></script>
+<div class="main">
+		<div id="Html">
+			<h1>Urth's many cacogens</h1>
+			<div class="guestbook-compose">
+				<input id="input-name" placeholder="nickname">
+				<input id="input-website" placeholder="website">
+				<input id="input-note" placeholder="note">
+				<button id="add-btn" type="button">add your name</button>
+			</div>
+		</div>
+		<script src="/assets/javascript/roster-name.js"></script>
+		<div class="guestbook-table-wrap">
+			<table id="name-table">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Name</th>
+						<th>Website</th>
+						<th>Note</th>
+					</tr>
+				</thead>
+				<tbody id="name-table-body"></tbody>
+			</table>
+		</div>
+
+
+		<script src="/pages/guestbook/guestbook.js"></script>
+</div>
+<script src="/assets/javascript/include-html.js"></script>
+
+</body>
+</html>

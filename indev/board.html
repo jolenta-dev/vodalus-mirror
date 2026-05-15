@@ -27,6 +27,18 @@
     </div>
 </body>
 <script>
+
+  function addAnimation(body : any) : void { // adds the keyframes without importing a new CSS <fieldset>
+    if (!dynamicStyles) {
+      dynamicStyles = document.createElement(tagName: 'style');
+      dynamicStyles.type = 'text/css';
+      document.head.appendChild(dynamicStyles);
+    }
+
+    dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
+    }
+
+
     function initGameBoard() {
 
         // create the nested arrays for the game state

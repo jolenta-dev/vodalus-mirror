@@ -1,0 +1,537 @@
+var COOLDOWN_MS = 3000;
+var onCooldown = false;
+var activeJourneyId = 1;
+var sessionLevel = null;
+var sessionNickname = null;
+var pendingJourneyId = null;
+
+var motivation = [
+  "90% of gamblers quit right before they win big.",
+  "You've already invested so much.... don't quit now...",
+  "You can win 10,000% of your money, but you can only lose 100%.",
+  "You're one bet away from glory!",
+  "Good things come to those who gamble.",
+  "The key to success is getting started",
+  "Every heartbreak makes the victory sweeter.",
+  '<img src="/assets/images/motivation.jpg" alt="Motivation">'
+];
+
+/* minLevel: need this journey_level on your registered account (after redeeming prior wins). */
+var JOURNEY_PHRASE_PARTS = {
+  adjectives: ['Ascian', 'Vodalian', 'Cumaean', 'Matachin'],
+  nouns1: ['Autarchs', 'Fliers', 'Torturers', 'Vodalani', 'Zoanthrops', 'Autochthons'],
+  verbs: ['fly', 'search', 'hunt', 'seek', 'journey'],
+  prepositions: ['at', 'during', 'through', 'while'],
+  nouns2: ['night', 'day', 'Nessus', 'Saltus', 'Thrax']
+};
+
+var JOURNEY_LEVEL_LOSS_LINE = 'You fail so poorly you are sent back through the Corridors of Time. You have lost a level.';
+
+var JOURNEYS = {
+  1: {
+    minLevel: 0,
+    requireAuth: false,
+    title: 'The road to Thrax is long, torturer.',
+    thresholds: [95, 80, 75], //0.1% to win
+    final: { levelLossMax: 1, failMax: 50, decrement: true, phrase: true },
+    successLines: [
+      'You ascend to the rank of journeyman at the Feast of Holy St. Katharine.',
+      'You are not killed, and instead sent onwards to reach Thrax.',
+      'You survive the Avern battle with Agius, and the walls of Nessus release you from its grasp.'
+    ],
+    winLine: 'You survive the chaos at Nessus\'s walls. Take this phrase, of the Increate\'s creation, to the Atrium of time and Valeria shall grant you a bountious future.',
+    phrasePreamble: 'Your phrase of the Increate\'s creation is: ',
+    events: [
+      [
+        'You drown in the river Gyoll as a young boy.',
+        'You are killed by Vodalus for distrupting his actions in the necropolis.',
+        'Ultan is so disappointed by your knowledge that the old man kills you himself.',
+        'You are caught feeding Triskele and punished severely.',
+        'Thecla does not love you and you torture her to death.'
+      ],
+      [
+        'Gurloes and Palaemon have chosen to kill you for your obstinance. You die in the Matachin Towers.',
+        'Agius has slain you for your belongings. You die in Nessus.',
+        'Baldanders is uncomfortable by your presence and slays you in the inn.',
+        'You crash the flier in the race with Agia and cannot pay for the damages.'
+      ],
+      [
+        'The Pelerines discover the claw in your boot and you are put to trial. They kill their own savior.',
+        'Dr. Talos can\'t stand your terrible acting and leaves you to die at Nessus\'s walls.',
+        'You sink into the murk of the Botanical Gardens. Father Inire\'s abomination claims another soul.',
+        'Hildegrin is unable to liberate Dorcas from the swamp and you are tricked by Agia without her wisdom.'
+      ],
+      [
+        'Jonas never comes to your aid at the walls and you are slain in the chaos.',
+        'Agia is unable to contain her rage and kills you herself after you fell Agius',
+        'You die in the Avern battle with Agius.'
+      ]
+    ],
+    phraseParts: JOURNEY_PHRASE_PARTS
+  },
+  2: {
+    minLevel: 1,
+    requireAuth: true,
+    title: 'A world beyond the walls.',
+    thresholds: [90, 85, 70], //0.02% to win
+    final: { levelLossMax: 1, failMax: 50, decrement: true, phrase: true },
+    successLines: [
+      'You successfully behead the woman in Saltus and recieve the funds you need to journey onwards.',
+      'You survive the encounter with the man apes and are kidnapped by Vodalians.',
+      'You consume the Alzabo and are with Thecla. Thrax is not far.'
+    ],
+    winLine: 'You manage to escape the House Absolute and the encounter with the witches. Thrax lies ahead. Take this phrase, of the Increate\'s creation, to the Atrium of Time and Valeria shall grant you a bountious future.',
+    phrasePreamble: 'Your phrase of the Increate\'s creation is: ',
+    events: [
+      [
+        'You are unable to behead the woman in Saltus and your title is stripped.',
+        'You fail to show the green man mercy and he is unable to come to your aid.',
+        'Your love for Agia is too strong and you lose your focus searching for her.'
+      ],
+      [
+        'You do not survive the encounter with the man apes in the cave.',
+        'The massive beast in the cave is awoken by your presence and hunts you down.',
+        'The Vodalians do not find you and your and Vodalus\'s paths never cross again.'
+      ],
+      [
+        'You do not survive the encounter with the Alzabo. The pain of Thecla\'s torture is too much to bear. You collapse in the clearing.',
+        'The beast that attacks Vodalus\'s camp takes you when you try to revive the soldier.',
+        'You spend an eternity locked in the walls of the House Absolute.'
+      ],
+      [
+        'You do not survive the encounter with Hildegrin and the witches in the stone town.',
+        'You are bitten by the same bloodbat as Jolenta and are drained of your life.',
+        'You cannot stand the thought of Jonas\'s nature and take your own life after he flees.'
+      ]
+    ],
+    phraseParts: JOURNEY_PHRASE_PARTS
+  },
+  3: {
+    minLevel: 2,
+    requireAuth: true,
+    title: 'Thrax and the journey beyond.',
+    thresholds: [88, 75, 70], //0.3% to win
+    final: { levelLossMax: 1, failMax: 65, decrement: true, phrase: true },
+    successLines: [
+      'You survive the encounter with the large beast and escape Thrax, ready to venture forth.',
+      'You survive the encounter with the Alzabo and take Little Severian onwards.',
+      'You kill Typhon, losing Little Severian along the way. You head forth to Lake Diuturna.'
+    ],
+    winLine: 'You find yourself in the Nothernmost reaches of the Commonwealth. Ascia\'s conquest lies ahead. Take this phrase, of the Increate\'s creation, to the Atrium of Time and Valeria shall grant you a bountious future.',
+    phrasePreamble: 'Your phrase of the Increate\'s creation is: ',
+    events: [
+      [
+        'Dorcas\'s depression is unrelenting and you spend forever unhappy in Thrax.',
+        'The prisoners in the dungeons revolt, overthrowing the Lictor.',
+        'You are killed by Hethor\'s monstrous creation.'
+      ],
+      [
+        'You are killed in the fight with the Alzabo, along with Severian and Severa.',
+        'Agia finally manages to slay you in your journey North.',
+        'You get lost in the mountains and freeze to death in the dying sun\'s heat.'
+      ],
+      [
+        'You are slain by Typhon in the batte against him.',
+        'You are killed by the mountain\'s roving zoanthrops.',
+        'The sorcerers of the strange city find out how to destroy you.',
+        'Little Severian\'s death is too much to bear and you collapse in the snow.'
+      ],
+      [
+        'You do not survive the encounter with Baldanders on the lake. The claw and Terminus Est are lost, their powers unrecoverable.',
+        'You side with Dr. Talos against the islanders and the fate of this universe, which is called Briah, is forever changed.',
+        'You are killed by crossfire at the edges of Ascia\'s enchroachment on the Commonwealth.'
+      ]
+    ],
+    phraseParts: JOURNEY_PHRASE_PARTS
+  },
+  4: {
+    minLevel: 3,
+    requireAuth: true,
+    title: 'The war and the Autarch.',
+    thresholds: [75, 72, 67], //1.2% to win
+    final: { levelLossMax: 1, failMax: 50, decrement: true, phrase: true },
+    successLines: [
+      'You successfully bring the dead man back to camp and you both rest to recover from your wounds.',
+      'You meet the Autarch and heed his urge to take his role as your own.',
+      'The Vodalians rescue you and you are returned to safety.'
+    ],
+    winLine: 'You return to the threshold of the Atrium of Time, the knowledge of this world revealed and Autarchy in your grasp. Take this phrase, of the Increate\'s creation, to Valeria and she shall grant you a bountious future.',
+    phrasePreamble: 'Your phrase of the Increate\'s creation is: ',
+    events: [
+      [
+        'You die in the battle with the Ascians.',
+        'Carrying the dead soldier is too great an effort and you die in the snows.',
+        'Your wounds are too great after returning from battle and you die of sickness.',
+        'The stories of the Ascian are so boring you leave before your wounds are healed.'
+      ],
+      [
+        'Releasing the claw from your grasp proves fatal.',
+        'The Autarch leaves you to die in the midst of the battlefield.',
+        'You are killed when Ascians shoot down your flier.',
+        'You fail to consume the Alzabo and allow the Autarchy to die.'
+      ],
+      [
+        'Vodalus\'s men cannot find you and you are unable to truly ascend to Autarch.',
+        'The green man is unable to rescue you from Agia\'s grasp.',
+        'You are told of your future and unable to bear its truth.'
+      ],
+      [
+        'You prick your finger on the thorny bush and bleed to death.',
+        'Your ship to Nessus sinks in the waters.',
+        'Your father is unable to recognize you and you are sent into a deep depression.'
+      ]
+    ],
+    phraseParts: JOURNEY_PHRASE_PARTS
+  }
+};
+
+var journeyState = {};
+
+function ensureState(id) {
+  if (!journeyState[id]) {
+    journeyState[id] = { stage: 0, seeds: {}, attempts: 0, lines: [] };
+  }
+  return journeyState[id];
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getMotivation() {
+  if (Math.random() < 0.1) {
+    return { useHtml: true, content: motivation[7] };
+  }
+  return { useHtml: false, content: motivation[randomInt(0, 5)] };
+}
+
+function incrementAttempts(id) {
+  var st = ensureState(id);
+  st.attempts += 1;
+  if (activeJourneyId === id) {
+    document.getElementById('journey-attempts').textContent = String(st.attempts);
+  }
+  if (st.attempts > 0 && st.attempts % 20 === 0 && activeJourneyId === id) {
+    var note = document.getElementById('journey-attempts-note');
+    if (note) {
+      var m = getMotivation();
+      if (m.useHtml) note.innerHTML = m.content;
+      else note.textContent = m.content;
+    }
+  }
+}
+
+function addLine(id, text, useHtml) {
+  var st = ensureState(id);
+  st.lines.push({ text: text, useHtml: !!useHtml });
+  if (activeJourneyId !== id) return;
+  appendJourneyListLine(document.getElementById('journey-list'), text, !!useHtml, COOLDOWN_MS);
+}
+
+function renderListFromState(id) {
+  var ul = document.getElementById('journey-list');
+  ul.innerHTML = '';
+  var st = ensureState(id);
+  for (var i = 0; i < st.lines.length; i++) {
+    var li = document.createElement('li');
+    var entry = st.lines[i];
+    if (entry.useHtml) li.innerHTML = entry.text;
+    else li.textContent = entry.text;
+    ul.appendChild(li);
+  }
+}
+
+function clearLines(id) {
+  ensureState(id).lines = [];
+  if (activeJourneyId === id) {
+    document.getElementById('journey-list').innerHTML = '';
+  }
+}
+
+function syncAttemptsDisplay(id) {
+  var st = ensureState(id);
+  document.getElementById('journey-attempts').textContent = String(st.attempts);
+  var note = document.getElementById('journey-attempts-note');
+  if (note && (st.attempts % 20 !== 0 || st.attempts === 0)) {
+    note.textContent = '';
+    note.innerHTML = '';
+  }
+}
+
+function updateButtonForStage(id) {
+  var btn = document.getElementById('journey-btn');
+  var st = ensureState(id);
+  var cfg = JOURNEYS[id];
+  if (!cfg) return;
+  if (st.stage >= 4) {
+    btn.textContent = 'Journey complete.';
+    btn.disabled = true;
+    return;
+  }
+  btn.textContent = st.stage === 0 ? 'Begin your journey.' : 'Continue your journey.';
+  /* Keep disabled during click cooldown; only re-enable in the cooldown timeout. */
+  if (!onCooldown) btn.disabled = false;
+}
+
+function fetchMe() {
+  return fetch('/api/me', { credentials: 'same-origin' })
+    .then(function (r) {
+      if (!r.ok) {
+        sessionNickname = null;
+        sessionLevel = null;
+        return { ok: false, level: 0, nickname: null };
+      }
+      return r.json().then(function (data) {
+        sessionNickname = data.nickname;
+        sessionLevel = data.journey_level != null ? Number(data.journey_level) : 0;
+        return { ok: true, level: sessionLevel, nickname: sessionNickname };
+      });
+    })
+    .catch(function () {
+      sessionNickname = null;
+      sessionLevel = null;
+      return { ok: false, level: 0, nickname: null };
+    });
+}
+
+function setTabActive(id) {
+  var tabs = document.querySelectorAll('.journey-tab');
+  for (var i = 0; i < tabs.length; i++) {
+    var t = tabs[i];
+    var jid = parseInt(t.getAttribute('data-journey'), 10);
+    var on = jid === id;
+    t.classList.toggle('journey-tab--active', on);
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+  }
+}
+
+function applyJourneyUI(id) {
+  var cfg = JOURNEYS[id];
+  var gate = document.getElementById('journey-gate-msg');
+  var loginPanel = document.getElementById('journey-login-panel');
+  var btn = document.getElementById('journey-btn');
+  var noteEl = document.getElementById('journey-attempts-note');
+  if (noteEl) {
+    noteEl.textContent = '';
+    noteEl.innerHTML = '';
+  }
+  document.getElementById('journey-title').textContent = cfg.title;
+  gate.hidden = true;
+  loginPanel.hidden = true;
+  btn.hidden = false;
+
+  if (cfg.requireAuth && !sessionNickname) {
+    loginPanel.hidden = false;
+    gate.hidden = false;
+    gate.textContent = 'This path requires login.';
+    btn.hidden = true;
+    syncAttemptsDisplay(id);
+    renderListFromState(id);
+    return;
+  }
+  var effLevel = sessionLevel == null ? 0 : sessionLevel;
+  if (cfg.requireAuth && effLevel < cfg.minLevel) {
+    gate.hidden = false;
+    gate.textContent = 'Your gambling level is too low for this path (need level ' + cfg.minLevel + ' or higher). Complete the earlier journeys first.';
+    btn.hidden = true;
+    syncAttemptsDisplay(id);
+    renderListFromState(id);
+    return;
+  }
+  syncAttemptsDisplay(id);
+  renderListFromState(id);
+  updateButtonForStage(id);
+}
+
+function selectJourney(id) {
+  activeJourneyId = id;
+  setTabActive(id);
+  var cfg = JOURNEYS[id];
+  if (cfg.requireAuth) {
+    fetchMe().then(function () {
+      if (activeJourneyId !== id) return;
+      applyJourneyUI(id);
+    });
+  } else {
+    applyJourneyUI(id);
+  }
+}
+
+document.querySelectorAll('.journey-tab').forEach(function (tab) {
+  tab.addEventListener('click', function () {
+    var id = parseInt(tab.getAttribute('data-journey'), 10);
+    pendingJourneyId = id;
+    selectJourney(id);
+  });
+});
+
+document.getElementById('journey-login-btn').addEventListener('click', function () {
+  var name = (document.getElementById('journey-login-name').value || '').trim();
+  var password = document.getElementById('journey-login-password').value || '';
+  if (!name) return;
+  fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ name: name, password: password })
+  })
+    .then(function (r) {
+      if (!r.ok) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          throw new Error((j && j.error) || 'login failed');
+        });
+      }
+      return fetchMe();
+    })
+    .then(function () {
+      var target = pendingJourneyId || activeJourneyId;
+      selectJourney(target);
+    })
+    .catch(function (e) {
+      var gate = document.getElementById('journey-gate-msg');
+      gate.hidden = false;
+      gate.textContent = e.message || 'Login failed.';
+    });
+});
+
+document.getElementById('journey-btn').addEventListener('click', function () {
+  var id = activeJourneyId;
+  var cfg = JOURNEYS[id];
+  var st = ensureState(id);
+  if (!cfg) return;
+  if (cfg.requireAuth && !sessionNickname) return;
+  if (cfg.requireAuth && (sessionLevel == null ? 0 : sessionLevel) < cfg.minLevel) return;
+  if (st.stage === 4) return;
+  if (onCooldown) return;
+  onCooldown = true;
+  var btn = document.getElementById('journey-btn');
+  btn.disabled = true;
+  setTimeout(function () {
+    onCooldown = false;
+    var cur = ensureState(activeJourneyId);
+    if (cur.stage < 4) document.getElementById('journey-btn').disabled = false;
+  }, COOLDOWN_MS);
+
+  if (st.stage <= 2) {
+    var th = cfg.thresholds[st.stage];
+    var roll = randomInt(1, 100);
+    st.seeds['seed' + (st.stage + 1)] = roll;
+    if (roll <= th) {
+      var pool = cfg.events[st.stage];
+      incrementAttempts(id);
+      if (st.stage === 0) clearLines(id);
+      addLine(id, pool[randomInt(0, pool.length - 1)], false);
+      btn.textContent = 'Begin your journey.';
+      st.stage = 0;
+      updateButtonForStage(id);
+      return;
+    }
+    if (st.stage === 0) clearLines(id);
+    addLine(id, cfg.successLines[st.stage], false);
+    st.stage += 1;
+    btn.textContent = 'Continue your journey.';
+    updateButtonForStage(id);
+    return;
+  }
+
+  if (st.stage === 3) {
+    var roll4 = randomInt(1, 100);
+    st.seeds.seed4 = roll4;
+    var seeds = st.seeds;
+    var fin = cfg.final;
+    if (fin.levelLossMax > 0 && roll4 <= fin.levelLossMax) {
+      addLine(id, JOURNEY_LEVEL_LOSS_LINE, false);
+      incrementAttempts(id);
+      if (fin.decrement) {
+        fetch('/api/decrement-journey-level', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ decrementBy: 1 })
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Not logged in');
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.success) {
+              addLine(id, 'Your level has been decremented.', false);
+              sessionLevel = data.journey_level != null ? data.journey_level : 0;
+              // Post announcement with user's name
+              fetch('/api/announcements/system', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ event: 'journey_level_decremented', name: data.name })
+              });
+            }
+          })
+          .catch(function (err) {
+            // User not logged in - post announcement without name
+            fetch('/api/announcements/system', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({ event: 'journey_level_decremented' })
+            });
+          });
+      }
+      btn.textContent = 'Begin your journey.';
+      st.stage = 0;
+      updateButtonForStage(id);
+      return;
+    }
+    if (roll4 <= fin.failMax) {
+      var pool4 = cfg.events[3];
+      addLine(id, pool4[randomInt(0, pool4.length - 1)], false);
+      incrementAttempts(id);
+      btn.textContent = 'Begin your journey.';
+      st.stage = 0;
+      updateButtonForStage(id);
+      return;
+    }
+    addLine(id, cfg.winLine, false);
+    if (fin.phrase && cfg.phraseParts) {
+      var pp = cfg.phraseParts;
+      var i1 = seeds.seed1 % pp.adjectives.length;
+      var i2 = seeds.seed2 % pp.nouns1.length;
+      var i3 = seeds.seed3 % pp.verbs.length;
+      var i4 = seeds.seed4 % pp.prepositions.length;
+      var i5 = seeds.seed2 % pp.nouns2.length;
+      var phrase = pp.adjectives[i1] + ' ' + pp.nouns1[i2] + ' ' + pp.verbs[i3] + ' ' + pp.prepositions[i4] + ' ' + pp.nouns2[i5];
+      addLine(id, cfg.phrasePreamble + '"' + phrase + '"', false);
+      fetch('/api/phrases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ phrase: phrase })
+      })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            return { ok: response.ok, data: data || {} };
+          }).catch(function () {
+            return { ok: false, data: {} };
+          });
+        })
+        .then(function (result) {
+          if (result.ok && result.data.success) {
+            addLine(id, 'Your phrase has been entered into the database. You may now claim it.', false);
+          } else {
+            var err = (result.data && result.data.error) ? String(result.data.error) : '';
+            addLine(id, err
+              ? ('Could not save your phrase: ' + err + ' Contact Jolenta if this persists.')
+              : 'An error occurred while entering your phrase into the database. Please note this error and contact Jolenta for help.', false);
+          }
+        })
+        .catch(function () {
+          addLine(id, 'Network error while saving your phrase. Try again or contact Jolenta.', false);
+        });
+    }
+    st.stage = 4;
+    updateButtonForStage(id);
+  }
+});
+
+selectJourney(1);
+fetchMe();
+
