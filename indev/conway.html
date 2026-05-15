@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="chat-page" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's</title>
+    <script>
+        if (new URLSearchParams(location.search).get('embed') === '1')
+            document.documentElement.classList.add('chat-embed');
+    </script>
+    <link rel="stylesheet" href="/indev/conway.css">
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+</head>
+
+<body>
+    <div w3-include-html="/assets/html/pointer-orbit.html"></div>
+
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <div id="simulation-controls-wrapper">
+        <button id="toggle-simulation-btn">Toggle Simulation</button>
+        <div id="generation-display">Generation: 0</div>
+    </div>
+    <div id="board-wrapper">
+    </div>
+</body>
+<script>
+    function initGameBoard() {
+
+        // create the nested arrays for the game state
+        const size = 75;
+        const gameBoard = Array.from({ length: size }, () =>
+            Array.from({ length: size }, () => 0));
+        console.log(gameBoard);
+
+        // do the shennanigans to make the HTML objects
+        const boardWrapper = document.getElementById("board-wrapper");
+        let rowWrapper = []
+        let letters = ["A", "B", "C", "D", "E", "F", "G", "H"]; // i feel really clever for this and just want to note that
+        for (let i = 0; i < size; i++) {
+            // create the row wrappers
+            rowWrapper[i] = document.createElement(`row-wrapper-${i}`);
+            rowWrapper[i].id = `row-wrapper-${i}`;
+            rowWrapper[i].classList.add('row-wrapper');
+            boardWrapper.appendChild(rowWrapper[i])
+            for (let j = size - 1; j >= 0; j--) {
+                // create the cells within
+                gameBoard[i][j] = document.createElement(`cell-${i}-${j}`);
+                gameBoard[i][j].id = `cell-${i}-${j}`
+                gameBoard[i][j].classList.add('cell')
+                //gameBoard[i][j].textContent = `${letters[i]}${(j + 1)}`;
+                let stateSeed = Math.random();
+                if (stateSeed > 0.5) {
+                    gameBoard[i][j].classList.add('alive');
+                } else {
+                    gameBoard[i][j].classList.add('dead');
+                }
+                rowWrapper[i].appendChild(gameBoard[i][j]);
+                // add the click toggle
+                gameBoard[i][j].addEventListener("click", function toggleState() {
+                    if (gameBoard[i][j].classList.contains('alive')) {
+                        gameBoard[i][j].classList.remove("alive");
+                        gameBoard[i][j].classList.add("dead");
+                    } else {
+                        gameBoard[i][j].classList.remove("dead");
+                        gameBoard[i][j].classList.add("alive");
+                    }
+                });
+            }
+        }
+
+        //add a way to toggle the sim
+        document.getElementById("toggle-simulation-btn").addEventListener('click', toggleSimulation);
+        let active = false;
+        let runningInterval = "";
+        function toggleSimulation() {
+            if (!active) {
+                runningInterval = setInterval(runSimulation, 500);
+                active = true;
+            } else {
+                active = false;
+                clearInterval(runningInterval);
+                return
+            }
+        }
+
+        // do the actual sim
+        let generation = 0;
+        function runSimulation() {
+            generation++;
+            document.getElementById("generation-display").textContent = `Generation: ${generation}`;
+            console.log(`generation: ${generation}`);
+
+            const nextAlive = Array.from({ length: size }, () => Array(size).fill(false));
+            const valueShifts = [-1, 0, 1];
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    let liveNeighbors = 0;
+                    for (let k = 0; k < 3; k++) {
+                        for (let l = 0; l < 3; l++) {
+                            if (k === 1 && l === 1) continue;
+                            const ni = i + valueShifts[k];
+                            const nj = j + valueShifts[l];
+                            if (ni < 0 || ni >= size || nj < 0 || nj >= size) continue;
+                            if (gameBoard[ni][nj].classList.contains("alive")) liveNeighbors++;
+                        }
+                    }
+                    const alive = gameBoard[i][j].classList.contains("alive");
+                    if (alive) {
+                        nextAlive[i][j] = liveNeighbors === 2 || liveNeighbors === 3;
+                    } else {
+                        nextAlive[i][j] = liveNeighbors === 3;
+                    }
+                }
+            }
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const cell = gameBoard[i][j];
+                    if (nextAlive[i][j]) {
+                        cell.classList.remove("dead");
+                        cell.classList.add("alive");
+                    } else {
+                        cell.classList.remove("alive");
+                        cell.classList.add("dead");
+                    }
+                }
+            }
+        }
+    }
+
+
+    initGameBoard();
+</script>
+
+<!--- thinking section
+
+ideas for things in the game:
+1. pick 3 rougelike shop
+2. map to follow on runs? or just one board at a time?
+3. multiplayer/CPU?
+4. items to reward
+
+a river flows downhill
+tides rise on set intervals of turns
+cascasing events
+encroachment of ice
+
+
+
+
+
+-->

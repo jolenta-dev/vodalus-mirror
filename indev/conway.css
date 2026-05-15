@@ -1,0 +1,44 @@
+#board-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 10vw;
+}
+
+#simulation-controls-wrapper {
+    position: relative;
+    left: 10vw;
+    display: inline;
+}
+
+#generation-display {
+    display: flex;
+    float: right;
+    margin-right: 100px;
+}
+
+#toggle-simulation-btn {
+    display: flex;
+    float: right;
+    margin-right: 100px;
+}
+
+.row-wrapper {
+    flex-direction: row;
+    display: flex;
+}
+
+.cell {
+    border: 1px solid black;
+    width: 10px;
+    height: 10px;
+    text-align: right;
+}
+
+.alive {
+    background-color: black;
+}
+
+.dead {
+    background-color: white;
+}
