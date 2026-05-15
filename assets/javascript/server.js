@@ -266,7 +266,7 @@ app.get('/api/daily-quote', (req, res) => {
     }
 });
 
-app.get('/', (req, res) => res.sendFile(path.join(PAGES_DIR, 'chat.html')));
+app.get('/', (req, res) => res.sendFile(path.join(PAGES_DIR, 'chat', 'chat.html')));
 
 // stuff for Katharine
 // conversation helpers
