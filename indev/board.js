@@ -29,15 +29,13 @@ function floatTile(el, isDragging) {
     }
     requestAnimationFrame(step);
 }
-function toggleCellState(cell) {
-    if (cell.classList.contains('alive')) {
-        cell.classList.remove('alive');
-        cell.classList.add('dead');
-    }
-    else {
-        cell.classList.remove('dead');
-        cell.classList.add('alive');
-    }
+let tileMap = [];
+function applyShopTileToCell(cell, shopTile) {
+    const label = shopTile.textContent ?? '';
+    cell.style.backgroundColor = shopTile.style.backgroundColor;
+    cell.textContent = label;
+    const idParts = cell.id.split('-');
+    tileMap[parseInt(idParts[1], 10)][parseInt(idParts[2], 10)] = label;
 }
 function setupShopTilePointerDrag(tile, setPauseFloat) {
     let startPointerX, startPointerY, startLeft, startTop;
@@ -103,7 +101,7 @@ function setupShopTilePointerDrag(tile, setPauseFloat) {
             const target = cellAtPointer(e.clientX, e.clientY);
             if (target) {
                 const shopTilesWrapper = document.getElementById('shop-tiles-wrapper');
-                toggleCellState(target);
+                applyShopTileToCell(target, tile);
                 finishDragUI();
                 tile.remove();
                 shopTilesWrapper?.remove();
@@ -125,6 +123,7 @@ function setupShopTilePointerDrag(tile, setPauseFloat) {
 function initGameBoard() {
     const size = 12;
     const gameBoard = Array.from({ length: size }, () => new Array(size));
+    tileMap = Array.from({ length: size }, () => Array.from({ length: size }, () => ''));
     const boardWrapper = document.getElementById('board-wrapper');
     if (!boardWrapper)
         return;
@@ -141,15 +140,7 @@ function initGameBoard() {
             row[j] = cell;
             cell.id = `cell-${i}-${j}`;
             cell.classList.add('cell');
-            let stateSeed = Math.random();
-            if (stateSeed > 0.5) {
-                cell.classList.add('alive');
-            }
-            else {
-                cell.classList.add('dead');
-            }
             rw.appendChild(cell);
-            cell.addEventListener("click", () => toggleCellState(cell));
         }
     }
 }
@@ -160,10 +151,19 @@ function initShop(items) {
         shopTilesWrapper.id = 'shop-tiles-wrapper';
         document.body.appendChild(shopTilesWrapper);
     }
+    const shopTilesWrapper = document.getElementById('shop-tiles-wrapper');
+    if (!shopTilesWrapper)
+        return;
+    const tileLabels = ['tile1', 'tile2', 'tile3', 'tile4', 'tile5', 'tile6', 'tile7', 'tile8'];
     for (let i = 0; i < items; i++) {
         const tile = document.createElement('div');
         tile.id = `shop-tile-${i}`;
         tile.classList.add('shop-tile');
+        tile.textContent = tileLabels[Math.floor(Math.random() * tileLabels.length)];
+        tile.style.backgroundColor =
+            '#' + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, '0');
+        tile.style.left = `${i * 100}px`;
+        shopTilesWrapper.appendChild(tile);
         let pauseFloat = false;
         floatTile(tile, () => pauseFloat);
         setupShopTilePointerDrag(tile, (active) => {
