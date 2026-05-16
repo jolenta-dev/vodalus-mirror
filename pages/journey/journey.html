@@ -17,8 +17,8 @@
   <div w3-include-html="/assets/html/pointer-orbit.html"></div>
 
   <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
-  <script src="/assets/javascript/sidebar-footer.js"></script>
-  <script src="/assets/javascript/journey-typed-line.js"></script>
+  <script src="/public/client/shared/sidebar-footer.js"></script>
+  <script src="/public/client/shared/journey-typed-line.js"></script>
   <div class="main">
     <div class="journey-layout">
       <div class="journey-layout__above">
@@ -54,7 +54,7 @@
 
   <script type="module">
     if (!document.documentElement.classList.contains('page-embed')) {
-      import('/assets/javascript/draggable-div.js').then(function (mod) {
+      import('/public/client/shared/draggable-div.js').then(function (mod) {
         var frame = document.createElement('iframe');
         frame.src = '/chat?embed=1';
         frame.title = 'Convene';
@@ -63,8 +63,8 @@
     }
   </script>
 
-  <script src="/pages/journey/journey.js"></script>
-  <script src="/assets/javascript/include-html.js"></script>
+  <script src="/public/client/pages/journey/journey.js"></script>
+  <script src="/public/client/shared/include-html.js"></script>
 
 </body>
 

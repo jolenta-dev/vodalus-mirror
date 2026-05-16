@@ -25,8 +25,8 @@
     <div w3-include-html="/assets/html/pointer-orbit.html"></div>
 
     <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
-    <script src="/assets/javascript/sidebar-footer.js"></script>
-    <script src="/assets/javascript/journey-typed-line.js"></script>
+    <script src="/public/client/shared/sidebar-footer.js"></script>
+    <script src="/public/client/shared/journey-typed-line.js"></script>
     <div class="main">
         <div id="board-ship" class="ship-board-setup">
             <h1>Tzadkiel's Ship has arrived at the House Absolute, Lictor.</h1>
@@ -58,7 +58,7 @@
             </div>
             <script type="module">
                 if (!document.documentElement.classList.contains('page-embed')) {
-                    import('/assets/javascript/draggable-div.js').then(function (mod) {
+                    import('/public/client/shared/draggable-div.js').then(function (mod) {
                         var frame = document.createElement('iframe');
                         frame.src = '/chat?embed=1';
                         frame.title = 'Convene';
@@ -66,10 +66,10 @@
                     });
                 }
             </script>
-            <script src="/pages/tzadkiels-ship/tzadkiels-ship.js"></script>
+            <script src="/public/client/pages/tzadkiels-ship/tzadkiels-ship.js"></script>
         </div>
     </div>
-    <script src="/assets/javascript/include-html.js"></script>
+    <script src="/public/client/shared/include-html.js"></script>
 
 </body>
 
