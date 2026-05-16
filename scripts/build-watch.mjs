@@ -11,16 +11,50 @@ function walkTs(dir, files = []) {
   return files;
 }
 
-const clientEntries = walkTs('src/client');
-
-const clientCtx = await esbuild.context({
-  entryPoints: clientEntries,
-  outdir: 'public/client',
-  outbase: 'src/client',
+const browserOpts = {
   platform: 'browser',
   sourcemap: true,
   bundle: false,
-});
+};
+
+const sharedEntries = walkTs('src/client/shared');
+const pageEntries = walkTs('src/client/pages');
+const indevEntries = walkTs('src/client/indev');
+
+const contexts = [];
+
+if (sharedEntries.length > 0) {
+  contexts.push(
+    await esbuild.context({
+      entryPoints: sharedEntries,
+      outdir: 'assets/javascript',
+      outbase: 'src/client/shared',
+      ...browserOpts,
+    })
+  );
+}
+
+if (pageEntries.length > 0) {
+  contexts.push(
+    await esbuild.context({
+      entryPoints: pageEntries,
+      outdir: 'pages',
+      outbase: 'src/client/pages',
+      ...browserOpts,
+    })
+  );
+}
+
+if (indevEntries.length > 0) {
+  contexts.push(
+    await esbuild.context({
+      entryPoints: indevEntries,
+      outdir: 'indev',
+      outbase: 'src/client/indev',
+      ...browserOpts,
+    })
+  );
+}
 
 const serverCtx = await esbuild.context({
   entryPoints: ['src/server/index.ts'],
@@ -40,6 +74,7 @@ const serverCtx = await esbuild.context({
   ],
 });
 
-await clientCtx.watch();
-await serverCtx.watch();
-console.log('watching src/client and src/server');
+contexts.push(serverCtx);
+
+for (const ctx of contexts) await ctx.watch();
+console.log('watching src/client → assets/javascript, pages, indev; src/server → dist');

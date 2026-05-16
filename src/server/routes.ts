@@ -46,7 +46,6 @@ const {
 } = require('./conversation');
 
 function registerRoutes(app) {
-app.use('/public', express.static(path.join(ROOT_DIR, 'public')));
 app.use('/pages', express.static(PAGES_DIR));
 app.use('/assets', express.static(ASSETS_DIR));
 app.use('/indev', express.static(path.join(ROOT_DIR, 'indev')));

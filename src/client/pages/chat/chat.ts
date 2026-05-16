@@ -1,4 +1,4 @@
-// @ts-nocheck — remove when this file is listed in tsconfig.strict.json
+// @ts-nocheck
 // --- Convene chat page: utils, websocket, login, messages, rooms, sidebar, admin UI ---
 import type { ConversationsResponse, MeResponse, MessagesResponse, WsAuthResponse } from '../../../shared/api-types';
 

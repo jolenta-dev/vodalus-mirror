@@ -1,5 +1,4 @@
 node_modules
-public
 dist
-/assets/javascript/node_modules
+public
 /assets/html/jolentas_status.html

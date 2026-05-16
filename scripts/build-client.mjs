@@ -11,17 +11,44 @@ function walkTs(dir, files = []) {
   return files;
 }
 
-const entryPoints = walkTs('src/client');
-if (entryPoints.length === 0) {
+const browserOpts = {
+  platform: 'browser',
+  sourcemap: true,
+  bundle: false,
+};
+
+const sharedEntries = walkTs('src/client/shared');
+const pageEntries = walkTs('src/client/pages');
+const indevEntries = walkTs('src/client/indev');
+
+if (sharedEntries.length === 0 && pageEntries.length === 0 && indevEntries.length === 0) {
   console.error('no client entry points under src/client');
   process.exit(1);
 }
 
-await esbuild.build({
-  entryPoints,
-  outdir: 'public/client',
-  outbase: 'src/client',
-  platform: 'browser',
-  sourcemap: true,
-  bundle: false,
-});
+if (sharedEntries.length > 0) {
+  await esbuild.build({
+    entryPoints: sharedEntries,
+    outdir: 'assets/javascript',
+    outbase: 'src/client/shared',
+    ...browserOpts,
+  });
+}
+
+if (pageEntries.length > 0) {
+  await esbuild.build({
+    entryPoints: pageEntries,
+    outdir: 'pages',
+    outbase: 'src/client/pages',
+    ...browserOpts,
+  });
+}
+
+if (indevEntries.length > 0) {
+  await esbuild.build({
+    entryPoints: indevEntries,
+    outdir: 'indev',
+    outbase: 'src/client/indev',
+    ...browserOpts,
+  });
+}
