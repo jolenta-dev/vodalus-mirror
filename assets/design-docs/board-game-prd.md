@@ -4,7 +4,7 @@
 
 Vodalus needs a **solo tactical board** experience: a small grid, discrete **phased** turns, one human vs one CPU opponent, with an **environmental** layer that creates pressure independent of the enemy. The experience lives as a normal site page at `pages/board.html`, using the same shell as other pages (sidebar, shared styles).
 
-[`indev/board.html`](../../indev/board.html) exists today as **Conway’s Game of Life** to validate that a **large DOM grid** scales and that **addressable cells** are viable in JavaScript. The **shipped game must not resemble Conway**; final boards are **8×8 to 12×12**. Conway code stays **archived** in `indev/` (or an equivalently obvious reference location) for possible future reuse, not as product mechanics.
+[`indev/board.html`](../../indev/board.html) hosts **in-development spikes** (grid addressing, shop UX experiments, and historically Conway’s Game of Life) to validate that a **large DOM grid** scales in JavaScript. The **shipped game must not resemble Conway** or retain spike-only mechanics; final boards are **8×8 to 12×12**. Conway or other obsolete spikes stay **archived** under `indev/` (or an equivalently obvious reference location) for reuse reference, not as product mechanics.
 
 ## 2. User stories
 
@@ -12,7 +12,7 @@ Vodalus needs a **solo tactical board** experience: a small grid, discrete **pha
 
 - Start a new procedural game; receive a board with valid starting layout.
 - Complete a **player phase**, then observe **CPU** and **environment** phases resolve in order.
-- Win by removing the enemy token from the board, or lose when the player token is removed.
+- Win when the **enemy tower** is eliminated from play, or lose when the **player tower** is eliminated (see §4.1 for tower definition and elimination).
 - **Stop** and **resume** the same in-progress game on **another device** (server-backed state).
 - Optionally abandon a run (no requirement to keep completed-run history for meta progression).
 
@@ -37,24 +37,30 @@ flowchart LR
 
 ## 4. Functional requirements
 
-### 4.1 Board and tokens
+### 4.1 Board, territory, and towers
 
 - Grid dimensions are **procedurally chosen per new game** within **8×8 and 12×12** inclusive.
-- Exactly **one player token** and **one enemy token**; both **present on the board** at game start.
-- Start positions are on **opposite sides** of the board (exact definition is implementation detail: e.g. opposing edges or hemispheres; PRD requires perceptual “opposite sides” and valid placement).
-- **Win**: enemy token **removed** from the board (any supported mechanic).
-- **Lose**: player token **removed** from the board.
+- **No implicit empty cells at generation**: every cell has a **base terrain** type assigned during procedural generation (e.g. grass, sea, mountain, river — exact taxonomy is implementation detail). Player-facing **tile placement** is modeled as an **overlay** on top of immutable-per-run base terrain unless a deliberate replace rule is documented later.
+- Each side owns a **territory**: a **single connected polyomino** of **5–10 cells** that **touches an assigned board edge**. Player and enemy territories **anchor to opposing edges** (e.g. player territory touches the south edge while enemy territory touches the north edge — mirroring and rotation are allowed if documented).
+- Each side has exactly **one tower** (player tower, enemy tower). Towers **do not move** in the current design phase; combat modeled as moving pieces (“super-tiles”, troops, chess-like units) is explicitly **out of scope until a later phase**.
+- **Tower placement rule**: within its territory and constrained to remain on that side’s half/placement policy, the tower occupies the **deepest interior** cell — maximize graph distance to territory boundary (ties broken deterministically from `rngSeed`, bias toward board center / predictable convention).
+- **Player phase placement constraint**: players may **not** place tiles in the **enemy territory** (neutral + friendly placement rules still governed by the placement-rule matrix).
+- **Win**: enemy tower **eliminated** (e.g. destroyed by environment or other documented mechanics).
+- **Lose**: player tower **eliminated**.
+- **Tower durability (v1 lock-in)**: **one-shot elimination** — the first qualifying hazard/event that destroys a tower ends the run for that side (no multi-hit HP pool in this milestone).
 
 ### 4.2 Phases
 
-1. **Player phase**: human selects legal actions (exact action set TBD under open questions); phase ends when the player commits the turn (or a timeout policy if one is added later; v1 may omit timeout).
-2. **CPU phase**: enemy acts using **simple heuristics** (e.g. move toward player, attack if in range, random tie-break). No minimax requirement for v1.
-3. **Environment phase**: one or more **environmental / hazard** systems apply in a documented order. **Multiple** such systems are **in scope for v1**; each should be a **named module** with testable rules (land in incremental PRs if needed).
+1. **Player phase**: before committing, the UI presents a **shop of three** placement options. Offers are generated deterministically from **`rngSeed` + `roundIndex` + side key** (mirrors the current `indev` spike behavior conceptually). The human **selects exactly one** offer and **places exactly one** tile on the board subject to placement rules (§4.1). Towers cannot be relocated during this phase. Timeout policy remains optional for v1.
+2. **CPU phase**: **mirrors** the player phase — deterministic shop generation for the enemy side, pick one legal placement using **simple heuristics** (e.g. prefer tiles that amplify hazards toward the player tower) with **random tie-break** acceptable for v1. No minimax requirement.
+3. **Environment phase**: **named hazard modules** resolve in documented order. **Multiple** modules remain **in scope for v1**, but milestone sequencing allows a **single minimal hazard** first (see §7) before the full interaction matrix lands. Hazards **read the merged view** (base terrain + player placements). Player placements **steer or amplify** environmental outcomes relative to raw terrain alone.
 
 ### 4.3 Procedural generation
 
 - Each **new** game (for modes that use the server) gets a layout generated from a **RNG seed** stored in save state so resume is deterministic.
-- Generator **must** produce a valid starting state: both tokens on board, opposite-side rule satisfied, and **path sanity** (e.g. a reachable path between player and enemy on walkable tiles unless a deliberate design chooses sealed regions—if so, document as an explicit mode).
+- Generator **must** produce a valid starting state: **full terrain assignment**, **valid territories** for both sides (§4.1), **tower positions**, and **initial placement legality** (typically zero overlays at generation — overlays introduced once turns begin).
+- **Placement rules are shared**: the same validator functions that gate runtime placements **must** inform generator retries/adjustments so procedural output cannot contradict live rules.
+- **Path sanity (update)**: because towers are **immobile** in this phase, v1 **does not require** a walkable path between towers purely for combat pacing. Reintroduce connectivity checks when hazards or mechanics demand contiguous traversal (fluids, fire spread, etc.).
 
 ### 4.4 Platform
 
@@ -77,8 +83,8 @@ Persist a **JSON snapshot** sufficient to reconstruct the match. Minimum suggest
 | `schemaVersion` | Forward-compatible migrations |
 | `rngSeed` | Reproducible proc-gen and hazard noise |
 | `boardWidth`, `boardHeight` | Grid size |
-| `cells` (or equivalent) | Terrain, hazards, occupancy per cell |
-| `playerToken`, `enemyToken` | Positions and any per-token state |
+| `cells` (or equivalent) | Base terrain, overlays/placements, hazard markers per cell |
+| `playerTower`, `enemyTower` | Positions and elimination flags |
 | `phase` | `player` / `cpu` / `environment` (or round boundary state) |
 | `roundIndex` | Ordering |
 | `hazardState` | Internal counters or queues per hazard module |
@@ -101,11 +107,14 @@ Exact URL shape and table name are implementation details; the PRD requires **on
 | Milestone | Deliverable |
 |-----------|-------------|
 | A | `pages/board.html` shell: grid UI stub, phase indicator, **empty** or stub phase resolution order |
-| B | Procedural generator within size bounds + **simple heuristic** CPU |
-| C | **First** environmental hazard module wired into `envPhase` |
+| B | Procedural generator within size bounds + **tile-placement CPU** (mirrored shop + heuristics) |
+| B2 (**phase 2 focus**) | Shared **rules + validators** driving proc-gen and runtime; **shop-of-three placement loop** in-browser; **one minimal hazard** eliminating towers; guest/offline deterministic play |
+| C | **First** environmental hazard module wired into `envPhase` (may coincide with B2 minimal hazard if shipped together) |
 | D | Additional hazard modules until “multi-hazard v1” acceptance is met |
 | E | Server **save/load** + resume UX for logged-in users |
 | F | Conway remains only under `indev/` (or documented archive); product path contains no Conway dependency |
+
+**Phase 2 tracker (GitLab):** [rules kernel](https://gitlab.com/hierodules/vodalus/-/work_items/6) → [placement loop UI](https://gitlab.com/hierodules/vodalus/-/work_items/7) → [minimal hazard + game over](https://gitlab.com/hierodules/vodalus/-/work_items/8) → [proc-gen + New Game](https://gitlab.com/hierodules/vodalus/-/work_items/9).
 
 ## 8. Risks
 
@@ -115,10 +124,11 @@ Exact URL shape and table name are implementation details; the PRD requires **on
 
 ## 9. Open questions
 
-- **Concrete v1 hazard list**: names, ordering, and interaction matrix (e.g. fire vs ice vs tide) — decide before locking acceptance tests.
-- **Token removal mechanics**: combat, hazard kill, push off board, or displace-to-void — affects CPU heuristics and generator constraints.
+- **Concrete v1 hazard list**: names, ordering, and interaction matrix (e.g. fire vs ice vs tide) — decide before locking acceptance tests beyond the minimal hazard.
+- **Minimal hazard specification**: exact elimination predicate (example pattern: “tower eliminated when adjacent to `<terrain>` after merges”) still needs authoritative numbers and ordering relative to placements.
+- **Terrain taxonomy**: final enum list, generator weights, and artwork/symbol mapping.
 - **Concurrent saves**: may a logged-in user have **multiple** in-progress board games, or exactly one slot?
-- **Player action set**: move range, attacks, skills, terrain interaction — drives UI and save shape.
+- **Future combat/movement**: when super-tiles or moving units arrive, revisit CPU heuristics and generator connectivity constraints.
 - **End-of-run server behavior**: delete row on win/lose vs keep short TTL for replay/debug (still **no** meta progression).
 
 ## 10. Decision log (from design session)
@@ -132,7 +142,19 @@ Exact URL shape and table name are implementation details; the PRD requires **on
 | Conway / indev | Spike only; archive in `indev/`; product grid 8×8–12×12, not CA-based |
 | Board content | Procedural per new game |
 | Run shape | Single board per save; win/lose ends run |
-| Win / lose | Remove enemy token vs lose if player token removed |
+| Win / lose | Enemy tower eliminated vs lose if player tower eliminated |
+| Territories | Connected polyomino **5–10 cells**, opposing **edge-anchored** sides |
+| Towers | Fixed **player tower** / **enemy tower**; immobile in current phase |
+| Tower placement | **Deepest interior** within territory (deterministic tie-break from seed) |
+| Terrain model | **No empty cells** at gen; **overlay placements** atop base terrain |
+| Placement constraint | **Not inside enemy territory**; additional **type-on-terrain** rules required |
+| Player phase action | **Shop of 3** (deterministic RNG) → pick **one** tile → place **one** tile |
+| CPU phase | **Mirrors** player placement flow |
+| Shop RNG | `rng(seed, roundIndex, side)` |
+| Tower HP | **One-shot** elimination v1 |
+| Path sanity | **Not required** while towers immobile; revisit with hazard connectivity needs |
+| Phase 2 env scope | Ship **one minimal hazard** capable of eliminating towers before full hazard suite |
+| Deferred | Moving units / super-tiles / chess-like armies |
 | CPU AI | Simple heuristics v1 |
 | Environment | Multiple hazard systems in v1 scope |
 | Platform | Desktop-first; mobile usable |
