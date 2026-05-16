@@ -369,7 +369,13 @@ function syncVipMembersToVipConversation() {
     });
 }
 syncVipMembersToVipConversation();
+
+function getClickerTagHolderCanonical() {
+  return clickerTagHolderCanonical;
+}
+
 module.exports = {
+  getClickerTagHolderCanonical,
   parseBotanicUpgradeLevels,
   upsertBotanicGardensSave,
   refreshClickerTagHolderCache,
