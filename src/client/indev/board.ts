@@ -35,6 +35,41 @@ function floatTile(el: HTMLElement, isDragging: () => boolean): void {
 let tileMap: string[][] = [];
 let riverMountain: [number, number] | null = null;
 
+// generate the log or exp curves for the corner fill
+function curveT(t: number, convex: boolean, dampening: number): number {
+  const clamped = Math.max(0, Math.min(1, t));
+  const k = 1 + dampening * 4;
+  if (convex) {
+    return Math.log(1 + clamped * k) / Math.log(1 + k);
+  }
+  return (Math.exp(k * clamped) - 1) / (Math.exp(k) - 1);
+}
+
+// fill in the gaps between the tiles
+function fillCorner(
+  label: string,
+  edgeAnchor: [number, number],
+  inwardAnchor: [number, number],
+  rows: number[],
+  convex: boolean,
+  dampening: number,
+): void {
+  const [rEdge, cEdge] = edgeAnchor;
+  const [rIn, cIn] = inwardAnchor;
+  const dr = rIn - rEdge;
+  if (dr === 0) return;
+  for (const row of rows) {
+    const t = (row - rEdge) / dr;
+    if (t < 0 || t > 1) continue;
+    const colBound = Math.round(cEdge + (cIn - cEdge) * curveT(t, convex, dampening));
+    const lo = Math.min(colBound, cEdge);
+    const hi = Math.max(colBound, cEdge);
+    for (let c = lo; c <= hi; c++) {
+      tileMap[row]![c] = label;
+    }
+  }
+}
+
 function styleCellFromLabel(cell: HTMLElement, label: string): void {
   switch (label) {
     case 'sea':
@@ -224,6 +259,13 @@ function initGameBoard(): void {
   // [11][11] is bottom left
   // [0][11] is top left
   // [11][0] is bottom right
+  //
+  // filling the regions is complicated:
+  // first, we decide the length of the region in each cardinal direction
+  // then we take the three exposed directions on the board connect them with lines
+  // we generate a random int that has a 50/50 to decide concavity between each set of points
+  // then we model a random dampening value for the curve between the two points
+  // then fill in the gaps
   function initProcGen(): void {
     // first, decide on the sea/mountain sides
     let seaSideLeft: boolean = Math.random() < 0.5;
@@ -270,48 +312,25 @@ function initGameBoard(): void {
       } else {
         tileMap[6 + i]![0] = 'sea';
       }
-      // West
-      for (let i: number = 0; i < seaSize[3] + 1; i++) {
-        if (seaSideLeft) {
-          tileMap[5]![11 + i] = 'sea';
-          tileMap[6]![11 + i] = 'sea';
-        } else {
-          tileMap[5]![i] = 'sea';
-          tileMap[6]![i] = 'sea';
-        }
-      }
-      // fill it out
+    }
+    // West
+    for (let i: number = 0; i < seaSize[3] + 1; i++) {
       if (seaSideLeft) {
-        let depth: number = seaSize[1];
-        for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-          tileMap[4]![11 - i] = 'sea';
-        }
-        for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-          tileMap[7]![11 - i] = 'sea';
-        }
-        for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-          tileMap[3]![11 - i] = 'sea';
-        }
-        for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-
-          tileMap[8]![11 - i] = 'sea';
-        }
+        tileMap[5]![11 + i] = 'sea';
+        tileMap[6]![11 + i] = 'sea';
       } else {
-        let depth: number = seaSize[3];
-        for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-          tileMap[4]![0 + i] = 'sea';
-        }
-        for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-          tileMap[7]![0 + i] = 'sea';
-        }
-        for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-          tileMap[3]![0 + i] = 'sea';
-        }
-        for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-
-          tileMap[8]![0 + i] = 'sea';
-        }
+        tileMap[5]![i] = 'sea';
+        tileMap[6]![i] = 'sea';
       }
+    }
+    const seaNorthConvex = Math.random() >= 0.5;
+    const seaDamp = Math.random();
+    if (seaSideLeft) {
+      fillCorner('sea', [5 - seaSize[0]!, 11], [5, 11 - seaSize[1]!], [3, 4], seaNorthConvex, seaDamp);
+      fillCorner('sea', [6 + seaSize[2]!, 11], [6, 11 - seaSize[1]!], [7, 8], !seaNorthConvex, seaDamp);
+    } else {
+      fillCorner('sea', [5 - seaSize[0]!, 0], [5, seaSize[3]!], [3, 4], seaNorthConvex, seaDamp);
+      fillCorner('sea', [6 + seaSize[2]!, 0], [6, seaSize[3]!], [7, 8], !seaNorthConvex, seaDamp);
     }
     // another one for the mountains
     // array order is clockwise NESW
@@ -345,48 +364,25 @@ function initGameBoard(): void {
       } else {
         tileMap[6 + i]![11] = 'mountain';
       }
-      // West
-      for (let i: number = 0; i < mountainSize[3] + 1; i++) {
-        if (seaSideLeft) {
-          tileMap[5]![i] = 'mountain';
-          tileMap[6]![i] = 'mountain';
-        } else {
-          tileMap[5]![11 + i] = 'mountain';
-          tileMap[6]![11 + i] = 'mountain';
-        }
+    }
+    // West
+    for (let i: number = 0; i < mountainSize[3] + 1; i++) {
+      if (seaSideLeft) {
+        tileMap[5]![i] = 'mountain';
+        tileMap[6]![i] = 'mountain';
+      } else {
+        tileMap[5]![11 + i] = 'mountain';
+        tileMap[6]![11 + i] = 'mountain';
       }
     }
-    // fill it out
+    const mountainNorthConvex = Math.random() >= 0.5;
+    const mountainDamp = Math.random();
     if (seaSideLeft) {
-      let depth: number = mountainSize[1];
-      for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-        tileMap[4]![0 + i] = 'mountain';
-      }
-      for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-        tileMap[7]![0 + i] = 'mountain';
-      }
-      for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-        tileMap[3]![0 + i] = 'mountain';
-      }
-      for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-
-        tileMap[8]![0 + i] = 'mountain';
-      }
+      fillCorner('mountain', [5 - mountainSize[0]!, 0], [5, mountainSize[1]!], [3, 4], mountainNorthConvex, mountainDamp);
+      fillCorner('mountain', [6 + mountainSize[2]!, 0], [6, mountainSize[1]!], [7, 8], !mountainNorthConvex, mountainDamp);
     } else {
-      let depth: number = mountainSize[3];
-      for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-        tileMap[4]![11 - i] = 'mountain';
-      }
-      for (let i: number = 0; i <= (depth - Math.floor(Math.random() * 2)); i++) {
-        tileMap[7]![11 - i] = 'mountain';
-      }
-      for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-        tileMap[3]![11 - i] = 'mountain';
-      }
-      for (let i: number = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-
-        tileMap[8]![11 - i] = 'mountain';
-      }
+      fillCorner('mountain', [5 - mountainSize[0]!, 11], [5, 11 - mountainSize[3]!], [3, 4], mountainNorthConvex, mountainDamp);
+      fillCorner('mountain', [6 + mountainSize[2]!, 11], [6, 11 - mountainSize[3]!], [7, 8], !mountainNorthConvex, mountainDamp);
     }
     // place snow on the peaks
     if (seaSideLeft) {
