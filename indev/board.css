@@ -12,10 +12,15 @@
     display: inline;
 }
 
-#generation-display {
-    display: flex;
-    float: right;
-    margin-right: 100px;
+#current-stage-display {
+    position: relative;
+    left: 10vw;
+    display: inline;
+    font-size: 2em;
+    color: white;
+    background-color: black;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 #trigger-shop-btn {

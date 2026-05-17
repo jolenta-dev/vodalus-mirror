@@ -14,17 +14,21 @@
 </head>
 
 <body>
-    <div w3-include-html="/assets/html/pointer-orbit.html"></div>
+    <div w3-include-html="../assets/html/pointer-orbit.html"></div>
+    <div id="site-sidebar-mount" data-src="../assets/html/sidebar.html"></div>
+    <script src="../assets/javascript/sidebar-footer.js"></script>
 
-    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
-    <script src="/assets/javascript/sidebar-footer.js"></script>
     <div id="simulation-controls-wrapper">
         <button id="trigger-shop-btn">Trigger Shop</button>
+        <button id="next-stage-btn">Next Stage</button>
+    </div>
+    <div id="current-stage-display">Setup
     </div>
     <div id="board-wrapper">
     </div>
     <div id="shop-tiles-wrapper">
     </div>
+    <script src="/assets/javascript/include-html.js"></script>
 </body>
 <script src="/indev/board.js"></script>
 
