@@ -30,6 +30,30 @@ function floatTile(el, isDragging) {
 }
 let tileMap = [];
 let riverMountain = null;
+function curveT(t, convex, dampening) {
+  const clamped = Math.max(0, Math.min(1, t));
+  const k = 1 + dampening * 4;
+  if (convex) {
+    return Math.log(1 + clamped * k) / Math.log(1 + k);
+  }
+  return (Math.exp(k * clamped) - 1) / (Math.exp(k) - 1);
+}
+function fillCorner(label, edgeAnchor, inwardAnchor, rows, convex, dampening) {
+  const [rEdge, cEdge] = edgeAnchor;
+  const [rIn, cIn] = inwardAnchor;
+  const dr = rIn - rEdge;
+  if (dr === 0) return;
+  for (const row of rows) {
+    const t = (row - rEdge) / dr;
+    if (t < 0 || t > 1) continue;
+    const colBound = Math.round(cEdge + (cIn - cEdge) * curveT(t, convex, dampening));
+    const lo = Math.min(colBound, cEdge);
+    const hi = Math.max(colBound, cEdge);
+    for (let c = lo; c <= hi; c++) {
+      tileMap[row][c] = label;
+    }
+  }
+}
 function styleCellFromLabel(cell, label) {
   switch (label) {
     case "sea":
@@ -143,6 +167,7 @@ function setupShopTilePointerDrag(tile, setPauseFloat, isSetup) {
           shopTilesWrapper?.remove();
         } else if (!shopTilesWrapper?.children.length) {
           shopTilesWrapper?.remove();
+          tryAdvanceSetupPhase();
         }
         return;
       }
@@ -200,7 +225,18 @@ function initGameBoard() {
     }
   }
   function initProcGen() {
-    let seaSideLeft = Math.random() < 0.5;
+    const BITS = 7n;
+    const MASK = 0x7Fn;
+    const COUNT = 25;
+    function randomSeed() {
+      return Array.from({ length: COUNT }, () => Math.floor(Math.random() * 100) + 1).reduce((seed2, v, i) => seed2 | BigInt(v) << BigInt(i) * BITS, 0n);
+    }
+    const seed = randomSeed();
+    function getSeed(seed2, index) {
+      return Number(seed2 >> BigInt(index) * BITS & MASK);
+    }
+    document.getElementById("seed-display").textContent = `Seed: ${seed.toString()}`;
+    let seaSideLeft = getSeed(seed, 0) < 50;
     if (seaSideLeft) {
       tileMap[5][11] = "sea";
       tileMap[6][11] = "sea";
@@ -213,10 +249,10 @@ function initGameBoard() {
       tileMap[6][0] = "sea";
     }
     const seaSize = [];
-    seaSize[0] = Math.floor(Math.random() * 3) + 1;
-    seaSize[1] = Math.floor(Math.random() * 3) + 1;
-    seaSize[2] = Math.floor(Math.random() * 3) + 1;
-    seaSize[3] = Math.floor(Math.random() * 3) + 1;
+    seaSize[0] = Math.floor(getSeed(seed, 1) / 100 * 4) + 1;
+    seaSize[1] = Math.floor(getSeed(seed, 2) / 100 * 4) + 1;
+    seaSize[2] = Math.floor(getSeed(seed, 3) / 100 * 4) + 1;
+    seaSize[3] = Math.floor(getSeed(seed, 4) / 100 * 4) + 1;
     for (let i = 0; i < seaSize[0] + 1; i++) {
       if (seaSideLeft) {
         tileMap[5 - i][11] = "sea";
@@ -226,8 +262,16 @@ function initGameBoard() {
     }
     for (let i = 0; i < seaSize[1] + 1; i++) {
       if (seaSideLeft) {
-        tileMap[6][11 - i] = "sea";
-        tileMap[5][11 - i] = "sea";
+        if (getSeed(seed, 5) < 33) {
+          tileMap[6][11 - i] = "sea";
+          tileMap[5][11 - (i - 1)] = "sea";
+        } else if (getSeed(seed, 5) < 66) {
+          tileMap[6][11 - i] = "sea";
+          tileMap[5][11 - i] = "sea";
+        } else {
+          tileMap[6][11 - (i - 1)] = "sea";
+          tileMap[5][11 - i] = "sea";
+        }
       } else {
         tileMap[6][i] = "sea";
         tileMap[5][i] = "sea";
@@ -239,50 +283,38 @@ function initGameBoard() {
       } else {
         tileMap[6 + i][0] = "sea";
       }
-      for (let i2 = 0; i2 < seaSize[3] + 1; i2++) {
-        if (seaSideLeft) {
-          tileMap[5][11 + i2] = "sea";
-          tileMap[6][11 + i2] = "sea";
-        } else {
-          tileMap[5][i2] = "sea";
-          tileMap[6][i2] = "sea";
-        }
-      }
+    }
+    for (let i = 0; i < seaSize[3] + 1; i++) {
       if (seaSideLeft) {
-        let depth = seaSize[1];
-        for (let i2 = 0; i2 <= depth - Math.floor(Math.random() * 2); i2++) {
-          tileMap[4][11 - i2] = "sea";
-        }
-        for (let i2 = 0; i2 <= depth - Math.floor(Math.random() * 2); i2++) {
-          tileMap[7][11 - i2] = "sea";
-        }
-        for (let i2 = 0; i2 < depth - (Math.floor(Math.random() * 2) + 1); i2++) {
-          tileMap[3][11 - i2] = "sea";
-        }
-        for (let i2 = 0; i2 < depth - (Math.floor(Math.random() * 2) + 1); i2++) {
-          tileMap[8][11 - i2] = "sea";
+        if (getSeed(seed, 6) < 33) {
+          tileMap[5][11 + i] = "sea";
+          tileMap[6][11 + (i - 1)] = "sea";
+        } else if (getSeed(seed, 6) < 66) {
+          tileMap[5][11 + i] = "sea";
+          tileMap[6][11 + i] = "sea";
+        } else {
+          tileMap[5][11 + (i - 1)] = "sea";
+          tileMap[6][11 + i] = "sea";
         }
       } else {
-        let depth = seaSize[3];
-        for (let i2 = 0; i2 <= depth - Math.floor(Math.random() * 2); i2++) {
-          tileMap[4][0 + i2] = "sea";
-        }
-        for (let i2 = 0; i2 <= depth - Math.floor(Math.random() * 2); i2++) {
-          tileMap[7][0 + i2] = "sea";
-        }
-        for (let i2 = 0; i2 < depth - (Math.floor(Math.random() * 2) + 1); i2++) {
-          tileMap[3][0 + i2] = "sea";
-        }
-        for (let i2 = 0; i2 < depth - (Math.floor(Math.random() * 2) + 1); i2++) {
-          tileMap[8][0 + i2] = "sea";
-        }
+        tileMap[5][i] = "sea";
+        tileMap[6][i] = "sea";
       }
     }
+    const seaNorthConvex = getSeed(seed, 7) < 50;
+    const seaDamp = getSeed(seed, 8) / 100;
+    if (seaSideLeft) {
+      fillCorner("sea", [5 - seaSize[0], 11], [5, 11 - seaSize[1]], [3, 4], seaNorthConvex, seaDamp);
+      fillCorner("sea", [6 + seaSize[2], 11], [6, 11 - seaSize[1]], [7, 8], !seaNorthConvex, seaDamp);
+    } else {
+      fillCorner("sea", [5 - seaSize[0], 0], [5, seaSize[3]], [3, 4], seaNorthConvex, seaDamp);
+      fillCorner("sea", [6 + seaSize[2], 0], [6, seaSize[3]], [7, 8], !seaNorthConvex, seaDamp);
+    }
     const mountainSize = [];
-    mountainSize[0] = Math.floor(Math.random() * 4) + 1;
-    mountainSize[1] = Math.floor(Math.random() * 4) + 1;
-    mountainSize[2] = Math.floor(Math.random() * 4) + 1;
-    mountainSize[3] = Math.floor(Math.random() * 4) + 1;
+    mountainSize[0] = Math.floor(getSeed(seed, 9) / 100 * 5) + 1;
+    mountainSize[1] = Math.floor(getSeed(seed, 10) / 100 * 5) + 1;
+    mountainSize[2] = Math.floor(getSeed(seed, 11) / 100 * 5) + 1;
+    mountainSize[3] = Math.floor(getSeed(seed, 12) / 100 * 5) + 1;
     for (let i = 0; i < mountainSize[0] + 1; i++) {
       if (seaSideLeft) {
         tileMap[5 - i][0] = "mountain";
@@ -295,8 +327,16 @@ function initGameBoard() {
         tileMap[6][i] = "mountain";
         tileMap[5][i] = "mountain";
       } else {
-        tileMap[6][11 - i] = "mountain";
-        tileMap[5][11 - i] = "mountain";
+        if (getSeed(seed, 13) < 33) {
+          tileMap[6][11 - i] = "mountain";
+          tileMap[5][11 - (i - 1)] = "mountain";
+        } else if (getSeed(seed, 13) < 66) {
+          tileMap[6][11 - i] = "mountain";
+          tileMap[5][11 - i] = "mountain";
+        } else {
+          tileMap[6][11 - (i - 1)] = "mountain";
+          tileMap[5][11 - i] = "mountain";
+        }
       }
     }
     for (let i = 0; i < mountainSize[2] + 1; i++) {
@@ -305,72 +345,60 @@ function initGameBoard() {
       } else {
         tileMap[6 + i][11] = "mountain";
       }
-      for (let i2 = 0; i2 < mountainSize[3] + 1; i2++) {
-        if (seaSideLeft) {
-          tileMap[5][i2] = "mountain";
-          tileMap[6][i2] = "mountain";
+    }
+    for (let i = 0; i < mountainSize[3] + 1; i++) {
+      if (seaSideLeft) {
+        tileMap[5][i] = "mountain";
+        tileMap[6][i] = "mountain";
+      } else {
+        if (getSeed(seed, 14) < 33) {
+          tileMap[5][11 + i] = "mountain";
+          tileMap[6][11 + (i - 1)] = "mountain";
+        } else if (getSeed(seed, 14) < 66) {
+          tileMap[5][11 + i] = "mountain";
+          tileMap[6][11 + i] = "mountain";
         } else {
-          tileMap[5][11 + i2] = "mountain";
-          tileMap[6][11 + i2] = "mountain";
+          tileMap[5][11 + (i - 1)] = "mountain";
+          tileMap[6][11 + i] = "mountain";
         }
       }
     }
+    const mountainNorthConvex = getSeed(seed, 15) < 50;
+    const mountainDamp = getSeed(seed, 16) / 100;
     if (seaSideLeft) {
-      let depth = mountainSize[1];
-      for (let i = 0; i <= depth - Math.floor(Math.random() * 2); i++) {
-        tileMap[4][0 + i] = "mountain";
-      }
-      for (let i = 0; i <= depth - Math.floor(Math.random() * 2); i++) {
-        tileMap[7][0 + i] = "mountain";
-      }
-      for (let i = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-        tileMap[3][0 + i] = "mountain";
-      }
-      for (let i = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-        tileMap[8][0 + i] = "mountain";
-      }
+      fillCorner("mountain", [5 - mountainSize[0], 0], [5, mountainSize[1]], [3, 4], mountainNorthConvex, mountainDamp);
+      fillCorner("mountain", [6 + mountainSize[2], 0], [6, mountainSize[1]], [7, 8], !mountainNorthConvex, mountainDamp);
     } else {
-      let depth = mountainSize[3];
-      for (let i = 0; i <= depth - Math.floor(Math.random() * 2); i++) {
-        tileMap[4][11 - i] = "mountain";
-      }
-      for (let i = 0; i <= depth - Math.floor(Math.random() * 2); i++) {
-        tileMap[7][11 - i] = "mountain";
-      }
-      for (let i = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-        tileMap[3][11 - i] = "mountain";
-      }
-      for (let i = 0; i < depth - (Math.floor(Math.random() * 2) + 1); i++) {
-        tileMap[8][11 - i] = "mountain";
-      }
+      fillCorner("mountain", [5 - mountainSize[0], 11], [5, 11 - mountainSize[3]], [3, 4], mountainNorthConvex, mountainDamp);
+      fillCorner("mountain", [6 + mountainSize[2], 11], [6, 11 - mountainSize[3]], [7, 8], !mountainNorthConvex, mountainDamp);
     }
     if (seaSideLeft) {
       tileMap[4][0] = "snow";
       tileMap[5][0] = "snow";
-      if (Math.random() < 0.5) {
+      if (getSeed(seed, 17) < 50) {
         tileMap[3][0] = "snow";
         tileMap[6][0] = "snow";
       }
-      if (Math.random() < 0.5) {
+      if (getSeed(seed, 18) < 50) {
         tileMap[4][1] = "snow";
         tileMap[5][1] = "snow";
       }
     } else {
       tileMap[4][11] = "snow";
       tileMap[5][11] = "snow";
-      if (Math.random() < 0.5) {
+      if (getSeed(seed, 19) < 50) {
         tileMap[3][11] = "snow";
         tileMap[6][11] = "snow";
       }
-      if (Math.random() < 0.5) {
+      if (getSeed(seed, 20) < 50) {
         tileMap[4][10] = "snow";
         tileMap[5][10] = "snow";
       }
     }
     function placeRiverMountainStart(bounds, maxGuesses2) {
       for (let i = 0; i < maxGuesses2; i++) {
-        const x = Math.floor(Math.random() * bounds.xSpan) + bounds.xLo;
-        const y = Math.floor(Math.random() * bounds.ySpan) + bounds.yLo;
+        const x = Math.floor(getSeed(seed, 21) / 100 * bounds.xSpan) + bounds.xLo;
+        const y = Math.floor(getSeed(seed, 22) / 100 * bounds.ySpan) + bounds.yLo;
         if (tileMap[x][y] === "mountain") {
           tileMap[x][y] = "river";
           return [x, y];
@@ -394,7 +422,7 @@ function initGameBoard() {
     for (let i = 0; i < 12; i++) {
       const prevRow = riverRow;
       riverCol += colStep;
-      riverRow += Math.floor(Math.random() * 3) - 1;
+      riverRow += Math.floor(getSeed(seed, 23) / 100 * 3) - 1;
       riverRow = Math.max(0, Math.min(11, riverRow));
       riverCol = Math.max(0, Math.min(11, riverCol));
       if (prevRow !== riverRow) {
@@ -408,6 +436,9 @@ function initGameBoard() {
   tileMapToCells();
 }
 initGameBoard();
+function isSetupShopType(type) {
+  return type === "setup1" || type === "setup2";
+}
 function initShop(items, type) {
   if (!document.getElementById("shop-tiles-wrapper")) {
     const shopTilesWrapper2 = document.createElement("div");
@@ -421,12 +452,10 @@ function initShop(items, type) {
     const tile = document.createElement("div");
     tile.id = `shop-tile-${i}`;
     tile.classList.add("shop-tile");
-    if (type === "setup") {
-      if (i === 0) {
-        tile.textContent = "tower";
-      } else {
-        tile.textContent = "interior";
-      }
+    if (type === "setup1") {
+      tile.textContent = "tower";
+    } else if (type === "setup2") {
+      tile.textContent = "interior";
     } else {
       tile.textContent = tileLabels[Math.floor(Math.random() * tileLabels.length)];
     }
@@ -458,17 +487,39 @@ function initShop(items, type) {
     floatTile(tile, () => pauseFloat);
     setupShopTilePointerDrag(tile, (active) => {
       if (active !== void 0) pauseFloat = active;
-    }, type === "setup");
+    }, isSetupShopType(type));
+  }
+}
+let gameStage = 3;
+let setupPhase = 1;
+function hasTowerOnBoard() {
+  for (const row of tileMap) {
+    for (const cell of row) {
+      if (cell === "tower") return true;
+    }
+  }
+  return false;
+}
+function tryAdvanceSetupPhase() {
+  if (gameStage !== 3 || isShopOpen()) return;
+  if (setupPhase === 1 && hasTowerOnBoard()) {
+    setupPhase = 2;
+    initShop(7, "setup2");
   }
 }
 document.getElementById("trigger-shop-btn")?.addEventListener("click", () => {
   if (gameStage === 3) {
-    initShop(8, "setup");
+    if (isShopOpen()) return;
+    if (setupPhase === 1) {
+      initShop(1, "setup1");
+    } else {
+      initShop(7, "setup2");
+    }
   } else {
     initShop(3);
   }
 });
-let gameStage = 3;
+initShop(1, "setup1");
 function isShopOpen() {
   const shopTilesWrapper = document.getElementById("shop-tiles-wrapper");
   return !!shopTilesWrapper && shopTilesWrapper.children.length > 0;
@@ -501,9 +552,10 @@ function progressGameStage(gameStage2) {
         initShop(3);
         return 0;
       case 3:
-        if (isShopOpen() || !isSetupComplete()) {
+        if (isShopOpen() || !isSetupComplete() || setupPhase !== 2) {
           return 3;
         }
+        setupPhase = 1;
         updateGameStageDisplay(0);
         initShop(3);
         return 0;
@@ -538,4 +590,13 @@ function updateGameStageDisplay(gameStage2) {
 document.getElementById("next-stage-btn")?.addEventListener("click", () => {
   gameStage = progressGameStage(gameStage);
 });
+function getCellNeighbors(y, x) {
+  const neighbors = [];
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      neighbors[i][j] = tileMap[i + 1 - i][j + 1 - j] ?? "undefined";
+    }
+  }
+  return neighbors;
+}
 //# sourceMappingURL=board.js.map

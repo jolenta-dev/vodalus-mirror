@@ -23,6 +23,12 @@
     border-radius: 10px;
 }
 
+#seed-display {
+    position: relative;
+    right: -70vw;
+    bottom: -90vh;
+}
+
 #trigger-shop-btn {
     display: flex;
     float: right;
