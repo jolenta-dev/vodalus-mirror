@@ -324,15 +324,20 @@ function initGameBoard(): void {
     for (let i: number = 0; i < seaSize[1] + 1; i++) {
       if (seaSideLeft) {
         const seaEastRoll = roll();
+        const seaEastColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
         if (seaEastRoll < 33) {
           tileMap[6]![11 - i] = 'sea';
-          tileMap[5]![11 - (i - 1)] = 'sea';
+          tileMap[5]![seaEastColAhead] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![seaEastColAhead] = 'sea';
         } else if (seaEastRoll < 66) {
           tileMap[6]![11 - i] = 'sea';
           tileMap[5]![11 - i] = 'sea';
         } else {
-          tileMap[6]![11 - (i - 1)] = 'sea';
+          tileMap[6]![seaEastColAhead] = 'sea';
           tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![seaEastColAhead] = 'sea';
         }
       } else {
         tileMap[6]![i] = 'sea';
@@ -351,15 +356,20 @@ function initGameBoard(): void {
     for (let i: number = 0; i < seaSize[3] + 1; i++) {
       if (seaSideLeft) {
         const seaWestRoll = roll();
+        const seaWestColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
         if (seaWestRoll < 33) {
-          tileMap[5]![11 + i] = 'sea';
-          tileMap[6]![11 + (i - 1)] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![seaWestColAhead] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![seaWestColAhead] = 'sea';
         } else if (seaWestRoll < 66) {
-          tileMap[5]![11 + i] = 'sea';
-          tileMap[6]![11 + i] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
         } else {
-          tileMap[5]![11 + (i - 1)] = 'sea';
-          tileMap[6]![11 + i] = 'sea';
+          tileMap[5]![seaWestColAhead] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![seaWestColAhead] = 'sea';
         }
       } else {
         tileMap[5]![i] = 'sea';
@@ -397,15 +407,20 @@ function initGameBoard(): void {
         tileMap[5]![i] = 'mountain';
       } else {
         const mountainEastRoll = roll();
+        const mountainEastColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
         if (mountainEastRoll < 33) {
           tileMap[6]![11 - i] = 'mountain';
-          tileMap[5]![11 - (i - 1)] = 'mountain';
+          tileMap[5]![mountainEastColAhead] = 'mountain';
+          tileMap[5]![11 - i] = 'mountain';
+          tileMap[6]![mountainEastColAhead] = 'mountain';
         } else if (mountainEastRoll < 66) {
           tileMap[6]![11 - i] = 'mountain';
           tileMap[5]![11 - i] = 'mountain';
         } else {
-          tileMap[6]![11 - (i - 1)] = 'mountain';
+          tileMap[6]![mountainEastColAhead] = 'mountain';
           tileMap[5]![11 - i] = 'mountain';
+          tileMap[6]![11 - i] = 'mountain';
+          tileMap[5]![mountainEastColAhead] = 'mountain';
         }
       }
     }
@@ -424,15 +439,20 @@ function initGameBoard(): void {
         tileMap[6]![i] = 'mountain';
       } else {
         const mountainWestRoll = roll();
+        const mountainWestColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
         if (mountainWestRoll < 33) {
-          tileMap[5]![11 + i] = 'mountain';
-          tileMap[6]![11 + (i - 1)] = 'mountain';
+          tileMap[5]![11 - i] = 'mountain';
+          tileMap[6]![mountainWestColAhead] = 'mountain';
+          tileMap[6]![11 - i] = 'mountain';
+          tileMap[5]![mountainWestColAhead] = 'mountain';
         } else if (mountainWestRoll < 66) {
-          tileMap[5]![11 + i] = 'mountain';
-          tileMap[6]![11 + i] = 'mountain';
+          tileMap[5]![11 - i] = 'mountain';
+          tileMap[6]![11 - i] = 'mountain';
         } else {
-          tileMap[5]![11 + (i - 1)] = 'mountain';
-          tileMap[6]![11 + i] = 'mountain';
+          tileMap[5]![mountainWestColAhead] = 'mountain';
+          tileMap[6]![11 - i] = 'mountain';
+          tileMap[5]![11 - i] = 'mountain';
+          tileMap[6]![mountainWestColAhead] = 'mountain';
         }
       }
     }

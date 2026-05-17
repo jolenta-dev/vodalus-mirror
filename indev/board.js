@@ -245,6 +245,21 @@ function initGameBoard() {
     const seedString = seedValue.toString();
     const roll = () => Number(mainSeed.next() % 100n);
     document.getElementById("seed-display").textContent = `Seed: ${seedString}`;
+    function fillStaggerFromCol11(label, i, rollValue, leadRow, trailRow) {
+      const col = 11 - i;
+      const colAhead = i > 0 ? 11 - (i - 1) : col;
+      tileMap[5][col] = label;
+      tileMap[6][col] = label;
+      if (colAhead === col) return;
+      if (rollValue < 33) {
+        tileMap[leadRow][colAhead] = label;
+      } else if (rollValue < 66) {
+        tileMap[5][colAhead] = label;
+        tileMap[6][colAhead] = label;
+      } else {
+        tileMap[trailRow][colAhead] = label;
+      }
+    }
     let seaSideLeft = roll() < 50;
     if (seaSideLeft) {
       tileMap[5][11] = "sea";
@@ -271,17 +286,7 @@ function initGameBoard() {
     }
     for (let i = 0; i < seaSize[1] + 1; i++) {
       if (seaSideLeft) {
-        const seaEastRoll = roll();
-        if (seaEastRoll < 33) {
-          tileMap[6][11 - i] = "sea";
-          tileMap[5][11 - (i - 1)] = "sea";
-        } else if (seaEastRoll < 66) {
-          tileMap[6][11 - i] = "sea";
-          tileMap[5][11 - i] = "sea";
-        } else {
-          tileMap[6][11 - (i - 1)] = "sea";
-          tileMap[5][11 - i] = "sea";
-        }
+        fillStaggerFromCol11("sea", i, roll(), 6, 5);
       } else {
         tileMap[6][i] = "sea";
         tileMap[5][i] = "sea";
@@ -296,17 +301,7 @@ function initGameBoard() {
     }
     for (let i = 0; i < seaSize[3] + 1; i++) {
       if (seaSideLeft) {
-        const seaWestRoll = roll();
-        if (seaWestRoll < 33) {
-          tileMap[5][11 + i] = "sea";
-          tileMap[6][11 + (i - 1)] = "sea";
-        } else if (seaWestRoll < 66) {
-          tileMap[5][11 + i] = "sea";
-          tileMap[6][11 + i] = "sea";
-        } else {
-          tileMap[5][11 + (i - 1)] = "sea";
-          tileMap[6][11 + i] = "sea";
-        }
+        fillStaggerFromCol11("sea", i, roll(), 5, 6);
       } else {
         tileMap[5][i] = "sea";
         tileMap[6][i] = "sea";
@@ -338,17 +333,7 @@ function initGameBoard() {
         tileMap[6][i] = "mountain";
         tileMap[5][i] = "mountain";
       } else {
-        const mountainEastRoll = roll();
-        if (mountainEastRoll < 33) {
-          tileMap[6][11 - i] = "mountain";
-          tileMap[5][11 - (i - 1)] = "mountain";
-        } else if (mountainEastRoll < 66) {
-          tileMap[6][11 - i] = "mountain";
-          tileMap[5][11 - i] = "mountain";
-        } else {
-          tileMap[6][11 - (i - 1)] = "mountain";
-          tileMap[5][11 - i] = "mountain";
-        }
+        fillStaggerFromCol11("mountain", i, roll(), 6, 5);
       }
     }
     for (let i = 0; i < mountainSize[2] + 1; i++) {
@@ -363,17 +348,7 @@ function initGameBoard() {
         tileMap[5][i] = "mountain";
         tileMap[6][i] = "mountain";
       } else {
-        const mountainWestRoll = roll();
-        if (mountainWestRoll < 33) {
-          tileMap[5][11 + i] = "mountain";
-          tileMap[6][11 + (i - 1)] = "mountain";
-        } else if (mountainWestRoll < 66) {
-          tileMap[5][11 + i] = "mountain";
-          tileMap[6][11 + i] = "mountain";
-        } else {
-          tileMap[5][11 + (i - 1)] = "mountain";
-          tileMap[6][11 + i] = "mountain";
-        }
+        fillStaggerFromCol11("mountain", i, roll(), 5, 6);
       }
     }
     const mountainNorthConvex = roll() < 50;
