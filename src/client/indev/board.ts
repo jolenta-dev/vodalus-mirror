@@ -198,16 +198,26 @@ function setupShopTilePointerDrag(tile: HTMLElement, setPauseFloat: (paused: boo
         const shopTilesWrapper = document.getElementById('shop-tiles-wrapper');
         // TODO: add tile placement check logic
         // if invalid, animateTileReturn(finishDragUI) and return
-        applyShopTileToCell(target, tile);
-        finishDragUI();
-        tile.remove();
-        if (!isSetup) {
-          shopTilesWrapper?.remove();
-        } else if (!shopTilesWrapper?.children.length) {
-          shopTilesWrapper?.remove();
-          tryAdvanceSetupPhase();
+        const idParts = target.id.split('-');
+        const targetY = parseInt(idParts[1]!, 10);
+        const targetX = parseInt(idParts[2]!, 10);
+
+        let validPlacement: boolean = isTilePlacementValid(targetY, targetX, tile.textContent ?? '');
+        if (validPlacement) {
+          applyShopTileToCell(target, tile);
+          finishDragUI();
+          tile.remove();
+          if (!isSetup) {
+            shopTilesWrapper?.remove();
+          } else if (!shopTilesWrapper?.children.length) {
+            shopTilesWrapper?.remove();
+            tryAdvanceSetupPhase();
+          }
+          return;
+        } else {
+          animateTileReturn(finishDragUI);
+          return;
         }
-        return;
       }
     }
     animateTileReturn(finishDragUI);
@@ -304,86 +314,6 @@ function initGameBoard(): void {
       tileMap[6]![11] = 'mountain';
       tileMap[5]![0] = 'sea';
       tileMap[6]![0] = 'sea';
-    }
-    // now determine the size of the sea in each direction
-    // array order is clockwise NESW
-    const seaSize: number[] = [];
-    seaSize[0] = Math.floor((roll() / 100) * 4) + 1;
-    seaSize[1] = Math.floor((roll() / 100) * 4) + 1;
-    seaSize[2] = Math.floor((roll() / 100) * 4) + 1;
-    seaSize[3] = Math.floor((roll() / 100) * 4) + 1;
-    // North
-    for (let i: number = 0; i < seaSize[0] + 1; i++) {
-      if (seaSideLeft) {
-        tileMap[5 - i]![11] = 'sea';
-      } else {
-        tileMap[5 - i]![0] = 'sea';
-      }
-    }
-    // East
-    for (let i: number = 0; i < seaSize[1] + 1; i++) {
-      if (seaSideLeft) {
-        const seaEastRoll = roll();
-        const seaEastColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
-        if (seaEastRoll < 33) {
-          tileMap[6]![11 - i] = 'sea';
-          tileMap[5]![seaEastColAhead] = 'sea';
-          tileMap[5]![11 - i] = 'sea';
-          tileMap[6]![seaEastColAhead] = 'sea';
-        } else if (seaEastRoll < 66) {
-          tileMap[6]![11 - i] = 'sea';
-          tileMap[5]![11 - i] = 'sea';
-        } else {
-          tileMap[6]![seaEastColAhead] = 'sea';
-          tileMap[5]![11 - i] = 'sea';
-          tileMap[6]![11 - i] = 'sea';
-          tileMap[5]![seaEastColAhead] = 'sea';
-        }
-      } else {
-        tileMap[6]![i] = 'sea';
-        tileMap[5]![i] = 'sea';
-      }
-    }
-    // South
-    for (let i: number = 0; i < seaSize[2] + 1; i++) {
-      if (seaSideLeft) {
-        tileMap[6 + i]![11] = 'sea';
-      } else {
-        tileMap[6 + i]![0] = 'sea';
-      }
-    }
-    // West
-    for (let i: number = 0; i < seaSize[3] + 1; i++) {
-      if (seaSideLeft) {
-        const seaWestRoll = roll();
-        const seaWestColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
-        if (seaWestRoll < 33) {
-          tileMap[5]![11 - i] = 'sea';
-          tileMap[6]![seaWestColAhead] = 'sea';
-          tileMap[6]![11 - i] = 'sea';
-          tileMap[5]![seaWestColAhead] = 'sea';
-        } else if (seaWestRoll < 66) {
-          tileMap[5]![11 - i] = 'sea';
-          tileMap[6]![11 - i] = 'sea';
-        } else {
-          tileMap[5]![seaWestColAhead] = 'sea';
-          tileMap[6]![11 - i] = 'sea';
-          tileMap[5]![11 - i] = 'sea';
-          tileMap[6]![seaWestColAhead] = 'sea';
-        }
-      } else {
-        tileMap[5]![i] = 'sea';
-        tileMap[6]![i] = 'sea';
-      }
-    }
-    const seaNorthConvex = (roll() < 50);
-    const seaDamp = (roll() / 100);
-    if (seaSideLeft) {
-      fillCorner('sea', [5 - seaSize[0]!, 11], [5, 11 - seaSize[1]!], [3, 4], seaNorthConvex, seaDamp);
-      fillCorner('sea', [6 + seaSize[2]!, 11], [6, 11 - seaSize[1]!], [7, 8], !seaNorthConvex, seaDamp);
-    } else {
-      fillCorner('sea', [5 - seaSize[0]!, 0], [5, seaSize[3]!], [3, 4], seaNorthConvex, seaDamp);
-      fillCorner('sea', [6 + seaSize[2]!, 0], [6, seaSize[3]!], [7, 8], !seaNorthConvex, seaDamp);
     }
     // another one for the mountains
     // array order is clockwise NESW
@@ -539,6 +469,86 @@ function initGameBoard(): void {
     }
 
     riverMountain = [riverRow, riverCol];
+    // now determine the size of the sea in each direction
+    // array order is clockwise NESW
+    const seaSize: number[] = [];
+    seaSize[0] = Math.floor((roll() / 100) * 4) + 1;
+    seaSize[1] = Math.floor((roll() / 100) * 4) + 1;
+    seaSize[2] = Math.floor((roll() / 100) * 4) + 1;
+    seaSize[3] = Math.floor((roll() / 100) * 4) + 1;
+    // North
+    for (let i: number = 0; i < seaSize[0] + 1; i++) {
+      if (seaSideLeft) {
+        tileMap[5 - i]![11] = 'sea';
+      } else {
+        tileMap[5 - i]![0] = 'sea';
+      }
+    }
+    // East
+    for (let i: number = 0; i < seaSize[1] + 1; i++) {
+      if (seaSideLeft) {
+        const seaEastRoll = roll();
+        const seaEastColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
+        if (seaEastRoll < 33) {
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![seaEastColAhead] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![seaEastColAhead] = 'sea';
+        } else if (seaEastRoll < 66) {
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+        } else {
+          tileMap[6]![seaEastColAhead] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![seaEastColAhead] = 'sea';
+        }
+      } else {
+        tileMap[6]![i] = 'sea';
+        tileMap[5]![i] = 'sea';
+      }
+    }
+    // South
+    for (let i: number = 0; i < seaSize[2] + 1; i++) {
+      if (seaSideLeft) {
+        tileMap[6 + i]![11] = 'sea';
+      } else {
+        tileMap[6 + i]![0] = 'sea';
+      }
+    }
+    // West
+    for (let i: number = 0; i < seaSize[3] + 1; i++) {
+      if (seaSideLeft) {
+        const seaWestRoll = roll();
+        const seaWestColAhead = i > 0 ? 11 - (i - 1) : 11 - i;
+        if (seaWestRoll < 33) {
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![seaWestColAhead] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![seaWestColAhead] = 'sea';
+        } else if (seaWestRoll < 66) {
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+        } else {
+          tileMap[5]![seaWestColAhead] = 'sea';
+          tileMap[6]![11 - i] = 'sea';
+          tileMap[5]![11 - i] = 'sea';
+          tileMap[6]![seaWestColAhead] = 'sea';
+        }
+      } else {
+        tileMap[5]![i] = 'sea';
+        tileMap[6]![i] = 'sea';
+      }
+    }
+    const seaNorthConvex = (roll() < 50);
+    const seaDamp = (roll() / 100);
+    if (seaSideLeft) {
+      fillCorner('sea', [5 - seaSize[0]!, 11], [5, 11 - seaSize[1]!], [3, 4], seaNorthConvex, seaDamp);
+      fillCorner('sea', [6 + seaSize[2]!, 11], [6, 11 - seaSize[1]!], [7, 8], !seaNorthConvex, seaDamp);
+    } else {
+      fillCorner('sea', [5 - seaSize[0]!, 0], [5, seaSize[3]!], [3, 4], seaNorthConvex, seaDamp);
+      fillCorner('sea', [6 + seaSize[2]!, 0], [6, seaSize[3]!], [7, 8], !seaNorthConvex, seaDamp);
+    }
   }
 
   initProcGen();
@@ -725,10 +735,80 @@ document.getElementById('next-stage-btn')?.addEventListener('click', (): void =>
 
 function getCellNeighbors(y: number, x: number): string[][] {
   const neighbors: string[][] = [];
-  for (let i: number = 0; i < 3; i++) {
-    for (let j: number = 0; j < 3; j++) {
-      neighbors[i]![j] = tileMap[(i + 1) - i]![(j + 1) - j] ?? 'undefined';
+  for (let i = 0; i < 3; i++) {
+    neighbors[i] = [];
+    for (let j = 0; j < 3; j++) {
+      neighbors[i]![j] = tileMap[(y + 1) - i]?.[(x + 1) - j] ?? 'undefined';
     }
   }
   return neighbors;
 }
+
+function isTilePlacementValid(y: number, x: number, type: string): boolean {
+  // don't let players palce on the other side of the board
+  if (y < 6) return false;
+  const existing = tileMap[y]?.[x] ?? '';
+  if (existing === type) return false;
+
+  const cellNeighbors: string[][] = getCellNeighbors(y, x);
+  return ((): boolean => {
+    switch (type) {
+
+      case 'grass': {
+        let numberMountainNeighbors = 0;
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            if (i === 1 && j === 1) continue;
+            const neighbor = cellNeighbors[i]![j];
+            if (neighbor === 'snow') return false;
+            if (neighbor === 'mountain') numberMountainNeighbors++;
+          }
+        }
+        return numberMountainNeighbors <= 3;
+      }
+
+      case 'sea': {
+        let numberSeaNeighbors = 0;
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            if (i === 1 && j === 1) continue;
+            if (cellNeighbors[i]![j] === 'sea') numberSeaNeighbors++;
+          }
+        }
+        return numberSeaNeighbors >= 1;
+      }
+
+      case 'river': {
+        let numberRiverNeighbors = 0;
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            if (i === 1 && j === 1) continue;
+            if (cellNeighbors[i]![j] === 'river') numberRiverNeighbors++;
+          }
+        }
+        // TODO: check if river is contiguous
+        if (numberRiverNeighbors === 0) return false;
+        return numberRiverNeighbors <= 2;
+      }
+
+      case 'mountain': {
+        let numberMountainNeighbors = 0;
+        let numberSnowNeighbors = 0;
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            if (i === 1 && j === 1) continue;
+            const neighbor = cellNeighbors[i]![j];
+            if (neighbor === 'mountain') numberMountainNeighbors++;
+            if (neighbor === 'snow') numberSnowNeighbors++;
+          }
+        }
+        return numberMountainNeighbors + numberSnowNeighbors >= 2;
+      }
+
+      default:
+        return true;
+
+    }
+  })();
+}
+
