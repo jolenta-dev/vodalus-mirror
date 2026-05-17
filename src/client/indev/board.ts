@@ -175,6 +175,7 @@ function setupShopTilePointerDrag(tile: HTMLElement, setPauseFloat: (paused: boo
 // TODO: logic for tile placement restrictions
 // some kind of river continuity check for dynamic events
 // if river is not contiguous -> flood to a lake to connect it
+// MAKE PROCGEN SEED BASED
 
 function tileMapToCells(): void {
   for (let i: number = 0; i < 12; i++) {
