@@ -1,4 +1,19 @@
 "use strict";
+function splitmix64(seed) {
+  let s = seed;
+  return {
+    next() {
+      s += 0x9e3779b97f4a7c15n;
+      let z = s;
+      z = (z ^ z >> 30n) * 0xbf58476d1ce4e5b9n & 0xFFFFFFFFFFFFFFFFn;
+      z = (z ^ z >> 27n) * 0x94d049bb133111ebn & 0xFFFFFFFFFFFFFFFFn;
+      return z ^ z >> 31n;
+    },
+    nextInt(min, max) {
+      return Number(this.next() % BigInt(max - min + 1)) + min;
+    }
+  };
+}
 function getRandomSignedInt() {
   return Math.random() * 2 - 1;
 }
@@ -225,18 +240,12 @@ function initGameBoard() {
     }
   }
   function initProcGen() {
-    const BITS = 7n;
-    const MASK = 0x7Fn;
-    const COUNT = 25;
-    function randomSeed() {
-      return Array.from({ length: COUNT }, () => Math.floor(Math.random() * 100) + 1).reduce((seed2, v, i) => seed2 | BigInt(v) << BigInt(i) * BITS, 0n);
-    }
-    const seed = randomSeed();
-    function getSeed(seed2, index) {
-      return Number(seed2 >> BigInt(index) * BITS & MASK);
-    }
-    document.getElementById("seed-display").textContent = `Seed: ${seed.toString()}`;
-    let seaSideLeft = getSeed(seed, 0) < 50;
+    const seedValue = BigInt(Date.now());
+    const mainSeed = splitmix64(seedValue);
+    const seedString = seedValue.toString();
+    const roll = () => Number(mainSeed.next() % 100n);
+    document.getElementById("seed-display").textContent = `Seed: ${seedString}`;
+    let seaSideLeft = roll() < 50;
     if (seaSideLeft) {
       tileMap[5][11] = "sea";
       tileMap[6][11] = "sea";
@@ -249,10 +258,10 @@ function initGameBoard() {
       tileMap[6][0] = "sea";
     }
     const seaSize = [];
-    seaSize[0] = Math.floor(getSeed(seed, 1) / 100 * 4) + 1;
-    seaSize[1] = Math.floor(getSeed(seed, 2) / 100 * 4) + 1;
-    seaSize[2] = Math.floor(getSeed(seed, 3) / 100 * 4) + 1;
-    seaSize[3] = Math.floor(getSeed(seed, 4) / 100 * 4) + 1;
+    seaSize[0] = Math.floor(roll() / 100 * 4) + 1;
+    seaSize[1] = Math.floor(roll() / 100 * 4) + 1;
+    seaSize[2] = Math.floor(roll() / 100 * 4) + 1;
+    seaSize[3] = Math.floor(roll() / 100 * 4) + 1;
     for (let i = 0; i < seaSize[0] + 1; i++) {
       if (seaSideLeft) {
         tileMap[5 - i][11] = "sea";
@@ -262,10 +271,11 @@ function initGameBoard() {
     }
     for (let i = 0; i < seaSize[1] + 1; i++) {
       if (seaSideLeft) {
-        if (getSeed(seed, 5) < 33) {
+        const seaEastRoll = roll();
+        if (seaEastRoll < 33) {
           tileMap[6][11 - i] = "sea";
           tileMap[5][11 - (i - 1)] = "sea";
-        } else if (getSeed(seed, 5) < 66) {
+        } else if (seaEastRoll < 66) {
           tileMap[6][11 - i] = "sea";
           tileMap[5][11 - i] = "sea";
         } else {
@@ -286,10 +296,11 @@ function initGameBoard() {
     }
     for (let i = 0; i < seaSize[3] + 1; i++) {
       if (seaSideLeft) {
-        if (getSeed(seed, 6) < 33) {
+        const seaWestRoll = roll();
+        if (seaWestRoll < 33) {
           tileMap[5][11 + i] = "sea";
           tileMap[6][11 + (i - 1)] = "sea";
-        } else if (getSeed(seed, 6) < 66) {
+        } else if (seaWestRoll < 66) {
           tileMap[5][11 + i] = "sea";
           tileMap[6][11 + i] = "sea";
         } else {
@@ -301,8 +312,8 @@ function initGameBoard() {
         tileMap[6][i] = "sea";
       }
     }
-    const seaNorthConvex = getSeed(seed, 7) < 50;
-    const seaDamp = getSeed(seed, 8) / 100;
+    const seaNorthConvex = roll() < 50;
+    const seaDamp = roll() / 100;
     if (seaSideLeft) {
       fillCorner("sea", [5 - seaSize[0], 11], [5, 11 - seaSize[1]], [3, 4], seaNorthConvex, seaDamp);
       fillCorner("sea", [6 + seaSize[2], 11], [6, 11 - seaSize[1]], [7, 8], !seaNorthConvex, seaDamp);
@@ -311,10 +322,10 @@ function initGameBoard() {
       fillCorner("sea", [6 + seaSize[2], 0], [6, seaSize[3]], [7, 8], !seaNorthConvex, seaDamp);
     }
     const mountainSize = [];
-    mountainSize[0] = Math.floor(getSeed(seed, 9) / 100 * 5) + 1;
-    mountainSize[1] = Math.floor(getSeed(seed, 10) / 100 * 5) + 1;
-    mountainSize[2] = Math.floor(getSeed(seed, 11) / 100 * 5) + 1;
-    mountainSize[3] = Math.floor(getSeed(seed, 12) / 100 * 5) + 1;
+    mountainSize[0] = Math.floor(roll() / 100 * 5) + 1;
+    mountainSize[1] = Math.floor(roll() / 100 * 5) + 1;
+    mountainSize[2] = Math.floor(roll() / 100 * 5) + 1;
+    mountainSize[3] = Math.floor(roll() / 100 * 5) + 1;
     for (let i = 0; i < mountainSize[0] + 1; i++) {
       if (seaSideLeft) {
         tileMap[5 - i][0] = "mountain";
@@ -327,10 +338,11 @@ function initGameBoard() {
         tileMap[6][i] = "mountain";
         tileMap[5][i] = "mountain";
       } else {
-        if (getSeed(seed, 13) < 33) {
+        const mountainEastRoll = roll();
+        if (mountainEastRoll < 33) {
           tileMap[6][11 - i] = "mountain";
           tileMap[5][11 - (i - 1)] = "mountain";
-        } else if (getSeed(seed, 13) < 66) {
+        } else if (mountainEastRoll < 66) {
           tileMap[6][11 - i] = "mountain";
           tileMap[5][11 - i] = "mountain";
         } else {
@@ -351,10 +363,11 @@ function initGameBoard() {
         tileMap[5][i] = "mountain";
         tileMap[6][i] = "mountain";
       } else {
-        if (getSeed(seed, 14) < 33) {
+        const mountainWestRoll = roll();
+        if (mountainWestRoll < 33) {
           tileMap[5][11 + i] = "mountain";
           tileMap[6][11 + (i - 1)] = "mountain";
-        } else if (getSeed(seed, 14) < 66) {
+        } else if (mountainWestRoll < 66) {
           tileMap[5][11 + i] = "mountain";
           tileMap[6][11 + i] = "mountain";
         } else {
@@ -363,8 +376,8 @@ function initGameBoard() {
         }
       }
     }
-    const mountainNorthConvex = getSeed(seed, 15) < 50;
-    const mountainDamp = getSeed(seed, 16) / 100;
+    const mountainNorthConvex = roll() < 50;
+    const mountainDamp = roll() / 100;
     if (seaSideLeft) {
       fillCorner("mountain", [5 - mountainSize[0], 0], [5, mountainSize[1]], [3, 4], mountainNorthConvex, mountainDamp);
       fillCorner("mountain", [6 + mountainSize[2], 0], [6, mountainSize[1]], [7, 8], !mountainNorthConvex, mountainDamp);
@@ -375,30 +388,30 @@ function initGameBoard() {
     if (seaSideLeft) {
       tileMap[4][0] = "snow";
       tileMap[5][0] = "snow";
-      if (getSeed(seed, 17) < 50) {
+      if (roll() < 50) {
         tileMap[3][0] = "snow";
         tileMap[6][0] = "snow";
       }
-      if (getSeed(seed, 18) < 50) {
+      if (roll() < 50) {
         tileMap[4][1] = "snow";
         tileMap[5][1] = "snow";
       }
     } else {
       tileMap[4][11] = "snow";
       tileMap[5][11] = "snow";
-      if (getSeed(seed, 19) < 50) {
+      if (roll() < 50) {
         tileMap[3][11] = "snow";
         tileMap[6][11] = "snow";
       }
-      if (getSeed(seed, 20) < 50) {
+      if (roll() < 50) {
         tileMap[4][10] = "snow";
         tileMap[5][10] = "snow";
       }
     }
     function placeRiverMountainStart(bounds, maxGuesses2) {
       for (let i = 0; i < maxGuesses2; i++) {
-        const x = Math.floor(getSeed(seed, 21) / 100 * bounds.xSpan) + bounds.xLo;
-        const y = Math.floor(getSeed(seed, 22) / 100 * bounds.ySpan) + bounds.yLo;
+        const x = Math.floor(roll() / 100 * bounds.xSpan) + bounds.xLo;
+        const y = Math.floor(roll() / 100 * bounds.ySpan) + bounds.yLo;
         if (tileMap[x][y] === "mountain") {
           tileMap[x][y] = "river";
           return [x, y];
@@ -419,10 +432,11 @@ function initGameBoard() {
     function setRiverCell(row, col) {
       tileMap[row][col] = "river";
     }
+    const riverSeed = splitmix64(mainSeed.next());
     for (let i = 0; i < 12; i++) {
       const prevRow = riverRow;
       riverCol += colStep;
-      riverRow += Math.floor(getSeed(seed, 23) / 100 * 3) - 1;
+      riverRow += Math.floor(riverSeed.nextInt(0, 99) / 100 * 3) - 1;
       riverRow = Math.max(0, Math.min(11, riverRow));
       riverCol = Math.max(0, Math.min(11, riverCol));
       if (prevRow !== riverRow) {
