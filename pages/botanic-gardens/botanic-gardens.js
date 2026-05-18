@@ -130,6 +130,19 @@ function formatUsNumber(n) {
 function readDisplayNumber(el) {
   return Number(String(el && el.textContent || "").replace(/,/g, "")) || 0;
 }
+function persistClickerNow() {
+  if (!sessionName || !clickerHydrated) return Promise.resolve();
+  clearTimeout(persistClickerTimer);
+  persistClickerTimer = null;
+  return fetch("/api/clicker/update-count", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload()))
+  }).then((r) => r.json().then((data) => {
+    if (!r.ok || !data.success) console.error(data.error || "save failed");
+  })).catch((e) => console.error(e));
+}
 function schedulePersistClicker() {
   if (!sessionName || !clickerHydrated) return;
   clearTimeout(persistClickerTimer);
@@ -192,10 +205,11 @@ function renderUpgrade5Current() {
 upgradeCost[1].textContent = formatUsNumber(20);
 const baseCost1 = 20;
 renderUpgrade1Current();
-upgrades[1].addEventListener("click", function() {
+upgrades[1].addEventListener("click", async function() {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[1]);
   if (currentCount >= currentCost && currentCost >= baseCost1) {
+    await persistClickerNow();
     increasePerClick++;
     upgradeLevel[1].innerHTML++;
     renderUpgrade1Current();
@@ -212,10 +226,11 @@ upgrades[1].addEventListener("click", function() {
 upgradeCost[2].textContent = formatUsNumber(50);
 const baseCost2 = 50;
 renderUpgrade2Current();
-upgrades[2].addEventListener("click", function() {
+upgrades[2].addEventListener("click", async function() {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[2]);
   if (currentCount >= currentCost && currentCost >= baseCost2) {
+    await persistClickerNow();
     perTick++;
     upgradeLevel[2].innerHTML++;
     renderUpgrade2Current();
@@ -232,10 +247,11 @@ upgrades[2].addEventListener("click", function() {
 upgradeCost[3].textContent = formatUsNumber(1e4);
 const baseCost3 = 1e4;
 renderUpgrade3Current();
-upgrades[3].addEventListener("click", function() {
+upgrades[3].addEventListener("click", async function() {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[3]);
   if (currentCount >= currentCost && currentCost >= baseCost3) {
+    await persistClickerNow();
     autoClickInterval /= 2;
     restartPassiveTimer();
     upgradeLevel[3].innerHTML++;
@@ -253,9 +269,10 @@ upgrades[3].addEventListener("click", function() {
 upgradeCost[4].textContent = formatUsNumber(5e4);
 const baseCost4 = 5e4;
 renderUpgrade4Current();
-upgrades[4].addEventListener("click", function() {
+upgrades[4].addEventListener("click", async function() {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[4]);
+  if (currentCount >= currentCost && currentCost >= baseCost4) await persistClickerNow();
   if (currentCount >= currentCost && currentCost >= baseCost4 && !holdToClick) {
     holdToClick = true;
     holdToClickInterval = 1e3;
@@ -286,10 +303,11 @@ upgrades[4].addEventListener("click", function() {
 upgradeCost[5].textContent = formatUsNumber(1e5);
 const baseCost5 = 1e5;
 renderUpgrade5Current();
-upgrades[5].addEventListener("click", function() {
+upgrades[5].addEventListener("click", async function() {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[5]);
   if (currentCount >= currentCost && currentCost >= baseCost5) {
+    await persistClickerNow();
     if (explosionChance <= 0.7) {
       explosionChance += 0.1;
     } else {
@@ -508,15 +526,7 @@ function fetchClickerCount() {
   }).catch((e) => console.error(e));
 }
 function updateClickerCount() {
-  if (!sessionName || !clickerHydrated) return;
-  fetch("/api/clicker/update-count", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload()))
-  }).then((r) => r.json()).then((data) => {
-    if (!data.success) console.error(data.error || "save failed");
-  }).catch((e) => console.error(e));
+  persistClickerNow();
 }
 setInterval(updateClickerCount, 6e4);
 function flushPersistClickerKeepalive(onDone) {
