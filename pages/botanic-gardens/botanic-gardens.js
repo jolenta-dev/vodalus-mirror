@@ -1,17 +1,24 @@
-"use strict";
+
+/* TODOS:
+- change progression to look more like CC
+- change upgrade info to hover messages
+- prestige/ascension????
+- FRONTEND PASS (duh)
+*/
 let count = 0;
 let increasePerClick = 1;
 let perTick = 0;
-let autoClickInterval = 1e3;
+let autoClickInterval = 1000;
 let explosionChance = 0;
 let explosionQuantity = 0;
 let holdToClick = false;
-let holdToClickInterval = 1e3;
+let holdToClickInterval = 1000;
 let buttonHeld = false;
 let lastHoldClickAt = 0;
 let sessionName = null;
 let persistClickerTimer = null;
 let clickerHydrated = false;
+
 function botanicUpgradeCost1(purchases) {
   let c = 20;
   for (let i = 0; i < purchases; i++) c = Math.round(c * 2.5);
@@ -23,17 +30,17 @@ function botanicUpgradeCost2(purchases) {
   return c;
 }
 function botanicUpgradeCost3(purchases) {
-  let c = 1e4;
+  let c = 10000;
   for (let i = 0; i < purchases; i++) c = Math.round(c * 10);
   return c;
 }
 function botanicUpgradeCost4(purchases) {
-  let c = 5e4;
+  let c = 50000;
   for (let i = 0; i < purchases; i++) c = Math.round(c * 5);
   return c;
 }
 function botanicUpgradeCost5(purchases) {
-  let c = 1e5;
+  let c = 100000;
   for (let i = 0; i < purchases; i++) c = Math.round(c * 10);
   return c;
 }
@@ -43,24 +50,26 @@ function botanicSaveLevelsPayload() {
   o.upgrade2_level = Math.max(0, perTick);
   for (let i = 3; i <= 5; i++) {
     const displayed = upgradeLevel[i] ? Number(upgradeLevel[i].innerHTML) : 1;
-    o["upgrade" + i + "_level"] = Math.max(0, (Number.isFinite(displayed) ? displayed : 1) - 1);
+    o['upgrade' + i + '_level'] = Math.max(0, (Number.isFinite(displayed) ? displayed : 1) - 1);
   }
-  for (let i = 6; i <= 10; i++) o["upgrade" + i + "_level"] = 0;
+  for (let i = 6; i <= 10; i++) o['upgrade' + i + '_level'] = 0;
   return o;
 }
-const draggableDivModule = import("/assets/javascript/draggable-div.js");
+
+const draggableDivModule = import('/assets/javascript/draggable-div.js');
 const openDraggableWindows = {};
+
 async function openDraggableModal(key, title, modalEl, hostEl) {
   if (!modalEl || !hostEl) return null;
   if (openDraggableWindows[key] && openDraggableWindows[key].isConnected) return openDraggableWindows[key];
   const existing = new Set(Array.from(document.querySelectorAll('[id^="div-"]')).map((el) => el.id));
   const mod = await draggableDivModule;
-  mod.initDraggableDiv(title, modalEl, "maximized");
+  mod.initDraggableDiv(title, modalEl, 'maximized');
   const created = Array.from(document.querySelectorAll('[id^="div-"]')).find((el) => !existing.has(el.id)) || null;
   if (created) {
-    const closeBtn = created.querySelector("#draggable-div-close");
+    const closeBtn = created.querySelector('#draggable-div-close');
     if (closeBtn) {
-      closeBtn.addEventListener("click", () => {
+      closeBtn.addEventListener('click', () => {
         if (modalEl && hostEl && !hostEl.contains(modalEl)) hostEl.appendChild(modalEl);
         openDraggableWindows[key] = null;
       }, { once: true });
@@ -69,114 +78,121 @@ async function openDraggableModal(key, title, modalEl, hostEl) {
   }
   return created;
 }
+
 function closeDraggableModal(key, modalEl, hostEl) {
   const win = openDraggableWindows[key];
   if (win && win.isConnected) win.remove();
   openDraggableWindows[key] = null;
   if (modalEl && hostEl && !hostEl.contains(modalEl)) hostEl.appendChild(modalEl);
 }
+
 function promptPassword(messageText) {
-  const overlay = document.getElementById("password-modal-overlay");
-  const modal = document.getElementById("password-modal");
-  const messageEl = document.getElementById("password-modal-message");
-  const input = document.getElementById("password-modal-input");
-  const revealCheckbox = document.getElementById("password-modal-reveal");
-  const okBtn = document.getElementById("password-modal-ok");
-  const cancelBtn = document.getElementById("password-modal-cancel");
+  const overlay = document.getElementById('password-modal-overlay');
+  const modal = document.getElementById('password-modal');
+  const messageEl = document.getElementById('password-modal-message');
+  const input = document.getElementById('password-modal-input');
+  const revealCheckbox = document.getElementById('password-modal-reveal');
+  const okBtn = document.getElementById('password-modal-ok');
+  const cancelBtn = document.getElementById('password-modal-cancel');
+
   return new Promise((resolve) => {
     let resolved = false;
     function finish(value) {
       if (resolved) return;
       resolved = true;
-      closeDraggableModal("password-modal", modal, overlay);
-      input.value = "";
-      input.type = "password";
+      closeDraggableModal('password-modal', modal, overlay);
+      input.value = '';
+      input.type = 'password';
       if (revealCheckbox) revealCheckbox.checked = false;
-      document.removeEventListener("keydown", onEscape);
-      input.removeEventListener("keydown", onPasswordKeydown);
+      document.removeEventListener('keydown', onEscape);
+      input.removeEventListener('keydown', onPasswordKeydown);
       resolve(value);
     }
+
     function onEscape(e) {
-      if (e.key === "Escape") finish(null);
+      if (e.key === 'Escape') finish(null);
     }
+
     function onPasswordKeydown(e) {
-      if (e.key === "Enter") {
+      if (e.key === 'Enter') {
         e.preventDefault();
         finish(input.value);
       }
     }
+
     messageEl.textContent = messageText;
-    input.value = "";
-    input.type = "password";
+    input.value = '';
+    input.type = 'password';
     if (revealCheckbox) {
       revealCheckbox.checked = false;
       revealCheckbox.onchange = () => {
-        input.type = revealCheckbox.checked ? "text" : "password";
+        input.type = revealCheckbox.checked ? 'text' : 'password';
       };
     }
+
     okBtn.onclick = () => finish(input.value);
     cancelBtn.onclick = () => finish(null);
-    document.addEventListener("keydown", onEscape);
-    input.addEventListener("keydown", onPasswordKeydown);
-    openDraggableModal("password-modal", "password", modal, overlay).then(() => input.focus());
+    document.addEventListener('keydown', onEscape);
+    input.addEventListener('keydown', onPasswordKeydown);
+    openDraggableModal('password-modal', 'password', modal, overlay).then(() => input.focus());
   });
 }
+
 let totalTracker = document.getElementById("count");
 let mainButton = document.getElementById("button");
-const usNumberFormat = new Intl.NumberFormat("en-US");
+const usNumberFormat = new Intl.NumberFormat('en-US');
+
 function formatUsNumber(n) {
   return usNumberFormat.format(Number(n) || 0);
 }
+
 function readDisplayNumber(el) {
-  return Number(String(el && el.textContent || "").replace(/,/g, "")) || 0;
+  return Number(String((el && el.textContent) || '').replace(/,/g, '')) || 0;
 }
-function persistClickerNow() {
-  if (!sessionName || !clickerHydrated) return Promise.resolve();
-  clearTimeout(persistClickerTimer);
-  persistClickerTimer = null;
-  return fetch("/api/clicker/update-count", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload()))
-  }).then((r) => r.json().then((data) => {
-    if (!r.ok || !data.success) console.error(data.error || "save failed");
-  })).catch((e) => console.error(e));
-}
+
 function schedulePersistClicker() {
   if (!sessionName || !clickerHydrated) return;
   clearTimeout(persistClickerTimer);
   persistClickerTimer = setTimeout(() => {
     persistClickerTimer = null;
     updateClickerCount();
-  }, 2e3);
+  }, 2000);
 }
-mainButton.addEventListener("click", function() {
-  count = count + increasePerClick;
+
+mainButton.addEventListener("click", function () {
+  count = count + increasePerClick
   totalTracker.textContent = formatUsNumber(count);
   schedulePersistClicker();
-  mainButton.style.animation = "none";
+  mainButton.style.animation = 'none';
   mainButton.offsetHeight;
-  mainButton.style.animation = "clickAnim 0.3s forwards";
+  mainButton.style.animation = 'clickAnim 0.3s forwards';
+})
+
+mainButton.addEventListener("animationend", function () {
+  mainButton.style.animation = '';
 });
-mainButton.addEventListener("animationend", function() {
-  mainButton.style.animation = "";
-});
+
 let upgrades = [];
+
 for (let i = 1; i < 100; i++) {
   upgrades[i] = document.getElementById(`upgrade${i}`);
 }
+
 let upgradeCost = [];
+
 for (let i = 1; i < 100; i++) {
-  upgradeCost[i] = document.getElementById(`upgrade${i}-cost`);
+  upgradeCost[i] = document.getElementById(`upgrade${i}-cost`)
 }
+
 let upgradeLevel = [];
+
 for (let i = 1; i < 100; i++) {
-  upgradeLevel[i] = document.getElementById(`upgrade${i}-level`);
+  upgradeLevel[i] = document.getElementById(`upgrade${i}-level`)
   if (upgradeLevel[i] != null) {
     upgradeLevel[i].innerHTML = "1";
   }
 }
+
 function renderUpgrade1Current() {
   const current = document.getElementById(`upgrade1-current`);
   if (current) current.textContent = `${formatUsNumber(increasePerClick)} / click`;
@@ -202,14 +218,17 @@ function renderUpgrade5Current() {
   const current = document.getElementById(`upgrade5-current`);
   if (current) current.textContent = `${explosionChance * 100}% chance to explode for ${formatUsNumber(explosionQuantity)} clicks`;
 }
+
+// upgrade 1 block (click power) ----------------------------------
 upgradeCost[1].textContent = formatUsNumber(20);
 const baseCost1 = 20;
 renderUpgrade1Current();
-upgrades[1].addEventListener("click", async function() {
+
+upgrades[1].addEventListener("click", function () {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[1]);
+
   if (currentCount >= currentCost && currentCost >= baseCost1) {
-    await persistClickerNow();
     increasePerClick++;
     upgradeLevel[1].innerHTML++;
     renderUpgrade1Current();
@@ -222,15 +241,18 @@ upgrades[1].addEventListener("click", async function() {
   } else {
     return;
   }
-});
+})
+
+// upgrade 2 block (passive income) ---------------------------------
 upgradeCost[2].textContent = formatUsNumber(50);
 const baseCost2 = 50;
 renderUpgrade2Current();
-upgrades[2].addEventListener("click", async function() {
+
+upgrades[2].addEventListener("click", function () {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[2]);
+
   if (currentCount >= currentCost && currentCost >= baseCost2) {
-    await persistClickerNow();
     perTick++;
     upgradeLevel[2].innerHTML++;
     renderUpgrade2Current();
@@ -243,15 +265,18 @@ upgrades[2].addEventListener("click", async function() {
   } else {
     return;
   }
-});
-upgradeCost[3].textContent = formatUsNumber(1e4);
-const baseCost3 = 1e4;
+})
+
+// upgrade 3 block (auto click speed) --------------------------------------
+upgradeCost[3].textContent = formatUsNumber(10000)
+const baseCost3 = 10000;
 renderUpgrade3Current();
-upgrades[3].addEventListener("click", async function() {
+
+upgrades[3].addEventListener("click", function () {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[3]);
+
   if (currentCount >= currentCost && currentCost >= baseCost3) {
-    await persistClickerNow();
     autoClickInterval /= 2;
     restartPassiveTimer();
     upgradeLevel[3].innerHTML++;
@@ -265,17 +290,20 @@ upgrades[3].addEventListener("click", async function() {
   } else {
     return;
   }
-});
-upgradeCost[4].textContent = formatUsNumber(5e4);
-const baseCost4 = 5e4;
+})
+
+// upgrade 4 block (hold to click) --------------------------------------------
+upgradeCost[4].textContent = formatUsNumber(50000);
+const baseCost4 = 50000;
 renderUpgrade4Current();
-upgrades[4].addEventListener("click", async function() {
+
+upgrades[4].addEventListener("click", function () {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[4]);
-  if (currentCount >= currentCost && currentCost >= baseCost4) await persistClickerNow();
+
   if (currentCount >= currentCost && currentCost >= baseCost4 && !holdToClick) {
     holdToClick = true;
-    holdToClickInterval = 1e3;
+    holdToClickInterval = 1000;
     upgradeLevel[4].innerHTML++;
     newCount = currentCount - currentCost;
     count = newCount;
@@ -300,21 +328,24 @@ upgrades[4].addEventListener("click", async function() {
   }
   renderUpgrade4Current();
 });
-upgradeCost[5].textContent = formatUsNumber(1e5);
-const baseCost5 = 1e5;
+
+// upgrade 5 block (explosions) --------------------------------------------
+upgradeCost[5].textContent = formatUsNumber(100000);
+const baseCost5 = 100000;
 renderUpgrade5Current();
-upgrades[5].addEventListener("click", async function() {
+
+upgrades[5].addEventListener("click", function () {
   let currentCount = count;
   let currentCost = readDisplayNumber(upgradeCost[5]);
+
   if (currentCount >= currentCost && currentCost >= baseCost5) {
-    await persistClickerNow();
     if (explosionChance <= 0.7) {
       explosionChance += 0.1;
     } else {
       explosionChance += 0.01;
     }
     if (upgradeLevel[5].innerHTML == 1) {
-      explosionQuantity = 1e3;
+      explosionQuantity = 1000;
     } else {
       explosionQuantity *= 1.5;
     }
@@ -330,22 +361,25 @@ upgrades[5].addEventListener("click", async function() {
     return;
   }
 });
+
+// run the passive skills ---------------------------------------
 function addPassive() {
   if (perTick <= 0) return;
   count += perTick;
-  totalTracker.textContent = formatUsNumber(count);
+  totalTracker.textContent = formatUsNumber(count)
   schedulePersistClicker();
-  mainButton.style.animation = "none";
+  mainButton.style.animation = 'none';
   mainButton.offsetHeight;
-  mainButton.style.animation = "clickAnim 0.3s forwards";
+  mainButton.style.animation = 'clickAnim 0.3s forwards';
   showClickAddition("button");
-}
-;
+};
+
 let passiveTimer = null;
 function restartPassiveTimer() {
   clearInterval(passiveTimer);
   passiveTimer = setInterval(addPassive, autoClickInterval);
 }
+
 function holdAndClick() {
   if (holdToClick) {
     count = count + increasePerClick;
@@ -354,36 +388,39 @@ function holdAndClick() {
     }
     totalTracker.textContent = formatUsNumber(count);
     schedulePersistClicker();
-    mainButton.style.animation = "none";
+    mainButton.style.animation = 'none';
     mainButton.offsetHeight;
-    mainButton.style.animation = "clickAnim 0.3s forwards";
+    mainButton.style.animation = 'clickAnim 0.3s forwards';
   }
-}
-;
-mainButton.addEventListener("mousedown", function() {
+};
+
+mainButton.addEventListener("mousedown", function () {
   buttonHeld = true;
   lastHoldClickAt = 0;
 });
-mainButton.addEventListener("mouseup", function() {
+
+mainButton.addEventListener("mouseup", function () {
   buttonHeld = false;
 });
-mainButton.addEventListener("mouseleave", function() {
+
+mainButton.addEventListener("mouseleave", function () {
   buttonHeld = false;
 });
 let explosionResult = false;
-mainButton.addEventListener("click", function() {
+mainButton.addEventListener("click", function () {
   explosionSeed = Math.random();
   if (explosionSeed < explosionChance) {
     explosionResult = true;
     count += explosionQuantity;
     totalTracker.textContent = formatUsNumber(count);
     schedulePersistClicker();
-    mainButton.style.animation = "none";
+    mainButton.style.animation = 'none';
     mainButton.offsetHeight;
-    mainButton.style.animation = "clickAnim 0.3s forwards";
+    mainButton.style.animation = 'clickAnim 0.3s forwards';
   }
 });
-setInterval(function() {
+
+setInterval(function () {
   if (!holdToClick || !buttonHeld) return;
   const now = Date.now();
   const gap = Math.max(50, holdToClickInterval);
@@ -391,10 +428,14 @@ setInterval(function() {
   lastHoldClickAt = now;
   holdAndClick();
 }, 50);
-mainButton.addEventListener("animationend", function() {
-  mainButton.style.animation = "";
+
+mainButton.addEventListener("animationend", function () {
+  mainButton.style.animation = '';
 });
+
 restartPassiveTimer();
+
+// for the buttons to be greyed out when unaffordable ----------------------------------
 function unaffordableButtons() {
   for (let i = 1; i < 100; i++) {
     if (upgradeCost[i] == null || upgrades[i] == null) continue;
@@ -405,17 +446,23 @@ function unaffordableButtons() {
     }
   }
 }
+
 setInterval(unaffordableButtons, 100);
+
+// to show little numbers when each click adds to the total ----------------------------------
+// first, we get the position of the mouse
 function getMousePos(ev) {
   if (!ev) return { x: 0, y: 0 };
   return { x: ev.clientX, y: ev.clientY };
 }
+
+// then, create the actual numbers
 function showClickAddition(locationOfAddition, ev) {
   const buttonWrapper = document.getElementById("button-wrapper");
   const clickAddition = document.createElement("div");
   clickAddition.classList.add("click-addition");
   if (explosionResult) {
-    clickAddition.textContent = `+${formatUsNumber(increasePerClick + explosionQuantity)}`;
+    clickAddition.textContent = `+${formatUsNumber((increasePerClick + explosionQuantity))}`;
     explosionResult = false;
   } else {
     clickAddition.textContent = `+${formatUsNumber(increasePerClick)}`;
@@ -426,11 +473,12 @@ function showClickAddition(locationOfAddition, ev) {
     clickAddition.style.top = p.y + "px";
   } else if (locationOfAddition == "button") {
     const r = mainButton.getBoundingClientRect();
-    clickAddition.style.left = r.left + r.width / 2 + "px";
+    clickAddition.style.left = (r.left + r.width / 2) + "px";
     clickAddition.style.top = r.top + "px";
   } else {
     console.error("Invalid location for click addition");
   }
+  // personally i love doing css via js
   clickAddition.style.zIndex = "1000";
   clickAddition.style.color = "aliceblue";
   clickAddition.style.fontSize = "2em";
@@ -448,87 +496,108 @@ function showClickAddition(locationOfAddition, ev) {
   document.body.appendChild(clickAddition);
   setTimeout(() => {
     clickAddition.remove();
-  }, 5e3);
+  }, 5000);
 }
+
 mainButton.addEventListener("click", (e) => showClickAddition("mouse", e));
+
+// login ---------------------------------------------------------------------------------
 function enterGardens(name) {
-  sessionName = String(name || "").trim();
+  sessionName = String(name || '').trim();
   if (!sessionName) return;
   clearTimeout(persistClickerTimer);
   persistClickerTimer = null;
   clickerHydrated = false;
-  document.getElementById("setup").style.display = "none";
-  document.getElementById("botanic-gardens-container").style.display = "";
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('botanic-gardens-container').style.display = '';
   fetchClickerCount();
 }
+
+// fetch/update clicker count ---------------------------------------------------------------------------------
 function fetchClickerCount() {
   if (!sessionName) return;
-  fetch("/api/clicker/count", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+  fetch('/api/clicker/count', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: sessionName })
-  }).then(async (r) => {
-    let data = {};
-    try {
-      data = await r.json();
-    } catch (e) {
-      console.error(e);
-      return;
-    }
-    if (!r.ok || data.error) {
-      console.error(data.error || "failed to load clicker count");
-      return;
-    }
-    const n = data.clicker_count != null ? Number(data.clicker_count) : 0;
-    count = Number.isFinite(n) ? n : 0;
-    totalTracker.textContent = formatUsNumber(count);
-    const u1 = data.upgrade1_level != null ? Number(data.upgrade1_level) : 0;
-    const u2 = data.upgrade2_level != null ? Number(data.upgrade2_level) : 0;
-    const u3 = data.upgrade3_level != null ? Number(data.upgrade3_level) : 0;
-    const u4 = data.upgrade4_level != null ? Number(data.upgrade4_level) : 0;
-    const u5 = data.upgrade5_level != null ? Number(data.upgrade5_level) : 0;
-    const p1 = Number.isFinite(u1) && u1 >= 0 ? Math.floor(u1) : 0;
-    const p2 = Number.isFinite(u2) && u2 >= 0 ? Math.floor(u2) : 0;
-    const p3 = Number.isFinite(u3) && u3 >= 0 ? Math.floor(u3) : 0;
-    const p4 = Number.isFinite(u4) && u4 >= 0 ? Math.floor(u4) : 0;
-    const p5 = Number.isFinite(u5) && u5 >= 0 ? Math.floor(u5) : 0;
-    increasePerClick = 1 + p1;
-    perTick = p2;
-    autoClickInterval = Math.max(50, Math.floor(1e3 / Math.pow(2, p3)));
-    restartPassiveTimer();
-    renderUpgrade2Current();
-    holdToClick = p4 > 0;
-    holdToClickInterval = Math.max(50, 1e3 - Math.max(0, p4 - 1) * 100);
-    explosionChance = 0;
-    explosionQuantity = 0;
-    for (let i = 0; i < p5; i++) {
-      if (explosionChance <= 0.7) explosionChance += 0.1;
-      else explosionChance += 0.01;
-      if (i === 0) explosionQuantity = 1e3;
-      else explosionQuantity *= 1.5;
-    }
-    renderUpgrade1Current();
-    renderUpgrade3Current();
-    renderUpgrade4Current();
-    renderUpgrade5Current();
-    if (upgradeLevel[1]) upgradeLevel[1].innerHTML = String(p1 + 1);
-    if (upgradeLevel[2]) upgradeLevel[2].innerHTML = String(p2 + 1);
-    if (upgradeLevel[3]) upgradeLevel[3].innerHTML = String(p3 + 1);
-    if (upgradeLevel[4]) upgradeLevel[4].innerHTML = String(p4 + 1);
-    if (upgradeLevel[5]) upgradeLevel[5].innerHTML = String(p5 + 1);
-    if (upgradeCost[1]) upgradeCost[1].textContent = formatUsNumber(botanicUpgradeCost1(p1));
-    if (upgradeCost[2]) upgradeCost[2].textContent = formatUsNumber(botanicUpgradeCost2(p2));
-    if (upgradeCost[3]) upgradeCost[3].textContent = formatUsNumber(botanicUpgradeCost3(p3));
-    if (upgradeCost[4]) upgradeCost[4].textContent = formatUsNumber(botanicUpgradeCost4(p4));
-    if (upgradeCost[5]) upgradeCost[5].textContent = formatUsNumber(botanicUpgradeCost5(p5));
-    clickerHydrated = true;
-  }).catch((e) => console.error(e));
+  })
+    .then(async (r) => {
+      let data = {};
+      try {
+        data = await r.json();
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+      if (!r.ok || data.error) {
+        console.error(data.error || 'failed to load clicker count');
+        return;
+      }
+      const n = data.clicker_count != null ? Number(data.clicker_count) : 0;
+      count = Number.isFinite(n) ? n : 0;
+      totalTracker.textContent = formatUsNumber(count);
+      const u1 = data.upgrade1_level != null ? Number(data.upgrade1_level) : 0;
+      const u2 = data.upgrade2_level != null ? Number(data.upgrade2_level) : 0;
+      const u3 = data.upgrade3_level != null ? Number(data.upgrade3_level) : 0;
+      const u4 = data.upgrade4_level != null ? Number(data.upgrade4_level) : 0;
+      const u5 = data.upgrade5_level != null ? Number(data.upgrade5_level) : 0;
+      const p1 = Number.isFinite(u1) && u1 >= 0 ? Math.floor(u1) : 0;
+      const p2 = Number.isFinite(u2) && u2 >= 0 ? Math.floor(u2) : 0;
+      const p3 = Number.isFinite(u3) && u3 >= 0 ? Math.floor(u3) : 0;
+      const p4 = Number.isFinite(u4) && u4 >= 0 ? Math.floor(u4) : 0;
+      const p5 = Number.isFinite(u5) && u5 >= 0 ? Math.floor(u5) : 0;
+      increasePerClick = 1 + p1;
+      perTick = p2;
+      autoClickInterval = Math.max(50, Math.floor(1000 / Math.pow(2, p3)));
+      restartPassiveTimer();
+      renderUpgrade2Current();
+      holdToClick = p4 > 0;
+      holdToClickInterval = Math.max(50, 1000 - Math.max(0, p4 - 1) * 100);
+      explosionChance = 0;
+      explosionQuantity = 0;
+      for (let i = 0; i < p5; i++) {
+        if (explosionChance <= 0.7) explosionChance += 0.1;
+        else explosionChance += 0.01;
+        if (i === 0) explosionQuantity = 1000;
+        else explosionQuantity *= 1.5;
+      }
+      renderUpgrade1Current();
+      renderUpgrade3Current();
+      renderUpgrade4Current();
+      renderUpgrade5Current();
+      if (upgradeLevel[1]) upgradeLevel[1].innerHTML = String(p1 + 1);
+      if (upgradeLevel[2]) upgradeLevel[2].innerHTML = String(p2 + 1);
+      if (upgradeLevel[3]) upgradeLevel[3].innerHTML = String(p3 + 1);
+      if (upgradeLevel[4]) upgradeLevel[4].innerHTML = String(p4 + 1);
+      if (upgradeLevel[5]) upgradeLevel[5].innerHTML = String(p5 + 1);
+      if (upgradeCost[1]) upgradeCost[1].textContent = formatUsNumber(botanicUpgradeCost1(p1));
+      if (upgradeCost[2]) upgradeCost[2].textContent = formatUsNumber(botanicUpgradeCost2(p2));
+      if (upgradeCost[3]) upgradeCost[3].textContent = formatUsNumber(botanicUpgradeCost3(p3));
+      if (upgradeCost[4]) upgradeCost[4].textContent = formatUsNumber(botanicUpgradeCost4(p4));
+      if (upgradeCost[5]) upgradeCost[5].textContent = formatUsNumber(botanicUpgradeCost5(p5));
+      clickerHydrated = true;
+    })
+    .catch((e) => console.error(e));
 }
+
 function updateClickerCount() {
-  persistClickerNow();
+  if (!sessionName || !clickerHydrated) return;
+  fetch('/api/clicker/update-count', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload()))
+  })
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data.success) console.error(data.error || 'save failed');
+    })
+    .catch((e) => console.error(e));
 }
-setInterval(updateClickerCount, 6e4);
+
+setInterval(updateClickerCount, 60000);
+
 function flushPersistClickerKeepalive(onDone) {
   clearTimeout(persistClickerTimer);
   persistClickerTimer = null;
@@ -536,69 +605,73 @@ function flushPersistClickerKeepalive(onDone) {
     if (onDone) onDone();
     return;
   }
-  fetch("/api/clicker/update-count", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+  fetch('/api/clicker/update-count', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(Object.assign({ name: sessionName, newCount: count }, botanicSaveLevelsPayload())),
     keepalive: true
-  }).catch(() => {
-  }).finally(() => {
-    if (onDone) onDone();
-  });
+  })
+    .catch(() => { })
+    .finally(() => {
+      if (onDone) onDone();
+    });
 }
-window.addEventListener("pagehide", () => flushPersistClickerKeepalive());
-window.addEventListener("beforeunload", () => flushPersistClickerKeepalive());
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") flushPersistClickerKeepalive();
+
+window.addEventListener('pagehide', () => flushPersistClickerKeepalive());
+window.addEventListener('beforeunload', () => flushPersistClickerKeepalive());
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushPersistClickerKeepalive();
 });
-window.addEventListener("message", (e) => {
-  if (e.origin !== location.origin || !e.data || e.data.type !== "vodalus-botanic-flush") return;
+window.addEventListener('message', (e) => {
+  if (e.origin !== location.origin || !e.data || e.data.type !== 'vodalus-botanic-flush') return;
   flushPersistClickerKeepalive(() => {
     if (e.source && e.source !== window) {
       try {
-        e.source.postMessage({ type: "vodalus-botanic-flush-done" }, location.origin);
-      } catch (err) {
-      }
+        e.source.postMessage({ type: 'vodalus-botanic-flush-done' }, location.origin);
+      } catch (err) { }
     }
   });
 });
-document.getElementById("input-name").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") document.getElementById("join-btn").click();
+
+// login button ---------------------------------------------------------------------------------
+document.getElementById('input-name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('join-btn').click();
 });
-document.getElementById("join-btn").addEventListener("click", () => {
-  const name = document.getElementById("input-name").value.trim();
-  if (!name) return alert("please enter a nickname.");
-  const tryLogin = (password = null) => fetch("/api/login", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, password })
-  });
+document.getElementById('join-btn').addEventListener('click', () => {
+  const name = document.getElementById('input-name').value.trim();
+  if (!name) return alert('please enter a nickname.');
+  const tryLogin = (password = null) =>
+    fetch('/api/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, password })
+    });
   (async () => {
     try {
       let r = await tryLogin();
       if (r.status === 401) {
-        const pw = await promptPassword("You have entered a protected nickname. Please enter the password to join.");
-        if (pw == null || pw === "") return alert("You have failed to enter a password. Cannot use protected nickname.");
+        const pw = await promptPassword('You have entered a protected nickname. Please enter the password to join.');
+        if (pw == null || pw === '') return alert('You have failed to enter a password. Cannot use protected nickname.');
         const retry = await tryLogin(pw);
         if (!retry.ok) {
           const res = await retry.json();
-          return alert(res.error || "Wrong password for nickname. If you have forgotten this password, contact Jolenta to reclaim it.");
+          return alert(res.error || 'Wrong password for nickname. If you have forgotten this password, contact Jolenta to reclaim it.');
         }
         enterGardens(name);
       } else if (!r.ok) {
         const res = await r.json();
-        return alert(res.error || "Login failed.");
+        return alert(res.error || 'Login failed.');
       } else {
         const pw = await promptPassword(
-          "You have entered a new nickname! \n \nEnter a password here if you would like to claim it. If you leave this blank and press OK, your nickname will be unclaimed."
+          'You have entered a new nickname! \n \nEnter a password here if you would like to claim it. If you leave this blank and press OK, your nickname will be unclaimed.'
         );
-        if (pw != null && pw.trim() !== "") {
-          const reg = await fetch("/api/register", {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
+        if (pw != null && pw.trim() !== '') {
+          const reg = await fetch('/api/register', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, password: pw.trim() })
           });
           const res = await reg.json();
@@ -607,12 +680,15 @@ document.getElementById("join-btn").addEventListener("click", () => {
         enterGardens(name);
       }
     } catch (err) {
-      alert(err.message || "Network/login error.");
+      alert(err.message || 'Network/login error.');
     }
   })();
 });
-fetch("/api/me", { credentials: "include" }).then((r) => r.ok ? r.json() : Promise.reject()).then((data) => {
-  if (data && data.nickname) enterGardens(data.nickname);
-}).catch(() => {
-});
-//# sourceMappingURL=botanic-gardens.js.map
+
+fetch('/api/me', { credentials: 'include' })
+  .then((r) => (r.ok ? r.json() : Promise.reject()))
+  .then((data) => {
+    if (data && data.nickname) enterGardens(data.nickname);
+  })
+  .catch(() => { });
+
