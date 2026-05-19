@@ -10,7 +10,6 @@ require('./db');
 require('./conversation');
 
 const app = express();
-app.set('trust proxy', 1);
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 

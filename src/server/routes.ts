@@ -43,22 +43,7 @@ const {
   getReadStatsForUser,
   markConversationReadForUser,
   syncVipMembersToVipConversation,
-  getClickerTagHolderCanonical,
 } = require('./conversation');
-
-const CHAT_SESSION_COOKIE = {
-  httpOnly: true,
-  signed: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 24 * 60 * 60 * 1000,
-};
-
-function setChatSessionCookie(req, res, name) {
-  const opts = { ...CHAT_SESSION_COOKIE };
-  if (req.secure) opts.secure = true;
-  res.cookie('chat_sid', name, opts);
-}
 
 function registerRoutes(app) {
 app.use('/pages', express.static(PAGES_DIR));
@@ -364,7 +349,7 @@ app.get('/api/chat-tag-preference', (req, res) => {
     if (!row) return res.status(404).json({ error: 'only registered names can set chat tag preference' });
     const tags = computeAvailableChatTagsForUser(row.name, !!row.vip, row.journey_level, row.prestige_level);
     const selected = resolveSelectedChatTag(row.name, !!row.vip, row.journey_level, row.prestige_level, row.selected_chat_tag);
-    res.json({ tags, selected, clicker_tag_holder: getClickerTagHolderCanonical() });
+    res.json({ tags, selected, clicker_tag_holder: clickerTagHolderCanonical });
 });
 
 app.post('/api/chat-tag-preference', (req, res) => {
@@ -1085,12 +1070,12 @@ app.post('/api/login', async (req, res) => {
 	const { name, password } = req.body;
 	const protected_name = chatdb.prepare('SELECT name, password FROM protected_names WHERE LOWER(name) = LOWER(?)').get(name);
 	if (!protected_name) {
-        setChatSessionCookie(req, res, name);
+        res.cookie('chat_sid', name, {httpOnly: true, signed: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000});
         return res.json({ success: true });
     }
 	if (!password || !(await bcrypt.compare(password, protected_name.password)))
 		return res.status(401).json({ error: 'wrong password for nickname' });
-    setChatSessionCookie(req, res, protected_name.name);
+    res.cookie('chat_sid', protected_name.name, {httpOnly: true, signed: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000});
 	res.json({ success: true });
 });
 
@@ -1115,7 +1100,7 @@ app.post('/api/adminLogin', async (req, res) => {
     if (protected_name.name.toLowerCase() !== 'admin' && protected_name.name.toLowerCase() !== 'jolenta') {
         return res.status(403).json({ error: 'not authorized' });
     }
-    setChatSessionCookie(req, res, protected_name.name);
+    res.cookie('chat_sid', protected_name.name, { httpOnly: true, signed: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
     res.json({ success: true });
 });
 
@@ -1136,7 +1121,7 @@ app.get('/api/me', (req, res) => {
         prestige_level,
         tags,
         selected_chat_tag,
-        clicker_tag_holder: getClickerTagHolderCanonical()
+        clicker_tag_holder: clickerTagHolderCanonical
     });
 });
 

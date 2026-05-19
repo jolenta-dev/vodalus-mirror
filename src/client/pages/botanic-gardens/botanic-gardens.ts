@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-
 /* TODOS:
 - change progression to look more like CC
 - change upgrade info to hover messages
@@ -20,6 +19,10 @@ let lastHoldClickAt = 0;
 let sessionName = null;
 let persistClickerTimer = null;
 let clickerHydrated = false;
+let clickerHydrateGen = 0;
+let upgrade3Level = 0;
+let upgrade4Level = 0;
+let upgrade5Level = 0;
 
 function botanicUpgradeCost1(purchases) {
   let c = 20;
@@ -50,12 +53,27 @@ function botanicSaveLevelsPayload() {
   const o = {};
   o.upgrade1_level = Math.max(0, increasePerClick - 1);
   o.upgrade2_level = Math.max(0, perTick);
-  for (let i = 3; i <= 5; i++) {
-    const displayed = upgradeLevel[i] ? Number(upgradeLevel[i].innerHTML) : 1;
-    o['upgrade' + i + '_level'] = Math.max(0, (Number.isFinite(displayed) ? displayed : 1) - 1);
-  }
+  o.upgrade3_level = Math.max(0, upgrade3Level);
+  o.upgrade4_level = Math.max(0, upgrade4Level);
+  o.upgrade5_level = Math.max(0, upgrade5Level);
   for (let i = 6; i <= 10; i++) o['upgrade' + i + '_level'] = 0;
   return o;
+}
+
+function setUpgradeLevelDisplay(i, purchases) {
+  if (upgradeLevel[i]) upgradeLevel[i].textContent = String(purchases + 1);
+}
+
+function setClickerInteractionEnabled(enabled) {
+  const container = document.getElementById('botanic-gardens-container');
+  if (container) container.style.pointerEvents = enabled ? '' : 'none';
+}
+
+function applyExplosionPurchase() {
+  if (explosionChance <= 0.7) explosionChance += 0.1;
+  else explosionChance += 0.01;
+  if (explosionQuantity === 0) explosionQuantity = 1000;
+  else explosionQuantity *= 1.5;
 }
 
 const draggableDivModule = import('/assets/javascript/draggable-div.js');
@@ -161,14 +179,20 @@ function schedulePersistClicker() {
   }, 2000);
 }
 
-mainButton.addEventListener("click", function () {
-  count = count + increasePerClick
+mainButton.addEventListener("click", function (e) {
+  count = count + increasePerClick;
+  let added = increasePerClick;
+  if (explosionChance > 0 && Math.random() < explosionChance) {
+    count += explosionQuantity;
+    added += explosionQuantity;
+  }
   totalTracker.textContent = formatUsNumber(count);
   schedulePersistClicker();
   mainButton.style.animation = 'none';
   mainButton.offsetHeight;
   mainButton.style.animation = 'clickAnim 0.3s forwards';
-})
+  showClickAddition("mouse", e, added);
+});
 
 mainButton.addEventListener("animationend", function () {
   mainButton.style.animation = '';
@@ -191,7 +215,7 @@ let upgradeLevel = [];
 for (let i = 1; i < 100; i++) {
   upgradeLevel[i] = document.getElementById(`upgrade${i}-level`)
   if (upgradeLevel[i] != null) {
-    upgradeLevel[i].innerHTML = "1";
+    upgradeLevel[i].textContent = "1";
   }
 }
 
@@ -201,7 +225,7 @@ function renderUpgrade1Current() {
 }
 function renderUpgrade2Current() {
   const current = document.getElementById(`upgrade2-current`);
-  if (current) current.textContent = `${formatUsNumber(perTick)} / ${autoClickInterval}ms`;
+  if (current) current.textContent = `${formatUsNumber(perTick)} clicks / ${autoClickInterval}ms`;
 }
 function renderUpgrade3Current() {
   const current = document.getElementById(`upgrade3-current`);
@@ -232,12 +256,12 @@ upgrades[1].addEventListener("click", function () {
 
   if (currentCount >= currentCost && currentCost >= baseCost1) {
     increasePerClick++;
-    upgradeLevel[1].innerHTML++;
+    setUpgradeLevelDisplay(1, increasePerClick - 1);
     renderUpgrade1Current();
-    newCount = currentCount - currentCost;
+    const newCount = currentCount - currentCost;
     count = newCount;
     totalTracker.textContent = formatUsNumber(newCount);
-    newCost = Math.round(currentCost * 2.5);
+    const newCost = Math.round(currentCost * 2.5);
     upgradeCost[1].textContent = formatUsNumber(newCost);
     schedulePersistClicker();
   } else {
@@ -256,12 +280,12 @@ upgrades[2].addEventListener("click", function () {
 
   if (currentCount >= currentCost && currentCost >= baseCost2) {
     perTick++;
-    upgradeLevel[2].innerHTML++;
+    setUpgradeLevelDisplay(2, perTick);
     renderUpgrade2Current();
-    newCount = currentCount - currentCost;
+    const newCount = currentCount - currentCost;
     count = newCount;
     totalTracker.textContent = formatUsNumber(newCount);
-    newCost = Math.round(currentCost * 5);
+    const newCost = Math.round(currentCost * 5);
     upgradeCost[2].textContent = formatUsNumber(newCost);
     schedulePersistClicker();
   } else {
@@ -281,12 +305,13 @@ upgrades[3].addEventListener("click", function () {
   if (currentCount >= currentCost && currentCost >= baseCost3) {
     autoClickInterval /= 2;
     restartPassiveTimer();
-    upgradeLevel[3].innerHTML++;
+    upgrade3Level++;
+    setUpgradeLevelDisplay(3, upgrade3Level);
     renderUpgrade3Current();
-    newCount = currentCount - currentCost;
+    const newCount = currentCount - currentCost;
     count = newCount;
     totalTracker.textContent = formatUsNumber(newCount);
-    newCost = Math.round(currentCost * 10);
+    const newCost = Math.round(currentCost * 10);
     upgradeCost[3].textContent = formatUsNumber(newCost);
     schedulePersistClicker();
   } else {
@@ -306,25 +331,34 @@ upgrades[4].addEventListener("click", function () {
   if (currentCount >= currentCost && currentCost >= baseCost4 && !holdToClick) {
     holdToClick = true;
     holdToClickInterval = 1000;
-    upgradeLevel[4].innerHTML++;
-    newCount = currentCount - currentCost;
+    upgrade4Level++;
+    setUpgradeLevelDisplay(4, upgrade4Level);
+    const newCount = currentCount - currentCost;
     count = newCount;
     totalTracker.textContent = formatUsNumber(newCount);
-    newCost = Math.round(currentCost * 5);
+    const newCost = Math.round(currentCost * 5);
     upgradeCost[4].textContent = formatUsNumber(newCost);
     schedulePersistClicker();
   } else if (currentCount >= currentCost && currentCost >= baseCost4 && holdToClick && holdToClickInterval > 100) {
     holdToClickInterval -= 100;
-    upgradeLevel[4].innerHTML++;
-    newCount = currentCount - currentCost;
+    upgrade4Level++;
+    setUpgradeLevelDisplay(4, upgrade4Level);
+    const newCount = currentCount - currentCost;
     count = newCount;
     totalTracker.textContent = formatUsNumber(newCount);
-    newCost = Math.round(currentCost * 10);
+    const newCost = Math.round(currentCost * 10);
     upgradeCost[4].textContent = formatUsNumber(newCost);
     schedulePersistClicker();
   } else if (currentCount >= currentCost && currentCost >= baseCost4 && holdToClick && holdToClickInterval <= 100) {
-    holdToClickInterval -= 1;
-    upgradeLevel[4].innerHTML++;
+    holdToClickInterval = Math.max(1, holdToClickInterval - 1);
+    upgrade4Level++;
+    setUpgradeLevelDisplay(4, upgrade4Level);
+    const newCount = currentCount - currentCost;
+    count = newCount;
+    totalTracker.textContent = formatUsNumber(newCount);
+    const newCost = Math.round(currentCost * 10);
+    upgradeCost[4].textContent = formatUsNumber(newCost);
+    schedulePersistClicker();
   } else {
     return;
   }
@@ -341,22 +375,14 @@ upgrades[5].addEventListener("click", function () {
   let currentCost = readDisplayNumber(upgradeCost[5]);
 
   if (currentCount >= currentCost && currentCost >= baseCost5) {
-    if (explosionChance <= 0.7) {
-      explosionChance += 0.1;
-    } else {
-      explosionChance += 0.01;
-    }
-    if (upgradeLevel[5].innerHTML == 1) {
-      explosionQuantity = 1000;
-    } else {
-      explosionQuantity *= 1.5;
-    }
-    upgradeLevel[5].innerHTML++;
+    applyExplosionPurchase();
+    upgrade5Level++;
+    setUpgradeLevelDisplay(5, upgrade5Level);
     renderUpgrade5Current();
-    newCount = currentCount - currentCost;
+    const newCount = currentCount - currentCost;
     count = newCount;
     totalTracker.textContent = formatUsNumber(newCount);
-    newCost = Math.round(currentCost * 10);
+    const newCost = Math.round(currentCost * 10);
     upgradeCost[5].textContent = formatUsNumber(newCost);
     schedulePersistClicker();
   } else {
@@ -367,13 +393,21 @@ upgrades[5].addEventListener("click", function () {
 // run the passive skills ---------------------------------------
 function addPassive() {
   if (perTick <= 0) return;
-  count += perTick;
-  totalTracker.textContent = formatUsNumber(count)
+  let added = 0;
+  for (let i = 0; i < perTick; i++) {
+    added += increasePerClick;
+    count += increasePerClick;
+    if (explosionChance > 0 && Math.random() < explosionChance) {
+      count += explosionQuantity;
+      added += explosionQuantity;
+    }
+  }
+  totalTracker.textContent = formatUsNumber(count);
   schedulePersistClicker();
   mainButton.style.animation = 'none';
   mainButton.offsetHeight;
   mainButton.style.animation = 'clickAnim 0.3s forwards';
-  showClickAddition("button");
+  showClickAddition("button", null, added);
 };
 
 let passiveTimer = null;
@@ -384,15 +418,18 @@ function restartPassiveTimer() {
 
 function holdAndClick() {
   if (holdToClick) {
+    let added = increasePerClick;
     count = count + increasePerClick;
-    if (Math.random() < explosionChance) {
+    if (explosionChance > 0 && Math.random() < explosionChance) {
       count += explosionQuantity;
+      added += explosionQuantity;
     }
     totalTracker.textContent = formatUsNumber(count);
     schedulePersistClicker();
     mainButton.style.animation = 'none';
     mainButton.offsetHeight;
     mainButton.style.animation = 'clickAnim 0.3s forwards';
+    showClickAddition("hold", null, added);
   }
 };
 
@@ -408,20 +445,6 @@ mainButton.addEventListener("mouseup", function () {
 mainButton.addEventListener("mouseleave", function () {
   buttonHeld = false;
 });
-let explosionResult = false;
-mainButton.addEventListener("click", function () {
-  explosionSeed = Math.random();
-  if (explosionSeed < explosionChance) {
-    explosionResult = true;
-    count += explosionQuantity;
-    totalTracker.textContent = formatUsNumber(count);
-    schedulePersistClicker();
-    mainButton.style.animation = 'none';
-    mainButton.offsetHeight;
-    mainButton.style.animation = 'clickAnim 0.3s forwards';
-  }
-});
-
 setInterval(function () {
   if (!holdToClick || !buttonHeld) return;
   const now = Date.now();
@@ -459,16 +482,11 @@ function getMousePos(ev) {
 }
 
 // then, create the actual numbers
-function showClickAddition(locationOfAddition, ev) {
-  const buttonWrapper = document.getElementById("button-wrapper");
+function showClickAddition(locationOfAddition, ev, addedAmount) {
   const clickAddition = document.createElement("div");
   clickAddition.classList.add("click-addition");
-  if (explosionResult) {
-    clickAddition.textContent = `+${formatUsNumber((increasePerClick + explosionQuantity))}`;
-    explosionResult = false;
-  } else {
-    clickAddition.textContent = `+${formatUsNumber(increasePerClick)}`;
-  }
+  const amount = addedAmount != null ? addedAmount : increasePerClick;
+  clickAddition.textContent = `+${formatUsNumber(amount)}`;
   if (locationOfAddition == "mouse") {
     const p = getMousePos(ev);
     clickAddition.style.left = p.x + "px";
@@ -477,6 +495,10 @@ function showClickAddition(locationOfAddition, ev) {
     const r = mainButton.getBoundingClientRect();
     clickAddition.style.left = (r.left + r.width / 2) + "px";
     clickAddition.style.top = r.top + "px";
+  } else if (locationOfAddition == "hold") {
+    const r = mainButton.getBoundingClientRect();
+    clickAddition.style.left = (r.left + r.width * 0.75) + "px";
+    clickAddition.style.top = (r.top + r.height * 0.35) + "px";
   } else {
     console.error("Invalid location for click addition");
   }
@@ -501,8 +523,6 @@ function showClickAddition(locationOfAddition, ev) {
   }, 5000);
 }
 
-mainButton.addEventListener("click", (e) => showClickAddition("mouse", e));
-
 // login ---------------------------------------------------------------------------------
 function enterGardens(name) {
   sessionName = String(name || '').trim();
@@ -510,14 +530,17 @@ function enterGardens(name) {
   clearTimeout(persistClickerTimer);
   persistClickerTimer = null;
   clickerHydrated = false;
+  clickerHydrateGen++;
   document.getElementById('setup').style.display = 'none';
   document.getElementById('botanic-gardens-container').style.display = '';
+  setClickerInteractionEnabled(false);
   fetchClickerCount();
 }
 
 // fetch/update clicker count ---------------------------------------------------------------------------------
 function fetchClickerCount() {
   if (!sessionName) return;
+  const gen = ++clickerHydrateGen;
   fetch('/api/clicker/count', {
     method: 'POST',
     credentials: 'include',
@@ -532,8 +555,10 @@ function fetchClickerCount() {
         console.error(e);
         return;
       }
+      if (gen !== clickerHydrateGen) return;
       if (!r.ok || data.error) {
         console.error(data.error || 'failed to load clicker count');
+        setClickerInteractionEnabled(true);
         return;
       }
       const n = data.clicker_count != null ? Number(data.clicker_count) : 0;
@@ -556,31 +581,33 @@ function fetchClickerCount() {
       renderUpgrade2Current();
       holdToClick = p4 > 0;
       holdToClickInterval = Math.max(50, 1000 - Math.max(0, p4 - 1) * 100);
+      upgrade3Level = p3;
+      upgrade4Level = p4;
+      upgrade5Level = p5;
       explosionChance = 0;
       explosionQuantity = 0;
-      for (let i = 0; i < p5; i++) {
-        if (explosionChance <= 0.7) explosionChance += 0.1;
-        else explosionChance += 0.01;
-        if (i === 0) explosionQuantity = 1000;
-        else explosionQuantity *= 1.5;
-      }
+      for (let i = 0; i < p5; i++) applyExplosionPurchase();
       renderUpgrade1Current();
       renderUpgrade3Current();
       renderUpgrade4Current();
       renderUpgrade5Current();
-      if (upgradeLevel[1]) upgradeLevel[1].innerHTML = String(p1 + 1);
-      if (upgradeLevel[2]) upgradeLevel[2].innerHTML = String(p2 + 1);
-      if (upgradeLevel[3]) upgradeLevel[3].innerHTML = String(p3 + 1);
-      if (upgradeLevel[4]) upgradeLevel[4].innerHTML = String(p4 + 1);
-      if (upgradeLevel[5]) upgradeLevel[5].innerHTML = String(p5 + 1);
+      setUpgradeLevelDisplay(1, p1);
+      setUpgradeLevelDisplay(2, p2);
+      setUpgradeLevelDisplay(3, p3);
+      setUpgradeLevelDisplay(4, p4);
+      setUpgradeLevelDisplay(5, p5);
       if (upgradeCost[1]) upgradeCost[1].textContent = formatUsNumber(botanicUpgradeCost1(p1));
       if (upgradeCost[2]) upgradeCost[2].textContent = formatUsNumber(botanicUpgradeCost2(p2));
       if (upgradeCost[3]) upgradeCost[3].textContent = formatUsNumber(botanicUpgradeCost3(p3));
       if (upgradeCost[4]) upgradeCost[4].textContent = formatUsNumber(botanicUpgradeCost4(p4));
       if (upgradeCost[5]) upgradeCost[5].textContent = formatUsNumber(botanicUpgradeCost5(p5));
       clickerHydrated = true;
+      setClickerInteractionEnabled(true);
     })
-    .catch((e) => console.error(e));
+    .catch((e) => {
+      console.error(e);
+      if (gen === clickerHydrateGen) setClickerInteractionEnabled(true);
+    });
 }
 
 function updateClickerCount() {

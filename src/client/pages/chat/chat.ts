@@ -1,6 +1,5 @@
 // @ts-nocheck
 // --- Convene chat page: utils, websocket, login, messages, rooms, sidebar, admin UI ---
-import type { ConversationsResponse, MeResponse, MessagesResponse, WsAuthResponse } from '../../../shared/api-types';
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -574,7 +573,7 @@ function connect() {
     };
   }
   fetch('/api/ws-auth', { credentials: 'include' })
-    .then((r) => (r.ok ? r.json() as Promise<WsAuthResponse> : null))
+    .then((r) => (r.ok ? r.json() : null))
     .then((body) => openWebSocket(body && body.token))
     .catch(() => openWebSocket(null));
 }
@@ -702,10 +701,10 @@ document.getElementById('join-btn').addEventListener('click', () => {
 // if chat_sid cookie exists, skip login screen
 fetch('/api/me', { credentials: 'include' })
   .then(r => {
-    if (r.ok) return r.json() as Promise<MeResponse>;
+    if (r.ok) return r.json();
     return Promise.reject(new Error('not logged in'));
   })
-  .then((data: MeResponse) => {
+  .then(data => {
     if (data && data.nickname) {
       if (data.clicker_tag_holder != null) clickerTagHolder = data.clicker_tag_holder;
       submitName(data.nickname);
@@ -807,7 +806,7 @@ function loadOlderMessages() {
   const conv = currentConversationId;
   const beforeId = oldestMessageId;
   fetch('/api/conversations/' + encodeURIComponent(conv) + '/messages?beforeId=' + encodeURIComponent(beforeId) + '&limit=' + HISTORY_PAGE_SIZE, { credentials: 'include' })
-    .then((r) => (r.ok ? r.json() as Promise<MessagesResponse> : Promise.reject(new Error('failed'))))
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error('failed'))))
     .then((payload) => {
       if (conv !== currentConversationId) return;
       const arr = (payload && payload.messages) || [];
@@ -979,7 +978,7 @@ function refreshSidebarMemberList() {
 // fetch rooms user may open; may reconnect ws if current room dropped
 function loadConversations() {
   return fetch('/api/conversations', { credentials: 'include' })
-    .then(r => r.ok ? r.json() as Promise<ConversationsResponse> : Promise.reject(new Error('failed to load conversations')))
+    .then(r => r.ok ? r.json() : Promise.reject(new Error('failed to load conversations')))
     .then(data => {
       knownConversations = (data && data.conversations) ? data.conversations : [];
       if (!knownConversations.length) knownConversations = [{ id: 'general', label: 'general', type: 'room' }];
