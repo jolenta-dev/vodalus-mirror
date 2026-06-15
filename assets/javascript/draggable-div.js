@@ -171,8 +171,9 @@ export function initDraggableDiv(header, content, state = "minimized") {
     let contentEl = element.querySelector("#draggable-div-content");
     let minimizeEl = element.querySelector("#draggable-div-minimize");
     let resizeEl = element.querySelector("#draggable-div-resize");
-    if (document.getElementById(element.id + "-header")) {
-      document.getElementById(element.id + "-header").onmousedown = dragMouseDown;
+    const headerBar = element.querySelector("#draggable-div-header");
+    if (headerBar) {
+      headerBar.onmousedown = dragMouseDown;
     } else {
       element.onmousedown = dragMouseDown;
     }
@@ -219,7 +220,7 @@ export function initDraggableDiv(header, content, state = "minimized") {
       if (isIframe) content.style.pointerEvents = "";
     }
     function toggleMinimize() {
-      let headerBar = element.querySelector("#draggable-div-header");
+      let headerBar2 = element.querySelector("#draggable-div-header");
       if (contentEl.style.display === "none") {
         let sx0 = window.scrollX || 0;
         let sy0 = window.scrollY || 0;
@@ -251,7 +252,7 @@ export function initDraggableDiv(header, content, state = "minimized") {
         contentEl.style.display = "none";
         contentEl.style.opacity = "0";
         resizeEl.style.display = "none";
-        element.style.height = headerBar.offsetHeight + "px";
+        element.style.height = headerBar2.offsetHeight + "px";
         let rect = element.getBoundingClientRect();
         let pad = 8;
         let main = document.querySelector(".main");
@@ -284,7 +285,7 @@ export function initDraggableDiv(header, content, state = "minimized") {
         });
         minimizeEl.textContent = "+";
       }
-      headerBar.style.cursor = "move";
+      headerBar2.style.cursor = "move";
     }
     draggableDivClose.addEventListener("click", () => {
       function removePanel() {

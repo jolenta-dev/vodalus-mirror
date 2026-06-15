@@ -581,6 +581,14 @@ loadLastReadState();
 loadUnreadState();
 connect();
 
+function setPasswordInputRevealed(input, revealed) {
+  const val = input.value;
+  input.type = revealed ? 'text' : 'password';
+  input.style.webkitTextSecurity = revealed ? 'none' : '';
+  input.value = val;
+  input.focus();
+}
+
 // overlay for password prompts during login / registration
 function promptPassword(messageText) {
   const overlay = document.getElementById('password-modal-overlay');
@@ -599,6 +607,7 @@ function promptPassword(messageText) {
       closeDraggableModal('password-modal', modal, overlay);
       input.value = '';
       input.type = 'password';
+      input.style.webkitTextSecurity = '';
       if (revealCheckbox) revealCheckbox.checked = false;
       document.removeEventListener('keydown', onEscape);
       input.removeEventListener('keydown', onPasswordKeydown);
@@ -621,9 +630,7 @@ function promptPassword(messageText) {
     input.type = 'password';
     if (revealCheckbox) {
       revealCheckbox.checked = false;
-      revealCheckbox.onchange = () => {
-        input.type = revealCheckbox.checked ? 'text' : 'password';
-      };
+      revealCheckbox.onchange = () => setPasswordInputRevealed(input, revealCheckbox.checked);
     }
 
     okBtn.onclick = () => finish(input.value);

@@ -182,8 +182,9 @@ export function initDraggableDiv(header, content, state = 'minimized') {
         let minimizeEl = element.querySelector('#draggable-div-minimize');
         let resizeEl = element.querySelector('#draggable-div-resize');
 
-        if (document.getElementById(element.id + "-header")) {
-            document.getElementById(element.id + "-header").onmousedown = dragMouseDown;
+        const headerBar = element.querySelector('#draggable-div-header');
+        if (headerBar) {
+            headerBar.onmousedown = dragMouseDown;
         } else {
             element.onmousedown = dragMouseDown;
         }

@@ -61,6 +61,10 @@ function refreshClickerTagHolderCache() {
 refreshClickerTagHolderCache();
 setInterval(refreshClickerTagHolderCache, 1000 * 60);
 
+function getClickerTagHolderCanonical() {
+    return clickerTagHolderCanonical;
+}
+
 function nameHoldsClickerChatTag(name) {
     if (!clickerTagHolderCanonical || !name) return false;
     return String(name).trim().toLowerCase() === String(clickerTagHolderCanonical).trim().toLowerCase();
@@ -373,6 +377,7 @@ module.exports = {
   parseBotanicUpgradeLevels,
   upsertBotanicGardensSave,
   refreshClickerTagHolderCache,
+  getClickerTagHolderCanonical,
   nameHoldsClickerChatTag,
   computeAvailableChatTagsForUser,
   resolveSelectedChatTag,
