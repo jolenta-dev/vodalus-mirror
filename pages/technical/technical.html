@@ -1,0 +1,45 @@
+<!DOCTYPE html> 
+<html lang="en" class="home-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Specs</title>
+    <link rel="stylesheet" href="/assets/stylesheets/about.css">
+    <link rel="stylesheet" href="/assets/stylesheets/sidebar.css">
+</head>
+
+<body>
+    <div w3-include-html="/assets/html/pointer-orbit.html"></div>
+    <div id="site-sidebar-mount" data-src="/assets/html/sidebar.html"></div>
+    <script src="/assets/javascript/sidebar-footer.js"></script>
+    <div class="main"> 
+      <h1 class="about-title">About (Technical ver.)</h1>
+      <h2 class="about-subtitle">What is this?</h2>
+        <p>This is vodalus.org. This is half my personal site and half a community hub. Primarily it is a place for me and my friends
+        to hang out, chat, play games I make, and to test out ideas I have.</p>
+      <h2 class="about-subtitle">So, what's the stack?</h2>
+        <p>It's actually fairly simple. Vodalus was not (initially, at least) intended to be that complicated.
+        Obviously, that view has changed, but the project's approach largely has not. Vodalus is still almost entirely written in bare HTML, CSS, and JS
+        (slowly, I am refactoring pages to TS).
+        <br>
+        All of this runs on a webserver I host running in my Proxmox cluster. It has 2 cores of a Xeon processer, 8GB of RAM, and a dream.
+        <br>
+        I use nginx as a web server, with fail2ban protecting my home network. The server itself is running off of Node.js.
+        <br>
+        You can find the (incredibly messy) source code for Vodalus <a href="https://gitlab.com/jolenta/vodalus">here</a>.</p>
+      <h2 class="about-subtitle">So, what's the backend look like?</h2>
+        <p>Mostly SQLite. All user data, chat messages, annoucements, scores, etc. are stored in SQLite DBs. Node does most of the heavy lifting of getting data into/out of these.</p>
+      <h2 class="about-subtitle">What are the main highlights?</h2>
+        <p>A custom built chat page, draggable iframe windows for multitasking, a variety of games ranging from dead simple to quite complex, a realtime widget for my music (yes, I am actually listening to that <i>right now</i>!), and so much more.</p>
+        <br>
+        <p>I put every extra moment I had into this site for many months straight and this is the result.</p>
+      <h2 class="about-subtitle">What other things have you made?</h2>
+        <p>My <a href="https://gitlab.com/jolenta">GitLab</a> has more of my projects. Lately, most of my effort has been on my text editor written in C, <a href="https://gitlab.com/jolenta/chloetext">chloetext</a>.
+        <br>
+        I am also currently brushing up on some PL theory to create silly language for chloetext's plugins (still in the early stages of fleshing that out).</p>
+      <h2 class="about-subtitle">Wow, that's really impressive! I want to hire you/connect/tell you about my project that might interest you; how do we get in touch?</h2>
+        <p>Recruiters and other entities can send inquiries to <a href="mailto:chloe.fling@tutamail.com">chloe.fling@tutamail.com</a>. I am primarily looking for full stack, systems, Linux, or otherwise cool opportunities.
+        I mainly work in TypeScript, C, Python, Java, and Rust. If you'd like to work together, reach out!</p>
+    </div>
+</body>
