@@ -647,6 +647,7 @@ function isTilePlacementValid(y, x, type) {
   if (y < 6) return false;
   const existing = tileMap[y]?.[x] ?? "";
   if (existing === type) return false;
+  if (existing === "tower" || existing === "interior") return false;
   const cellNeighbors = getCellNeighbors(y, x);
   return (() => {
     switch (type) {
@@ -668,6 +669,7 @@ function isTilePlacementValid(y, x, type) {
           for (let j = 0; j < 3; j++) {
             if (i === 1 && j === 1) continue;
             if (cellNeighbors[i][j] === "sea") numberSeaNeighbors++;
+            if (existing === "snow" || existing === "mountain") return false;
           }
         }
         return numberSeaNeighbors >= 1;
