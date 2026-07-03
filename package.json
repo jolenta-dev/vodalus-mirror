@@ -1,0 +1,33 @@
+{
+  "name": "vodalus",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --watch",
+    "start": "node build/server.js",
+    "typecheck": "tsc -p tsconfig.strict.json",
+    "dev": "npm run build && npm run build:watch"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.8.1",
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cookie-signature": "^1.2.2",
+    "express": "^4.21.2",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "@types/ws": "^8.5.13",
+    "esbuild": "^0.25.0",
+    "typescript": "^6.0.3"
+  }
+}
