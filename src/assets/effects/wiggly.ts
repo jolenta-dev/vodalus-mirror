@@ -1,3 +1,5 @@
+import { injectKeyframeRule } from "./keyframes.js";
+
 declare global {
   interface Window {
     initWiggle: (root?: ParentNode) => void;
@@ -30,17 +32,7 @@ export class Wiggly {
     if (Wiggly.ready) return;
     Wiggly.ready = true;
 
-    let dynamicStyles: HTMLStyleElement | undefined;
-    function addAnimation(body: string): void {
-      if (!dynamicStyles) {
-        dynamicStyles = document.createElement("style");
-        dynamicStyles.type = "text/css";
-        document.head.appendChild(dynamicStyles);
-      }
-      dynamicStyles.sheet?.insertRule(body, dynamicStyles.sheet.cssRules.length);
-    }
-
-    addAnimation(`
+    injectKeyframeRule(`
       @keyframes wiggle {
         from {
           rotate: 5deg;

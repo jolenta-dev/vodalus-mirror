@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --watch",
+    "build": "tsc",
     "start": "node build/server.js",
-    "typecheck": "tsc -p tsconfig.strict.json",
-    "dev": "npm run build && npm run build:watch"
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "refresh": "npm run build && npm start"
   },
   "engines": {
     "node": ">=20"
