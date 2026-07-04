@@ -2,3 +2,4 @@ node_modules
 dist
 public
 /assets/html/jolentas_status.html
+.env
