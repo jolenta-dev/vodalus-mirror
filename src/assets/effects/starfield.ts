@@ -4,6 +4,11 @@ export function getOrCreateStarfield(main: HTMLElement): HTMLElement {
     field = document.createElement("div");
     field.id = "starfield";
     field.setAttribute("aria-hidden", "true");
+    field.style.position = "absolute";
+    field.style.inset = "0";
+    field.style.overflow = "hidden";
+    field.style.pointerEvents = "none";
+    field.style.zIndex = "-1";
     main.insertBefore(field, main.firstChild);
   }
   return field;
