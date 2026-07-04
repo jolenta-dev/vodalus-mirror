@@ -2,3 +2,5 @@ export { background } from "./background.js";
 export { button } from "./button.js";
 export { text } from "./text.js";
 export { textInput } from "./text-input.js";
+export { sidebarButton } from "./sidebar-button.js";
+export { sidebarInfo } from "./sidebar-info.js";

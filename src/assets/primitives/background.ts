@@ -1,5 +1,6 @@
 import { Stars } from "../effects/stars.js";
 import { SunAndLune } from "../effects/sun-and-lune.js";
+import { loadFonts } from "./fonts.js";
 
 export class background {
   public NUM_STARS: number = 100;
@@ -18,10 +19,10 @@ export class background {
 
     // styling
     el.style.color = "aliceblue";
-    el.style.backgroundColor = "#1a0033"; // TODO: un-magic number all of these
+    el.style.backgroundColor = "transparent";
     el.style.position = "relative";
     el.style.isolation = "isolate";
-    el.style.cursor = "url('/assets/cursors/pink/default_pink.cur'), auto";
+    el.style.cursor = "url('/multimedia/cursors/pink/default_pink.cur'), auto";
     el.style.minHeight = "100dvh";
     el.style.boxSizing = "border-box";
 
@@ -33,7 +34,12 @@ export class background {
       new SunAndLune(el);
     }
 
+    loadFonts();
+
+    document.documentElement.style.backgroundColor = "#1a0033";
     document.body.style.margin = "0";
+    document.body.style.backgroundColor = "#1a0033";
+    document.body.style.fontFamily = "'Nedar', ui-sans-serif, system-ui, sans-serif";
     document.body.append(el);
   }
 }

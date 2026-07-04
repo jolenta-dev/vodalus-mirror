@@ -11,7 +11,9 @@
   </body>
   <script type="module">
     import { text, button, textInput, background } from "/build/primitives.js";
+    import { sidebar } from "/build/radicals.js";
     new background(true, true);
+    new sidebar("really awesome status message", "https://lastfm.freetls.fastly.net/i/u/174s/8dce63c224a643b78b39caeb27aadf8b.png", "Nas - One Love");
     new text("Hello!");
     new button("top 5");
     new button("bottom 3");

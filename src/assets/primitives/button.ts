@@ -14,7 +14,7 @@ export class button {
 
     // styling
     el.style.textAlign = "center";
-    el.style.cursor = "url('/assets/cursors/pink/link.cur'), pointer";
+    el.style.cursor = "url('/multimedia/cursors/pink/link.cur'), pointer";
     el.style.font = "inherit";
     el.style.boxSizing = "border-box";
     el.style.padding = "6px 14px";
