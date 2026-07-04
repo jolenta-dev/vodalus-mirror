@@ -11,7 +11,7 @@ export class textInput {
 
     // styling
     el.style.textAlign = "center";
-    el.style.cursor = "url('/multimedia/crusors/pink/beam.cur'), text";
+    el.style.cursor = "url('/multimedia/cursors/pink/beam.cur'), text";
     el.style.margin = "0";
     el.style.padding = "6px 14px";
     el.style.font = "inherit";

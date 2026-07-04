@@ -25,6 +25,7 @@ export class sidebarInfo {
     bottomStack.style.display = "flex";
     bottomStack.style.flexDirection = "column";
     bottomStack.style.gap = "0.35rem";
+    bottomStack.style.marginLeft = "10px";
     bottomStack.style.padding = "8px 8px 8px 16px";
     bottomStack.style.boxSizing = "border-box";
     bottomStack.style.fontFamily = "'Nedar', ui-sans-serif, system-ui, sans-serif";

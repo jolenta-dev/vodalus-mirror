@@ -13,4 +13,4 @@ app.get("/", (_req, res) => {
 
 app.use(express.static(rootDir));
 
-app.listen(3000, () => console.log("Server running on :3000"));
+app.listen(4000, () => console.log("Server running on :4000"));
