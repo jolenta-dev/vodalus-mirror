@@ -29,6 +29,7 @@ export class table {
         th.style.fontWeight = "normal";
         th.style.textAlign = "right";
         th.style.width = "20%";
+        th.style.textDecoration = "underline";
         tr.appendChild(th);
       }
     }
