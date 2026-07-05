@@ -10,14 +10,20 @@
   <body>
   </body>
   <script type="module">
-    import { text, button, textInput, background } from "/build/primitives.js";
+    import { text, button, textInput, background, table } from "/build/primitives.js";
     import { sidebar } from "/build/radicals.js";
     new background(true, true);
     new sidebar("really awesome status message", "https://lastfm.freetls.fastly.net/i/u/174s/8dce63c224a643b78b39caeb27aadf8b.png", "Nas - One Love");
-    new text("Hello!");
+    new text(`<p>Hello!</p>
+              <br>
+              <p>This is a really long string after the last one</p>
+              <br>
+              <p>i hope this works</p>`);
     new button("top 5");
     new button("bottom 3");
     new button("wiggles", "wiggler", true);
     new textInput("please enter your name owo");
+    let testTable = new table(4, 4, ["col 1", "col 2", "3 columns???", "4"]);
+    testTable.addRow(4, ["this is just to test if this works really", "", "", ""]);
   </script>
 </html>
