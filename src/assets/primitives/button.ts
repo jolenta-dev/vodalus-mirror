@@ -3,10 +3,12 @@ import { root } from "./root.js";
 
 export class button {
   readonly el: HTMLButtonElement;
+  btn: HTMLButtonElement;
 
   constructor(content: string, id?: string, wiggles?: boolean) {
     const el: HTMLButtonElement = document.createElement("button");
     el.textContent = content;
+    this.btn = el;
 
     if (id) {
       el.id = id;

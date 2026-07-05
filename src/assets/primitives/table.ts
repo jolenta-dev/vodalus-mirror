@@ -33,7 +33,6 @@ export class table {
       }
     }
 
-    if (!rows) return;
     thead.appendChild(tr);
     t.appendChild(thead);
     t.appendChild(this.tbody);

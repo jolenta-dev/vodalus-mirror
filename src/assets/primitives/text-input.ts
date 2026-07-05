@@ -1,9 +1,12 @@
 import { root } from "./root.js";
 
 export class textInput {
+  input: HTMLInputElement;
+
   constructor(placeholder: string, id?: string) {
     const el: HTMLInputElement = document.createElement("input");
     el.placeholder = placeholder;
+    this.input = el;
 
     if (id) {
       el.id = id;

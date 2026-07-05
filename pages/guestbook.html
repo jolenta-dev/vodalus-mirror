@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" class="home-page">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guestbook | vodalus.org</title>
+  </head>
+
+  <body>
+  </body>
+  <script type="module">
+    import { text, button, textInput, background, table } from "/build/primitives.js";
+    import { sidebar, guestbook } from "/build/radicals.js";
+    new background(true, true);
+    new sidebar("really awesome status message", "https://lastfm.freetls.fastly.net/i/u/174s/8dce63c224a643b78b39caeb27aadf8b.png", "Nas - One Love");
+    let testGuestbook = new guestbook;
+    testGuestbook.addEntry(["[1/1/1970, 12:00:00 AM]", "(OWNER) (THE HOUSE) (THE ARCHON) (PRESTIGE 7) (AUTARCH) (MASTER GAMBLER) ⋆.˚jolenta˖✧°.", "https://staging.vodalus.org", `"i was here first"`]);
+    testGuestbook.addEntry(["[2/25/2026, 3:58:06 AM]", "(VIP) (PRESTIGE 1) (AUTARCH) (MASTER GAMBLER) ≽(•⩊ •マ≼noel≽(•⩊ •マ≼", "", `"i love it here"`]);
+    testGuestbook.addEntry(["[2/25/2026, 4:59:21 AM]", "(VIP) (AUTARCH) 𐦂𖨆𐀪𖠋𓅰Kaiya𐦂𖨆𐀪𖠋𓅰", "", `"Grrr"`]);
+    testGuestbook.addEntry(["[3/1/2026, 7:45:27 PM]", "(VIP) (PRESTIGE 3) (AUTARCH) (MASTER GAMBLER) (CARPAL TUNNEL) ⋆ 𖤓 ⋆˚࿔Summers⋆ 𖤓 ⋆˚࿔", "", `	"This is the best website, maybe even the second."`]);
+    testGuestbook.addEntry(["[3/1/2026, 11:06:38 PM]", "	(VIP) (PRESTIGE 3) (AUTARCH) (MASTER GAMBLER) જ⁀➴ ♡grlluvr25જ⁀➴ ♡", "", `	"I am so happy to be here <3"`]);
+  </script>
+</html>
