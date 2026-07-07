@@ -12,6 +12,8 @@
   <script type="module">
     import { text, button, textInput, background, table } from "/build/primitives.js";
     import { sidebar } from "/build/radicals.js";
+    import { pointerOrbit } from "/build/effects.js";
+    new pointerOrbit();
     new background(true, true);
     new sidebar("really awesome status message", "https://vodalus.org/assets/images/haku.png", "whispers of white cat, vol. 4");
     new text(`<p>Hello!</p>

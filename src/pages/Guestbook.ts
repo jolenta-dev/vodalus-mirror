@@ -1,5 +1,6 @@
 import { background, pageTitle } from "../primitives.js";
 import { sidebar, guestbook } from "../radicals.js";
+import { pointerOrbit } from "../effects.js";
 
 interface entry {
   date: string,
@@ -17,6 +18,7 @@ const jolentaRow: string[] = [
 
 export class Guestbook {
   constructor() {
+    new pointerOrbit();
     new background(true, true);
     new sidebar("status msg aha", "https://vodalus.org/assets/images/haku.png", "Haku sounds");
     new pageTitle("Urth's many cacogens");
