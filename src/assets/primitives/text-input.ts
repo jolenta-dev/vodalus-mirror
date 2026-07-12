@@ -1,4 +1,5 @@
 import { root } from "./root.js";
+import { VODALUS_ALICEBLUE } from "../theme.js";
 
 export class textInput {
   input: HTMLInputElement;
@@ -19,10 +20,10 @@ export class textInput {
     el.style.padding = "6px 14px";
     el.style.font = "inherit";
     el.style.fontWeight = "bold";
-    el.style.border = "1px solid aliceblue";
+    el.style.border = `1px solid ${VODALUS_ALICEBLUE}`;
     el.style.boxSizing = "border-box";
     el.style.backgroundColor = "#0f001e";
-    el.style.color = "aliceblue";
+    el.style.color = VODALUS_ALICEBLUE;
     el.style.borderRadius = "5px" // clever shennanigans will be needed for this soon....
 
     root().appendChild(el);

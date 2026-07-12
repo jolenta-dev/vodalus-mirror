@@ -1,4 +1,5 @@
 import { root } from "./root.js";
+import { VODALUS_TABLE_TEXT, VODALUS_TABLE_BORDER } from "../theme.js";
 
 export class table {
   rows: number;
@@ -23,9 +24,9 @@ export class table {
         th.textContent = headers[i] as string;
         th.style.padding = "0.6em";
         th.style.verticalAlign = "top";
-        th.style.border = "1px solid #5c5c5c";
+        th.style.border = `1px solid ${VODALUS_TABLE_BORDER}`;
         th.style.background = "rgba(255, 255, 255, 0.07)";
-        th.style.color = "#f4f4f4";
+        th.style.color = VODALUS_TABLE_TEXT;
         th.style.fontWeight = "normal";
         th.style.textAlign = "right";
         th.style.width = "20%";
@@ -54,13 +55,13 @@ export class table {
       td.textContent = content[i] as string;
       td.style.padding = "0.6em";
       td.style.verticalAlign = "top";
-      td.style.border = "1px solid #5c5c5c";
-      td.style.color = "#f4f4f4";
+      td.style.border = `1px solid ${VODALUS_TABLE_BORDER}`;
+      td.style.color = VODALUS_TABLE_TEXT;
       td.style.textAlign = "right";
       td.style.width = "20%";
       tr.appendChild(td);
     }
-    tr.style.backgroundColor = (this.rows % 2) ? "rgba(255, 255, 255, 0.045" : "rgba(0, 0, 0, 0.08)";
+    tr.style.backgroundColor = (this.rows % 2) ? "rgba(255, 255, 255, 0.045)" : "rgba(0, 0, 0, 0.08)";
     this.tbody.appendChild(tr);
     this.rows++;
   }

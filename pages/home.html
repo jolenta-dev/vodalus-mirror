@@ -11,7 +11,7 @@
   </body>
   <script type="module">
     import { text, button, textInput, background, table, journeyTabs } from "/build/primitives.js";
-    import { sidebar } from "/build/radicals.js";
+    import { sidebar, journeyBottom } from "/build/radicals.js";
     import { pointerOrbit } from "/build/effects.js";
     new pointerOrbit();
     new background(true, true);
@@ -27,8 +27,6 @@
     new textInput("please enter your name owo");
     let testTable = new table(4, 4, ["col 1", "col 2", "3 columns???", "4"]);
     testTable.addRow(4, ["this is just to test if this works really", "", "", ""]);
-    const tabs = new journeyTabs();
-    document.body.appendChild(tabs.tabContainer);
-
+    const journey = new journeyBottom();
   </script>
 </html>

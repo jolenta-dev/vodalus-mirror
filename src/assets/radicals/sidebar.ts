@@ -1,6 +1,7 @@
 import { sidebarButton } from "../primitives/sidebar-button.js";
 import { sidebarInfo } from "../primitives/sidebar-info.js";
 import { root } from "../primitives/root.js";
+import { VODALUS_SERIF, VODALUS_GREEN, VODALUS_CURSOR_LINK } from "../theme.js";
 
 const PAGE_LIST: [string, string][] = [
   ["home", "/"],
@@ -55,7 +56,7 @@ export class sidebar {
     sidenav.style.top = "0";
     sidenav.style.left = "0";
     sidenav.style.backgroundColor = "transparent";
-    sidenav.style.fontFamily = '"Meylda", ui-serif, Georgia, "Times New Roman", serif';
+    sidenav.style.fontFamily = VODALUS_SERIF;
     sidenav.style.overflowY = "auto";
     sidenav.style.overflowX = "hidden";
     sidenav.style.paddingTop = "20px";
@@ -81,14 +82,14 @@ export class sidebar {
     toggle.style.width = "28px";
     toggle.style.height = "48px";
     toggle.style.padding = "0";
-    toggle.style.background = "#334232";
+    toggle.style.background = VODALUS_GREEN;
     toggle.style.border = "none";
     toggle.style.borderRadius = "6px";
     toggle.style.color = "black";
     toggle.style.fontSize = "16px";
     toggle.style.lineHeight = "48px";
     toggle.style.textAlign = "center";
-    toggle.style.cursor = 'url("/multimedia/cursors/pink/link.cur"), pointer';
+    toggle.style.cursor = VODALUS_CURSOR_LINK;
     container.appendChild(toggle);
 
     const main = root();

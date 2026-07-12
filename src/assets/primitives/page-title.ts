@@ -1,4 +1,5 @@
 import { root } from "./root.js";
+import { VODALUS_SERIF } from "../theme.js";
 
 export class pageTitle {
   constructor(content: string) {
@@ -8,7 +9,7 @@ export class pageTitle {
     title.innerHTML = "<h2><b>" + content + "</b></h2>";
     titleWrapper.style.display = "flex";
     titleWrapper.style.justifyContent = "center";
-    titleWrapper.style.fontFamily = `"Meylda", ui-serif, Georgia, "Times New Roman", serif`;
+    titleWrapper.style.fontFamily = VODALUS_SERIF;
 
     root().appendChild(titleWrapper);
   }

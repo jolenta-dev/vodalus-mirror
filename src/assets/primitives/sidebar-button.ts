@@ -1,4 +1,5 @@
 import { sidebarMount } from "./sidebar-mount.js";
+import { VODALUS_ALICEBLUE, VODALUS_GREEN, VODALUS_CURSOR_LINK, VODALUS_NAV_RADIUS, VODALUS_SHADOW_OFFSET, VODALUS_HOVER_SHIFT } from "../theme.js";
 
 export class sidebarButton {
   constructor(textContent: string, href: string, shadow: boolean = true) {
@@ -14,30 +15,30 @@ export class sidebarButton {
     el.textContent = textContent;
     el.href = href;
 
-    el.style.cursor = "url('/multimedia/cursors/pink/link.cur'), pointer";
+    el.style.cursor = VODALUS_CURSOR_LINK;
     el.style.fontSize = "25px";
     el.style.padding = "10px 8px 10px 16px";
     el.style.textDecoration = "none";
     el.style.fontFamily = "inherit";
-    el.style.color = "aliceblue";
-    el.style.backgroundColor = "#334232";
+    el.style.color = VODALUS_ALICEBLUE;
+    el.style.backgroundColor = VODALUS_GREEN;
     el.style.display = "flex";
     el.style.lineHeight = "1.2";
     el.style.justifyContent = "left";
     el.style.position = "relative";
     el.style.zIndex = "1";
     el.style.transition = "transform 0.1s ease";
-    el.style.borderRadius = "0px 4px 20% / 90% 1px";
+    el.style.borderRadius = VODALUS_NAV_RADIUS;
     el.style.height = "50px";
     el.style.alignItems = "center";
     el.style.paddingLeft = "0.2em";
 
     el.addEventListener("mouseenter", () => {
       el.style.color = "black";
-      el.style.transform = "translate(-6px, 6px)";
+      el.style.transform = VODALUS_HOVER_SHIFT;
     });
     el.addEventListener("mouseleave", () => {
-      el.style.color = "aliceblue";
+      el.style.color = VODALUS_ALICEBLUE;
       el.style.transform = "";
     });
 
@@ -46,8 +47,8 @@ export class sidebarButton {
       shadowEl.style.position = "absolute";
       shadowEl.style.inset = "0";
       shadowEl.style.backgroundColor = "black";
-      shadowEl.style.transform = "translate(-8px, 8px)";
-      shadowEl.style.borderRadius = "0px 4px 20% / 90% 1px";
+      shadowEl.style.transform = VODALUS_SHADOW_OFFSET;
+      shadowEl.style.borderRadius = VODALUS_NAV_RADIUS;
       wrapper.appendChild(shadowEl);
     }
 

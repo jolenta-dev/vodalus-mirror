@@ -1,4 +1,5 @@
 import { sidebarMount } from "./sidebar-mount.js";
+import { VODALUS_SANS, VODALUS_CURSOR_DEFAULT, VODALUS_SHADOW_OFFSET, VODALUS_HOVER_SHIFT } from "../theme.js";
 
 export class sidebarInfo {
   constructor(
@@ -28,8 +29,8 @@ export class sidebarInfo {
     bottomStack.style.marginLeft = "10px";
     bottomStack.style.padding = "8px 8px 8px 16px";
     bottomStack.style.boxSizing = "border-box";
-    bottomStack.style.fontFamily = "'Nedar', ui-sans-serif, system-ui, sans-serif";
-    bottomStack.style.cursor = "url('/multimedia/cursors/pink/default_pink.cur'), auto";
+    bottomStack.style.fontFamily = VODALUS_SANS;
+    bottomStack.style.cursor = VODALUS_CURSOR_DEFAULT;
     bottomStack.style.transition = "transform 0.1s ease";
 
     const background: HTMLDivElement = document.createElement("div");
@@ -41,7 +42,7 @@ export class sidebarInfo {
     bottomStack.appendChild(background);
 
     bottomStack.addEventListener("mouseenter", () => {
-      bottomStack.style.transform = "translate(-6px, 6px)";
+      bottomStack.style.transform = VODALUS_HOVER_SHIFT;
     });
     bottomStack.addEventListener("mouseleave", () => {
       bottomStack.style.transform = "";
@@ -70,7 +71,7 @@ export class sidebarInfo {
     statusMessage.style.fontSize = "16px";
     statusMessage.style.lineHeight = "1.3";
     statusMessage.style.color = "black";
-    statusMessage.style.cursor = "url('/multimedia/cursors/pink/default_pink.cur'), auto";
+    statusMessage.style.cursor = VODALUS_CURSOR_DEFAULT;
     statusMessage.style.fontStyle = "italic";
     statusMessage.style.display = "block";
     status.append(statusMessage);
@@ -113,7 +114,7 @@ export class sidebarInfo {
       shadowEl.style.position = "absolute";
       shadowEl.style.inset = "0";
       shadowEl.style.backgroundColor = "black";
-      shadowEl.style.transform = "translate(-8px, 8px)";
+      shadowEl.style.transform = VODALUS_SHADOW_OFFSET;
       shadowEl.style.zIndex = "0";
       wrapper.appendChild(shadowEl);
     }

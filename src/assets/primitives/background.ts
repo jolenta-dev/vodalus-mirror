@@ -1,6 +1,7 @@
 import { Stars } from "../effects/stars.js";
 import { SunAndLune } from "../effects/sun-and-lune.js";
 import { loadFonts } from "./fonts.js";
+import { VODALUS_PURPLE, VODALUS_ALICEBLUE, VODALUS_SANS, VODALUS_CURSOR_DEFAULT } from "../theme.js";
 
 export class background {
   public NUM_STARS: number = 100;
@@ -18,11 +19,11 @@ export class background {
     })();
 
     // styling
-    el.style.color = "aliceblue";
+    el.style.color = VODALUS_ALICEBLUE;
     el.style.backgroundColor = "transparent";
     el.style.position = "relative";
     el.style.isolation = "isolate";
-    el.style.cursor = "url('/multimedia/cursors/pink/default_pink.cur'), auto";
+    el.style.cursor = VODALUS_CURSOR_DEFAULT;
     el.style.minHeight = "100dvh";
     el.style.boxSizing = "border-box";
 
@@ -36,10 +37,10 @@ export class background {
 
     loadFonts();
 
-    document.documentElement.style.backgroundColor = "#1a0033";
+    document.documentElement.style.backgroundColor = VODALUS_PURPLE;
     document.body.style.margin = "0";
-    document.body.style.backgroundColor = "#1a0033";
-    document.body.style.fontFamily = "'Nedar', ui-sans-serif, system-ui, sans-serif";
+    document.body.style.backgroundColor = VODALUS_PURPLE;
+    document.body.style.fontFamily = VODALUS_SANS;
     document.body.append(el);
   }
 }
