@@ -1,8 +1,8 @@
-import { button } from "./button.js";
+import { Button } from "./button.js";
 import { root } from "./root.js";
 import { VODALUS_PURPLE, VODALUS_ALICEBLUE, VODALUS_BUTTON_HOVER } from "../theme.js";
 
-export class journeyTabs {
+export class JourneyTabs {
   readonly tabContainer: HTMLDivElement;
   public active: HTMLButtonElement;
 
@@ -18,13 +18,9 @@ export class journeyTabs {
     this.tabContainer.style.backgroundColor = VODALUS_PURPLE;
     this.tabContainer.style.color = VODALUS_ALICEBLUE;
 
-    this.active = new button("error").btn; // i hate this, but nice if it ever truly breaks somehow
+    this.active = new Button("error").btn; // i hate this, but nice if it ever truly breaks somehow
     for (let i: number = 0; i < tabContent.length; i++) {
-      const btn: button = new button(tabContent[i] as string, `journey-tab-btn-${i}`, false, false);
-      if (i == 0) {
-        root().removeChild(this.active);
-        this.active = btn.btn;
-      }
+      const btn: Button = new Button(tabContent[i] as string, `journey-tab-btn-${i}`, false, false);
       btn.btn.style.fontSize = "1rem";
       btn.btn.style.display = "inline-flex";
       btn.btn.style.alignItems = "center";
@@ -34,6 +30,12 @@ export class journeyTabs {
       btn.btn.style.flex = "1 1 0";
       btn.btn.style.borderRadius = "0";
       btn.btn.style.backgroundColor = VODALUS_PURPLE;
+      if (i == 0) {
+        root().removeChild(this.active);
+        this.active = btn.btn;
+        this.active.dataset.active = "true";
+        this.paint(this.active);
+      }
       this.tabContainer.appendChild(btn.btn);
 
       btn.btn.addEventListener("mouseenter", (): void => this.hover(btn.btn));

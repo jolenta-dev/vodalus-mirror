@@ -1,6 +1,6 @@
-import { background, pageTitle } from "../primitives.js";
-import { sidebar, guestbook } from "../radicals.js";
-import { pointerOrbit } from "../effects.js";
+import { Background, PageTitle } from "../primitives.js";
+import { Sidebar, GuestbookTable } from "../radicals.js";
+import { PointerOrbit } from "../effects.js";
 
 interface entry {
   date: string,
@@ -18,10 +18,10 @@ const jolentaRow: string[] = [
 
 export class Guestbook {
   constructor() {
-    new pointerOrbit();
-    new background(true, true);
-    new sidebar("status msg aha", "https://vodalus.org/assets/images/haku.png", "Haku sounds");
-    new pageTitle("Urth's many cacogens");
+    new PointerOrbit();
+    new Background(true, true);
+    new Sidebar("status msg aha", "https://vodalus.org/assets/images/haku.png", "Haku sounds");
+    new PageTitle("Urth's many cacogens");
     fetch("/api/names")
       .then(r => r.json())
       .then((names: entry[]): void => {
@@ -34,7 +34,7 @@ export class Guestbook {
             entry.note,
           ]),
         ];
-        new guestbook(content.length, content);
+        new GuestbookTable(content.length, content);
       });
   }
 }

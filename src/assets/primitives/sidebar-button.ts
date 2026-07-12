@@ -1,7 +1,7 @@
 import { sidebarMount } from "./sidebar-mount.js";
 import { VODALUS_ALICEBLUE, VODALUS_GREEN, VODALUS_CURSOR_LINK, VODALUS_NAV_RADIUS, VODALUS_SHADOW_OFFSET, VODALUS_HOVER_SHIFT } from "../theme.js";
 
-export class sidebarButton {
+export class SidebarButton {
   constructor(textContent: string, href: string, shadow: boolean = true) {
     const wrapper: HTMLDivElement = document.createElement("div");
     wrapper.className = "nav-item";

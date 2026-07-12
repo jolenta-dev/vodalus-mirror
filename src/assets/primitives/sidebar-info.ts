@@ -1,7 +1,7 @@
 import { sidebarMount } from "./sidebar-mount.js";
 import { VODALUS_SANS, VODALUS_CURSOR_DEFAULT, VODALUS_SHADOW_OFFSET, VODALUS_HOVER_SHIFT } from "../theme.js";
 
-export class sidebarInfo {
+export class SidebarInfo {
   constructor(
     statusMessageText?: string,
     nowPlayingImage?: string,

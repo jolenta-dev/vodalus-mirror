@@ -1,10 +1,10 @@
-import { table } from "../primitives/table.js";
-import { button } from "../primitives/button.js";
-import { textInput } from "../primitives/text-input.js";
+import { Table } from "../primitives/table.js";
+import { Button } from "../primitives/button.js";
+import { TextInput } from "../primitives/text-input.js";
 import { root } from "../primitives/root.js";
 
-export class guestbook {
-  guestbookTable: table;
+export class GuestbookTable {
+  guestbookTable: Table;
   constructor(rows: number, content: string[][]) {
     const guestbookWrapper: HTMLDivElement = document.createElement("div");
     root().appendChild(guestbookWrapper);
@@ -18,10 +18,10 @@ export class guestbook {
     inputWrapper.style.gap = "0";
     inputWrapper.style.justifyContent = "center";
     guestbookWrapper.append(inputWrapper);
-    const nicknameInput: textInput = new textInput("nickname");
-    const websiteInput: textInput = new textInput("website");
-    const noteInput: textInput = new textInput("note");
-    const submitBtn: button = new button("add your name", "", true);
+    const nicknameInput: TextInput = new TextInput("nickname");
+    const websiteInput: TextInput = new TextInput("website");
+    const noteInput: TextInput = new TextInput("note");
+    const submitBtn: Button = new Button("add your name", "", true);
     nicknameInput.input.style.borderRadius = "5px 0px 0px 5px";
     websiteInput.input.style.borderRadius = "0px";
     noteInput.input.style.borderRadius = "0px";
@@ -31,7 +31,7 @@ export class guestbook {
     inputWrapper.appendChild(noteInput.input);
     inputWrapper.appendChild(submitBtn.btn);
 
-    const guestbookTable: table = new table(0, 4, ["date", "name", "website", "note"]);
+    const guestbookTable: Table = new Table(0, 4, ["date", "name", "website", "note"]);
     this.guestbookTable = guestbookTable;
 
     for (let i: number = 0; i < rows; i++) {

@@ -2,7 +2,7 @@ import { Wiggly } from "../effects/wiggly.js";
 import { root } from "./root.js";
 import { VODALUS_ALICEBLUE, VODALUS_BUTTON, VODALUS_BUTTON_HOVER, VODALUS_CURSOR_LINK } from "../theme.js";
 
-export class button {
+export class Button {
   readonly el: HTMLButtonElement;
   btn: HTMLButtonElement;
 

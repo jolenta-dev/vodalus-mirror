@@ -3,7 +3,7 @@ import { SunAndLune } from "../effects/sun-and-lune.js";
 import { loadFonts } from "./fonts.js";
 import { VODALUS_PURPLE, VODALUS_ALICEBLUE, VODALUS_SANS, VODALUS_CURSOR_DEFAULT } from "../theme.js";
 
-export class background {
+export class Background {
   public NUM_STARS: number = 100;
 
   constructor(stars?: boolean, sunAndLune?: boolean) {

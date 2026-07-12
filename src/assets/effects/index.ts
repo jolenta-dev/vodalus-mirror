@@ -1,5 +1,5 @@
 export { injectKeyframeRule } from "./keyframes.js";
-export { pointerOrbit } from "./pointer-orbit.js";
+export { PointerOrbit } from "./pointer-orbit.js";
 export { getOrCreateStarfield } from "./starfield.js";
 export { Stars } from "./stars.js";
 export { SunAndLune } from "./sun-and-lune.js";

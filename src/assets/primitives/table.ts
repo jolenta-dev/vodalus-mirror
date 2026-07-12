@@ -1,7 +1,7 @@
 import { root } from "./root.js";
 import { VODALUS_TABLE_TEXT, VODALUS_TABLE_BORDER } from "../theme.js";
 
-export class table {
+export class Table {
   rows: number;
   tbody: HTMLTableSectionElement;
 

@@ -1,5 +1,5 @@
-import { button } from "../primitives/button.js";
-import { journeyTabs } from "../primitives/journey-tabs.js";
+import { Button } from "../primitives/button.js";
+import { JourneyTabs } from "../primitives/journey-tabs.js";
 import { root } from "../primitives/root.js";
 import { VODALUS_ALICEBLUE, VODALUS_SERIF } from "../theme.js";
 
@@ -10,15 +10,19 @@ const defaultTitles: string[] = [
   "The war and the Autarch."
 ]
 
-export class journeyBottom extends journeyTabs {
+export class JourneyBottom extends JourneyTabs {
   journeyTitle: HTMLHeadingElement;
+  container: HTMLDivElement;
+  beginBtn: HTMLButtonElement;
+
   constructor(titles: string[] = defaultTitles) {
     super();
     const container: HTMLDivElement = document.createElement("div");
     const journeyTitle: HTMLHeadingElement = document.createElement("h1");
-    const beginBtn: HTMLButtonElement = new button("Begin your journey.").btn;
+    const beginBtn: HTMLButtonElement = new Button("Begin your journey.").btn;
 
     // container
+    this.container = container;
     container.style.flex = "1 1 0";
     container.style.display = "flex";
     container.style.flexDirection = "column";
@@ -39,6 +43,7 @@ export class journeyBottom extends journeyTabs {
     journeyTitle.style.lineHeight = "1.25";
 
     // button
+    this.beginBtn = beginBtn;
     beginBtn.style.display = "inline-block";
     beginBtn.style.fontSize = "clamp(1.1rem, 2.8vw, 1.35rem)";
     beginBtn.style.lineHeight = "1.25";

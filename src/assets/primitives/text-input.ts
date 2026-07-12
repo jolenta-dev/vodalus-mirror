@@ -1,7 +1,7 @@
 import { root } from "./root.js";
 import { VODALUS_ALICEBLUE } from "../theme.js";
 
-export class textInput {
+export class TextInput {
   input: HTMLInputElement;
 
   constructor(placeholder: string, id?: string) {

@@ -1,7 +1,7 @@
 import { root } from "../primitives/root.js"
 import { injectKeyframeRule } from "./keyframes.js"
 
-export class pointerOrbit {
+export class PointerOrbit {
   constructor() {
     injectKeyframeRule(`@keyframes orbitElementAnim { 
       from { 

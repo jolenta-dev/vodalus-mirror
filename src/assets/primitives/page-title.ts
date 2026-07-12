@@ -1,7 +1,7 @@
 import { root } from "./root.js";
 import { VODALUS_SERIF } from "../theme.js";
 
-export class pageTitle {
+export class PageTitle {
   constructor(content: string) {
     const titleWrapper: HTMLDivElement = document.createElement("div");
     const title: HTMLHeadingElement = document.createElement("h1");

@@ -1,5 +1,5 @@
-import { sidebarButton } from "../primitives/sidebar-button.js";
-import { sidebarInfo } from "../primitives/sidebar-info.js";
+import { SidebarButton } from "../primitives/sidebar-button.js";
+import { SidebarInfo } from "../primitives/sidebar-info.js";
 import { root } from "../primitives/root.js";
 import { VODALUS_SERIF, VODALUS_GREEN, VODALUS_CURSOR_LINK } from "../theme.js";
 
@@ -14,7 +14,7 @@ const PAGE_LIST: [string, string][] = [
   ["about", "/about"],
 ];
 
-export class sidebar {
+export class Sidebar {
   constructor(
     statusMessageText?: string,
     nowPlayingImage?: string,
@@ -24,10 +24,10 @@ export class sidebar {
     this.createContainer();
 
     for (const [text, href] of PAGE_LIST) {
-      new sidebarButton(text, href, shadow);
+      new SidebarButton(text, href, shadow);
     }
 
-    new sidebarInfo(statusMessageText, nowPlayingImage, nowPlayingAttribution, shadow);
+    new SidebarInfo(statusMessageText, nowPlayingImage, nowPlayingAttribution, shadow);
   }
 
   private createContainer(): void {

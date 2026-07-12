@@ -1,7 +1,7 @@
 import { root } from "./root.js";
 import { VODALUS_ALICEBLUE } from "../theme.js";
 
-export class text {
+export class Text {
   constructor(inner: string, id?: string) {
     const el: HTMLDivElement = document.createElement("div");
     el.innerHTML = inner;
