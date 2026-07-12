@@ -1,9 +1,10 @@
 import { Stars } from "../effects/stars.js";
 import { SunAndLune } from "../effects/sun-and-lune.js";
+import { Component } from "./component.js";
 import { loadFonts } from "./fonts.js";
 import { VODALUS_PURPLE, VODALUS_ALICEBLUE, VODALUS_SANS, VODALUS_CURSOR_DEFAULT } from "../theme.js";
 
-export class Background {
+export class Background extends Component<HTMLDivElement> {
   public NUM_STARS: number = 100;
 
   constructor(stars?: boolean, sunAndLune?: boolean) {
@@ -27,12 +28,14 @@ export class Background {
     el.style.minHeight = "100dvh";
     el.style.boxSizing = "border-box";
 
+    super(el);
+
     if (stars) {
-      new Stars(el, this.NUM_STARS);
+      new Stars(this.el, this.NUM_STARS);
     }
 
     if (sunAndLune) {
-      new SunAndLune(el);
+      new SunAndLune(this.el);
     }
 
     loadFonts();
@@ -41,6 +44,6 @@ export class Background {
     document.body.style.margin = "0";
     document.body.style.backgroundColor = VODALUS_PURPLE;
     document.body.style.fontFamily = VODALUS_SANS;
-    document.body.append(el);
+    this.mount(document.body);
   }
 }

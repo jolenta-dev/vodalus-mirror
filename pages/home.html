@@ -10,8 +10,8 @@
   <body>
   </body>
   <script type="module">
-    import { Text, Button, TextInput, Background, Table, JourneyMidline, JourneyList } from "/build/primitives.js";
-    import { Sidebar, JourneyBottom } from "/build/radicals.js";
+    import { Text, Button, TextInput, Background, Table } from "/build/primitives.js";
+    import { Sidebar } from "/build/radicals.js";
     import { PointerOrbit } from "/build/effects.js";
     new PointerOrbit();
     new Background(true, true);
@@ -20,18 +20,12 @@
               <br>
               <p>This is a really long string after the last one</p>
               <br>
-              <p>i hear the guestbook is starting to take shape...</p>`);
+              <p>i hear the guestbook, journeys, and Tzadkiel's are really starting to take shape...</p>`);
     new Button("top 5");
     new Button("bottom 3");
     new Button("wiggles", "wiggler", true);
     new TextInput("please enter your name owo");
     let testTable = new Table(4, 4, ["col 1", "col 2", "3 columns???", "4"]);
     testTable.addRow(4, ["this is just to test if this works really", "", "", ""]);
-    const list = new JourneyList();
-    document.body.appendChild(list.list);
-    const midline = new JourneyMidline();
-    document.body.appendChild(midline.midline);
-    const journey = new JourneyBottom();
-    list.append("hello");
   </script>
 </html>

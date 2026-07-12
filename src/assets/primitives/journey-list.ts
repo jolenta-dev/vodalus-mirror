@@ -1,22 +1,23 @@
-export class JourneyList {
-  list: HTMLUListElement;
-  constructor() {
-    const list: HTMLUListElement = document.createElement("ul");
-    list.style.listStyle = "none";
-    list.style.padding = "0 0.25rem 0.25rem";
-    list.style.width = "90%";
-    list.style.maxWidth = "36rem";
-    list.style.textAlign = "center";
-    list.style.flex = "1 1 0";
-    list.style.minHeight = "0";
-    list.style.overflowX = "hidden";
-    list.style.overflowY = "auto";
-    list.style.overscrollBehavior = "contain";
-    list.style.display = "flex";
-    list.style.flexDirection = "column";
-    list.style.justifyContent = "flex-end";
+import { Component } from "./component.js";
 
-    this.list = list;
+export class JourneyList extends Component<HTMLUListElement> {
+  constructor() {
+    const el: HTMLUListElement = document.createElement("ul");
+    el.style.listStyle = "none";
+    el.style.padding = "0 0.25rem 0.25rem";
+    el.style.width = "90%";
+    el.style.maxWidth = "36rem";
+    el.style.textAlign = "center";
+    el.style.flex = "1 1 0";
+    el.style.minHeight = "0";
+    el.style.overflowX = "hidden";
+    el.style.overflowY = "auto";
+    el.style.overscrollBehavior = "contain";
+    el.style.display = "flex";
+    el.style.flexDirection = "column";
+    el.style.justifyContent = "flex-end";
+
+    super(el);
   }
 
   public append(str: string): void {
@@ -27,6 +28,6 @@ export class JourneyList {
     li.style.overflowWrap = "break-word";
     li.style.wordBreak = "break-word";
 
-    this.list.appendChild(li);
+    this.el.appendChild(li);
   }
 }

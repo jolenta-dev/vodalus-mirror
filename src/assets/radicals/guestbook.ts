@@ -1,13 +1,14 @@
 import { Table } from "../primitives/table.js";
 import { Button } from "../primitives/button.js";
 import { TextInput } from "../primitives/text-input.js";
-import { root } from "../primitives/root.js";
+import { Component } from "../primitives/component.js";
 
-export class GuestbookTable {
+export class GuestbookTable extends Component<HTMLDivElement> {
   guestbookTable: Table;
   constructor(rows: number, content: string[][]) {
     const guestbookWrapper: HTMLDivElement = document.createElement("div");
-    root().appendChild(guestbookWrapper);
+    super(guestbookWrapper);
+    this.mount();
 
     const inputWrapper: HTMLDivElement = document.createElement("div");
     inputWrapper.style.display = "flex";
@@ -22,14 +23,14 @@ export class GuestbookTable {
     const websiteInput: TextInput = new TextInput("website");
     const noteInput: TextInput = new TextInput("note");
     const submitBtn: Button = new Button("add your name", "", true);
-    nicknameInput.input.style.borderRadius = "5px 0px 0px 5px";
-    websiteInput.input.style.borderRadius = "0px";
-    noteInput.input.style.borderRadius = "0px";
-    submitBtn.btn.style.borderRadius = "0px 5px 5px 0px";
-    inputWrapper.appendChild(nicknameInput.input);
-    inputWrapper.appendChild(websiteInput.input);
-    inputWrapper.appendChild(noteInput.input);
-    inputWrapper.appendChild(submitBtn.btn);
+    nicknameInput.el.style.borderRadius = "5px 0px 0px 5px";
+    websiteInput.el.style.borderRadius = "0px";
+    noteInput.el.style.borderRadius = "0px";
+    submitBtn.el.style.borderRadius = "0px 5px 5px 0px";
+    inputWrapper.appendChild(nicknameInput.el);
+    inputWrapper.appendChild(websiteInput.el);
+    inputWrapper.appendChild(noteInput.el);
+    inputWrapper.appendChild(submitBtn.el);
 
     const guestbookTable: Table = new Table(0, 4, ["date", "name", "website", "note"]);
     this.guestbookTable = guestbookTable;

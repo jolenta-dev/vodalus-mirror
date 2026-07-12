@@ -1,21 +1,12 @@
 import { Button } from "../primitives/button.js";
-import { JourneyTabs } from "../primitives/journey-tabs.js";
 import { Component } from "../primitives/component.js";
 import { VODALUS_ALICEBLUE, VODALUS_SERIF } from "../theme.js";
 
-const defaultTitles: string[] = [ // TODO: pull this out to somewhere else
-  "The road to Thrax is long, torturer.",
-  "A world beyond the walls.",
-  "Thrax and the journey yet to come.",
-  "The war and the Autarch."
-]
-
-export class JourneyBottom extends Component<HTMLDivElement> {
+export class TzadkielsBottom extends Component<HTMLDivElement> {
   journeyTitle: HTMLHeadingElement;
   beginBtn: HTMLButtonElement;
-  tabs: JourneyTabs;
 
-  constructor(titles: string[] = defaultTitles) {
+  constructor() {
     const container: HTMLDivElement = document.createElement("div");
     container.style.flex = "1 1 0";
     container.style.display = "flex";
@@ -30,7 +21,7 @@ export class JourneyBottom extends Component<HTMLDivElement> {
     // heading
     const journeyTitle: HTMLHeadingElement = document.createElement("h1");
     this.journeyTitle = journeyTitle;
-    journeyTitle.textContent = titles[0] as string;
+    journeyTitle.textContent = "You board the ship, but the journey to Yesod is long and fraught with adversaries.";
     journeyTitle.style.fontFamily = VODALUS_SERIF;
     journeyTitle.style.color = VODALUS_ALICEBLUE;
     journeyTitle.style.margin = "0";
@@ -49,14 +40,8 @@ export class JourneyBottom extends Component<HTMLDivElement> {
     beginBtn.style.margin = "0.6rem auto 0";
     beginBtn.style.borderRadius = "0";
 
-    // tabs drive the heading text
-    this.tabs = new JourneyTabs(undefined, (active: HTMLButtonElement): void => {
-      this.journeyTitle.textContent = defaultTitles[Number(active.id.slice(-1))] as string;
-    });
-
     container.appendChild(journeyTitle);
     container.appendChild(beginBtn);
-    container.appendChild(this.tabs.el);
     this.mount();
   }
 }

@@ -1,9 +1,9 @@
-import { JourneyBottom } from "../radicals.js";
+import { TzadkielsBottom } from "../radicals.js";
 import { JourneyTop } from "../radicals.js";
 import { root } from "../assets/primitives/root.js";
 import { Page } from "./Page.js";
 
-export class Journey extends Page {
+export class Tzadkiels extends Page {
   list: HTMLUListElement;
   counter: HTMLSpanElement;
 
@@ -11,11 +11,11 @@ export class Journey extends Page {
     super({
       statusMessageText: "status msg aha",
       nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-      nowPlayingAttribution: "White cat beats to study and relax to",
+      nowPlayingAttribution: "HAKUCAST #4728: The disappearance of the fih toy",
     });
     const container: HTMLDivElement = document.createElement("div");
     const top: JourneyTop = new JourneyTop();
-    const bottom: JourneyBottom = new JourneyBottom();
+    const bottom: TzadkielsBottom = new TzadkielsBottom();
     this.list = top.list;
     this.counter = top.counter;
 

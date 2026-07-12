@@ -1,7 +1,7 @@
-import { root } from "./root.js";
+import { Component } from "./component.js";
 import { VODALUS_ALICEBLUE } from "../theme.js";
 
-export class Text {
+export class Text extends Component<HTMLDivElement> {
   constructor(inner: string, id?: string) {
     const el: HTMLDivElement = document.createElement("div");
     el.innerHTML = inner;
@@ -16,6 +16,7 @@ export class Text {
       el.id = id;
     }
 
-    root().appendChild(el);
+    super(el);
+    this.mount();
   }
 }

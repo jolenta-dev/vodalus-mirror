@@ -1,19 +1,21 @@
-import { root } from "./root.js";
+import { Component } from "./component.js";
 import { VODALUS_TABLE_TEXT, VODALUS_TABLE_BORDER } from "../theme.js";
 
-export class Table {
+export class Table extends Component<HTMLTableElement> {
   rows: number;
   tbody: HTMLTableSectionElement;
 
   constructor(rows: number, columns: number, headers: string[]) {
-    this.rows = 0;
-    this.tbody = document.createElement("tbody");
     const t: HTMLTableElement = document.createElement("table");
     t.style.tableLayout = "fixed";
     t.style.width = "90%";
     t.style.margin = "10px auto";
     t.style.borderCollapse = "collapse";
-    root().appendChild(t);
+
+    super(t);
+    this.rows = 0;
+    this.tbody = document.createElement("tbody");
+    this.mount();
 
     const thead: HTMLHeadElement = document.createElement("thead");
     const tr: HTMLTableRowElement = document.createElement("tr");

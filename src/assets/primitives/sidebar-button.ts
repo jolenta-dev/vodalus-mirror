@@ -1,7 +1,8 @@
 import { sidebarMount } from "./sidebar-mount.js";
+import { Component } from "./component.js";
 import { VODALUS_ALICEBLUE, VODALUS_GREEN, VODALUS_CURSOR_LINK, VODALUS_NAV_RADIUS, VODALUS_SHADOW_OFFSET, VODALUS_HOVER_SHIFT } from "../theme.js";
 
-export class SidebarButton {
+export class SidebarButton extends Component<HTMLDivElement> {
   constructor(textContent: string, href: string, shadow: boolean = true) {
     const wrapper: HTMLDivElement = document.createElement("div");
     wrapper.className = "nav-item";
@@ -11,35 +12,35 @@ export class SidebarButton {
     wrapper.style.marginRight = "10px";
     wrapper.style.flexShrink = "0";
 
-    const el: HTMLAnchorElement = document.createElement("a");
-    el.textContent = textContent;
-    el.href = href;
+    const link: HTMLAnchorElement = document.createElement("a");
+    link.textContent = textContent;
+    link.href = href;
 
-    el.style.cursor = VODALUS_CURSOR_LINK;
-    el.style.fontSize = "25px";
-    el.style.padding = "10px 8px 10px 16px";
-    el.style.textDecoration = "none";
-    el.style.fontFamily = "inherit";
-    el.style.color = VODALUS_ALICEBLUE;
-    el.style.backgroundColor = VODALUS_GREEN;
-    el.style.display = "flex";
-    el.style.lineHeight = "1.2";
-    el.style.justifyContent = "left";
-    el.style.position = "relative";
-    el.style.zIndex = "1";
-    el.style.transition = "transform 0.1s ease";
-    el.style.borderRadius = VODALUS_NAV_RADIUS;
-    el.style.height = "50px";
-    el.style.alignItems = "center";
-    el.style.paddingLeft = "0.2em";
+    link.style.cursor = VODALUS_CURSOR_LINK;
+    link.style.fontSize = "25px";
+    link.style.padding = "10px 8px 10px 16px";
+    link.style.textDecoration = "none";
+    link.style.fontFamily = "inherit";
+    link.style.color = VODALUS_ALICEBLUE;
+    link.style.backgroundColor = VODALUS_GREEN;
+    link.style.display = "flex";
+    link.style.lineHeight = "1.2";
+    link.style.justifyContent = "left";
+    link.style.position = "relative";
+    link.style.zIndex = "1";
+    link.style.transition = "transform 0.1s ease";
+    link.style.borderRadius = VODALUS_NAV_RADIUS;
+    link.style.height = "50px";
+    link.style.alignItems = "center";
+    link.style.paddingLeft = "0.2em";
 
-    el.addEventListener("mouseenter", () => {
-      el.style.color = "black";
-      el.style.transform = VODALUS_HOVER_SHIFT;
+    link.addEventListener("mouseenter", () => {
+      link.style.color = "black";
+      link.style.transform = VODALUS_HOVER_SHIFT;
     });
-    el.addEventListener("mouseleave", () => {
-      el.style.color = VODALUS_ALICEBLUE;
-      el.style.transform = "";
+    link.addEventListener("mouseleave", () => {
+      link.style.color = VODALUS_ALICEBLUE;
+      link.style.transform = "";
     });
 
     if (shadow) {
@@ -52,7 +53,9 @@ export class SidebarButton {
       wrapper.appendChild(shadowEl);
     }
 
-    wrapper.appendChild(el);
-    sidebarMount().appendChild(wrapper);
+    wrapper.appendChild(link);
+
+    super(wrapper);
+    this.mount(sidebarMount());
   }
 }

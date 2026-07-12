@@ -1,5 +1,6 @@
 import { SidebarButton } from "../primitives/sidebar-button.js";
 import { SidebarInfo } from "../primitives/sidebar-info.js";
+import { Component } from "../primitives/component.js";
 import { root } from "../primitives/root.js";
 import { VODALUS_SERIF, VODALUS_GREEN, VODALUS_CURSOR_LINK } from "../theme.js";
 
@@ -14,14 +15,15 @@ const PAGE_LIST: [string, string][] = [
   ["about", "/about"],
 ];
 
-export class Sidebar {
+export class Sidebar extends Component<HTMLDivElement> {
   constructor(
     statusMessageText?: string,
     nowPlayingImage?: string,
     nowPlayingAttribution?: string,
     shadow: boolean = true,
   ) {
-    this.createContainer();
+    super(Sidebar.resolveContainer());
+    this.setupMobileSidebarToggle();
 
     for (const [text, href] of PAGE_LIST) {
       new SidebarButton(text, href, shadow);
@@ -30,10 +32,10 @@ export class Sidebar {
     new SidebarInfo(statusMessageText, nowPlayingImage, nowPlayingAttribution, shadow);
   }
 
-  private createContainer(): void {
-    if (document.getElementById("sidebar-container")) {
-      this.setupMobileSidebarToggle();
-      return;
+  private static resolveContainer(): HTMLDivElement {
+    const existing = document.getElementById("sidebar-container");
+    if (existing) {
+      return existing as HTMLDivElement;
     }
 
     const container: HTMLDivElement = document.createElement("div");
@@ -99,7 +101,7 @@ export class Sidebar {
 
     document.body.prepend(container);
 
-    this.setupMobileSidebarToggle();
+    return container;
   }
 
   private setupMobileSidebarToggle(): void {

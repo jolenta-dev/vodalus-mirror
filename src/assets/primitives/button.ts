@@ -1,15 +1,11 @@
 import { Wiggly } from "../effects/wiggly.js";
-import { root } from "./root.js";
+import { Component } from "./component.js";
 import { VODALUS_ALICEBLUE, VODALUS_BUTTON, VODALUS_BUTTON_HOVER, VODALUS_CURSOR_LINK } from "../theme.js";
 
-export class Button {
-  readonly el: HTMLButtonElement;
-  btn: HTMLButtonElement;
-
+export class Button extends Component<HTMLButtonElement> {
   constructor(content: string, id?: string, wiggles?: boolean, hasHover: boolean = true) {
     const el: HTMLButtonElement = document.createElement("button");
     el.textContent = content;
-    this.btn = el;
 
     if (id) {
       el.id = id;
@@ -26,7 +22,7 @@ export class Button {
     el.style.borderRadius = "5px"; // clever shennanigans will be needed for this soon...
     el.style.backgroundColor = VODALUS_BUTTON;
 
-    this.el = el;
+    super(el);
 
     if (wiggles) {
       this.makeWiggly();
@@ -37,7 +33,7 @@ export class Button {
       el.addEventListener("mouseleave", () => this.hover(el));
     }
 
-    root().appendChild(el);
+    this.mount();
   }
 
   makeWiggly(): void {

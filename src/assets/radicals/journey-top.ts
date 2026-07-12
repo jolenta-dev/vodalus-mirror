@@ -1,18 +1,25 @@
 import { JourneyList } from "../primitives/journey-list.js";
 import { JourneyMidline } from "../primitives/journey-midline.js";
+import { Component } from "../primitives/component.js";
 
-export class JourneyTop {
+export class JourneyTop extends Component<HTMLDivElement> {
   list: HTMLUListElement;
-  container: HTMLDivElement;
   counter: HTMLSpanElement;
 
   constructor() {
     const container: HTMLDivElement = document.createElement("div");
+    container.style.flex = "1 1 0";
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.alignItems = "center";
+    container.style.padding = "0 1rem 1rem";
+
+    super(container);
+
     const journeySubtitle: HTMLHeadingElement = document.createElement("h2");
-    const list: HTMLUListElement = new JourneyList().list;
-    const midline: HTMLDivElement = new JourneyMidline().midline;
+    const list: HTMLUListElement = new JourneyList().el;
+    const midline: HTMLDivElement = new JourneyMidline().el;
     this.list = list;
-    this.container = container;
 
     // setup for the events counter
     journeySubtitle.id = "journey-subtitle";
@@ -30,16 +37,8 @@ export class JourneyTop {
     attemptCount.textContent = "1";
     journeySubtitle.appendChild(attemptCount);
 
-    container.style.flex = "1 1 0";
-    container.style.display = "flex";
-    container.style.flexDirection = "column";
-    container.style.alignItems = "center";
-    container.style.padding = "0 1rem 1rem";
-
     container.appendChild(journeySubtitle);
     container.appendChild(list);
     container.appendChild(midline);
   }
-
-
 }

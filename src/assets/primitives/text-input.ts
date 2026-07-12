@@ -1,13 +1,10 @@
-import { root } from "./root.js";
+import { Component } from "./component.js";
 import { VODALUS_ALICEBLUE } from "../theme.js";
 
-export class TextInput {
-  input: HTMLInputElement;
-
+export class TextInput extends Component<HTMLInputElement> {
   constructor(placeholder: string, id?: string) {
     const el: HTMLInputElement = document.createElement("input");
     el.placeholder = placeholder;
-    this.input = el;
 
     if (id) {
       el.id = id;
@@ -26,6 +23,7 @@ export class TextInput {
     el.style.color = VODALUS_ALICEBLUE;
     el.style.borderRadius = "5px" // clever shennanigans will be needed for this soon....
 
-    root().appendChild(el);
+    super(el);
+    this.mount();
   }
 }

@@ -1,7 +1,8 @@
 import { sidebarMount } from "./sidebar-mount.js";
+import { Component } from "./component.js";
 import { VODALUS_SANS, VODALUS_CURSOR_DEFAULT, VODALUS_SHADOW_OFFSET, VODALUS_HOVER_SHIFT } from "../theme.js";
 
-export class SidebarInfo {
+export class SidebarInfo extends Component<HTMLDivElement> {
   constructor(
     statusMessageText?: string,
     nowPlayingImage?: string,
@@ -120,6 +121,8 @@ export class SidebarInfo {
     }
 
     wrapper.appendChild(bottomStack);
-    sidebarMount().appendChild(wrapper);
+
+    super(wrapper);
+    this.mount(sidebarMount());
   }
 }

@@ -1,46 +1,53 @@
 import { Button } from "./button.js";
+import { Component } from "./component.js";
 import { root } from "./root.js";
 import { VODALUS_PURPLE, VODALUS_ALICEBLUE, VODALUS_BUTTON_HOVER } from "../theme.js";
 
-export class JourneyTabs {
-  readonly tabContainer: HTMLDivElement;
+export class JourneyTabs extends Component<HTMLDivElement> {
   public active: HTMLButtonElement;
+  private readonly onToggle: ((active: HTMLButtonElement) => void) | undefined;
 
-  constructor(tabContent: string[] = ["I — Nessus", "II — Saltus and beyond", "III — Thrax", "IV — Autarchy"]) {
-    this.tabContainer = document.createElement("div");
-    this.tabContainer.style.display = "flex";
-    this.tabContainer.style.flexWrap = "wrap";
-    this.tabContainer.style.overflow = "hidden";
-    this.tabContainer.style.boxSizing = "border-box";
-    this.tabContainer.style.width = "100%";
-    this.tabContainer.style.maxWidth = "min(90%, 36rem)";
-    this.tabContainer.style.marginTop = "1rem";
-    this.tabContainer.style.backgroundColor = VODALUS_PURPLE;
-    this.tabContainer.style.color = VODALUS_ALICEBLUE;
+  constructor(
+    tabContent: string[] = ["I — Nessus", "II — Saltus and beyond", "III — Thrax", "IV — Autarchy"], // TODO: pull this array out to somewhere better
+    onToggle?: (active: HTMLButtonElement) => void,
+  ) {
+    const el: HTMLDivElement = document.createElement("div");
+    el.style.display = "flex";
+    el.style.flexWrap = "wrap";
+    el.style.overflow = "hidden";
+    el.style.boxSizing = "border-box";
+    el.style.width = "100%";
+    el.style.maxWidth = "min(90%, 36rem)";
+    el.style.marginTop = "1rem";
+    el.style.backgroundColor = VODALUS_PURPLE;
+    el.style.color = VODALUS_ALICEBLUE;
 
-    this.active = new Button("error").btn; // i hate this, but nice if it ever truly breaks somehow
+    super(el);
+    this.onToggle = onToggle;
+
+    this.active = new Button("error").el; // i hate this, but nice if it ever truly breaks somehow
     for (let i: number = 0; i < tabContent.length; i++) {
       const btn: Button = new Button(tabContent[i] as string, `journey-tab-btn-${i}`, false, false);
-      btn.btn.style.fontSize = "1rem";
-      btn.btn.style.display = "inline-flex";
-      btn.btn.style.alignItems = "center";
-      btn.btn.style.justifyContent = "center";
-      btn.btn.style.gap = "0.35em";
-      btn.btn.style.maxWidth = "100%";
-      btn.btn.style.flex = "1 1 0";
-      btn.btn.style.borderRadius = "0";
-      btn.btn.style.backgroundColor = VODALUS_PURPLE;
+      btn.el.style.fontSize = "1rem";
+      btn.el.style.display = "inline-flex";
+      btn.el.style.alignItems = "center";
+      btn.el.style.justifyContent = "center";
+      btn.el.style.gap = "0.35em";
+      btn.el.style.maxWidth = "100%";
+      btn.el.style.flex = "1 1 0";
+      btn.el.style.borderRadius = "0";
+      btn.el.style.backgroundColor = VODALUS_PURPLE;
       if (i == 0) {
         root().removeChild(this.active);
-        this.active = btn.btn;
+        this.active = btn.el;
         this.active.dataset.active = "true";
         this.paint(this.active);
       }
-      this.tabContainer.appendChild(btn.btn);
+      this.el.appendChild(btn.el);
 
-      btn.btn.addEventListener("mouseenter", (): void => this.hover(btn.btn));
-      btn.btn.addEventListener("mouseleave", (): void => this.hover(btn.btn));
-      btn.btn.addEventListener("click", (): void => this.toggleActive(btn.btn));
+      btn.el.addEventListener("mouseenter", (): void => this.hover(btn.el));
+      btn.el.addEventListener("mouseleave", (): void => this.hover(btn.el));
+      btn.el.addEventListener("click", (): void => this.toggleActive(btn.el));
     }
   }
 
@@ -71,5 +78,6 @@ export class JourneyTabs {
       el.dataset.active = "true";
       this.paint(el);
     }
+    this.onToggle?.(this.active);
   }
 }

@@ -1,7 +1,7 @@
-import { root } from "./root.js";
+import { Component } from "./component.js";
 import { VODALUS_SERIF } from "../theme.js";
 
-export class PageTitle {
+export class PageTitle extends Component<HTMLDivElement> {
   constructor(content: string) {
     const titleWrapper: HTMLDivElement = document.createElement("div");
     const title: HTMLHeadingElement = document.createElement("h1");
@@ -11,6 +11,7 @@ export class PageTitle {
     titleWrapper.style.justifyContent = "center";
     titleWrapper.style.fontFamily = VODALUS_SERIF;
 
-    root().appendChild(titleWrapper);
+    super(titleWrapper);
+    this.mount();
   }
 }
