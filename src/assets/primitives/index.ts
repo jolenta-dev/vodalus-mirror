@@ -5,4 +5,5 @@ export { textInput } from "./text-input.js";
 export { sidebarButton } from "./sidebar-button.js";
 export { sidebarInfo } from "./sidebar-info.js";
 export { table } from "./table.js";
-export { pageTitle } from "./page-title.js"; 
+export { pageTitle } from "./page-title.js";
+export { journeyTabs } from "./journey-tabs.js";

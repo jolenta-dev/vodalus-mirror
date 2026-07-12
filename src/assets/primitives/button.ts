@@ -5,7 +5,7 @@ export class button {
   readonly el: HTMLButtonElement;
   btn: HTMLButtonElement;
 
-  constructor(content: string, id?: string, wiggles?: boolean) {
+  constructor(content: string, id?: string, wiggles?: boolean, hasHover: boolean = true) {
     const el: HTMLButtonElement = document.createElement("button");
     el.textContent = content;
     this.btn = el;
@@ -31,8 +31,10 @@ export class button {
       this.makeWiggly();
     }
 
-    el.addEventListener("mouseenter", () => this.hover(el));
-    el.addEventListener("mouseleave", () => this.hover(el));
+    if (hasHover) {
+      el.addEventListener("mouseenter", () => this.hover(el));
+      el.addEventListener("mouseleave", () => this.hover(el));
+    }
 
     root().appendChild(el);
   }

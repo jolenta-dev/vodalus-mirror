@@ -15,6 +15,10 @@ app.get("/guestbook", (_req, res) => {
   res.sendFile(path.join(rootDir, "./pages/guestbook.html"));
 });
 
+app.get("/journey", (_req, res) => {
+  res.sendFile(path.join(rootDir, "./pages/journey.html"));
+})
+
 app.get("/api/names", async (_req, res) => { // TODO: this cannot be left in.
   const response = await fetch("https://vodalus.org/api/names");
   res.json(await response.json());

@@ -1,1 +1,1 @@
-export { background, button, text, textInput, sidebarButton, sidebarInfo, table, pageTitle } from "./assets/primitives/index.js";
+export { background, button, text, textInput, sidebarButton, sidebarInfo, table, pageTitle, journeyTabs } from "./assets/primitives/index.js";
