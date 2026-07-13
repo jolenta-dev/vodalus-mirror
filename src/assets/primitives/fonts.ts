@@ -1,11 +1,11 @@
 export function loadFonts(): void {
-  if (document.getElementById("vodalus-fonts")) {
-    return;
-  }
+    if (document.getElementById("vodalus-fonts")) {
+        return;
+    }
 
-  const style: HTMLStyleElement = document.createElement("style");
-  style.id = "vodalus-fonts";
-  style.textContent = `
+    const style: HTMLStyleElement = document.createElement("style");
+    style.id = "vodalus-fonts";
+    style.textContent = `
     @font-face {
       font-family: "Meylda";
       font-style: normal;
@@ -23,5 +23,5 @@ export function loadFonts(): void {
       src: url("/multimedia/fonts/Nedar/Nedar.ttf") format("truetype");
     }
   `;
-  document.head.appendChild(style);
+    document.head.appendChild(style);
 }
