@@ -379,7 +379,11 @@ function holdAndClick() {
 ;
 mainButton.addEventListener("mousedown", function() {
   buttonHeld = true;
+<<<<<<< HEAD
+  lastHoldClickAt = Date.now();
+=======
   lastHoldClickAt = 0;
+>>>>>>> 92aa2323e17d65cf0138a753e00fa9b5cd37a1e6
 });
 mainButton.addEventListener("mouseup", function() {
   buttonHeld = false;
