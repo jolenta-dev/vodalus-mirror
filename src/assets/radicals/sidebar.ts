@@ -65,6 +65,7 @@ export class Sidebar extends Component<HTMLDivElement> {
     sidenav.style.display = "flex";
     sidenav.style.flexDirection = "column";
     sidenav.style.boxSizing = "border-box";
+    sidenav.style.scrollbarWidth = "none";
 
     container.appendChild(sidenav);
 
