@@ -1,10 +1,11 @@
+// @ts-expect-error browser-resolved path to marked esm bundle
+import { marked } from "../../../node_modules/marked/lib/marked.esm.js";
 import { Component } from "./component.js";
 import { VODALUS_ALICEBLUE } from "../theme.js";
 
 export class Text extends Component<HTMLDivElement> {
-    constructor(inner: string, id?: string) {
+    constructor(id?: string) {
         const el: HTMLDivElement = document.createElement("div");
-        el.innerHTML = inner;
 
         el.style.borderRadius = "15px";
         el.style.border = `1px solid ${VODALUS_ALICEBLUE}`;
@@ -17,6 +18,13 @@ export class Text extends Component<HTMLDivElement> {
         }
 
         super(el);
-        this.mount();
+    }
+
+    readMarkdown(filePath: string): void {
+        void fetch(filePath)
+            .then((response) => response.text())
+            .then((markdown) => {
+                this.el.innerHTML = marked(markdown) as string;
+            });
     }
 }

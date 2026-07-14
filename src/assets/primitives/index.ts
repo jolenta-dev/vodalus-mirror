@@ -9,3 +9,4 @@ export { PageTitle } from "./page-title.js";
 export { JourneyTabs } from "./journey-tabs.js";
 export { JourneyMidline } from "./journey-midline.js";
 export { JourneyList } from "./journey-list.js";
+export { UpdateNotes } from "./update-notes.js";
