@@ -38,6 +38,7 @@ export class UpdateNotes extends Component<HTMLDivElement> {
             });
 
         text.el.style.border = "0";
+        text.el.style.backgroundColor = "";
 
         title.style.fontFamily = VODALUS_SERIF;
         title.style.display = "flex";
