@@ -48,6 +48,7 @@ const {
 
 function registerRoutes(app) {
 app.use('/pages', express.static(PAGES_DIR));
+app.use('/assets/databases', (_req, res) => res.sendStatus(404));
 app.use('/assets', express.static(ASSETS_DIR));
 app.use('/indev', express.static(path.join(ROOT_DIR, 'indev')));
 
