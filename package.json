@@ -6,7 +6,7 @@
     "build": "tsc",
     "start": "node build/server.js",
     "typecheck": "tsc --noEmit",
-    "dev": "tsc --watch",
+    "dev": "tsc-watch --onSuccess \"node build/server.js\"",
     "refresh": "npm run build && npm start"
   },
   "engines": {
@@ -29,6 +29,7 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.5",
     "@types/ws": "^8.5.13",
+    "tsc-watch": "^7.2.1",
     "esbuild": "^0.25.0",
     "typescript": "^6.0.3"
   }
