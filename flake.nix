@@ -27,7 +27,11 @@
               typescript
             ];
             shellHook = ''
-              exec fish
+              if command -v fish >/dev/null 2>&1; then
+                exec fish
+              elif command -v zsh >/dev/null 2>&1; then
+                exec zsh
+              fi
             '';
           };
         }
