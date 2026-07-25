@@ -1,6 +1,5 @@
 // originally from - https://web.archive.org/web/20041026003308/http://rainbow.arch.scriptmania.com/scripts/mouse_clock.html
 import { root } from "../primitives/root.js";
-import { VODALUS_GREEN } from "../theme.js";
 
 interface Cursor {
     x: number;
@@ -25,7 +24,7 @@ export class ClockCursor {
         "(prefers-reduced-motion: reduce)"
     );
 
-    private readonly dateColor: string = VODALUS_GREEN;
+    private readonly dateColor: string = "lightblue";
     private readonly faceColor: string = "pink";
     private readonly secondsColor: string = "red";
     private readonly minutesColor: string = "pink";
