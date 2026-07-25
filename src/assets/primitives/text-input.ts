@@ -21,7 +21,7 @@ export class TextInput extends Component<HTMLInputElement> {
         el.style.boxSizing = "border-box";
         el.style.backgroundColor = "#0f001e";
         el.style.color = VODALUS_ALICEBLUE;
-        el.style.borderRadius = "5px" // clever shennanigans will be needed for this soon....
+        el.style.borderRadius = "5px"
 
         super(el);
         this.mount();

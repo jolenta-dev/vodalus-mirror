@@ -11,6 +11,8 @@ export interface PageOptions {
 }
 
 export class Page {
+    PointerOrbit: PointerOrbit;
+
     constructor(options: PageOptions = {}) {
         const {
             stars = true,
@@ -20,7 +22,7 @@ export class Page {
             nowPlayingAttribution,
         } = options;
 
-        new PointerOrbit();
+        this.PointerOrbit = new PointerOrbit();
         new Background(stars, sunAndLune);
         new Sidebar(statusMessageText, nowPlayingImage, nowPlayingAttribution);
     }

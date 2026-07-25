@@ -19,7 +19,7 @@ export class Button extends Component<HTMLButtonElement> {
         el.style.padding = "6px 14px";
         el.style.border = `1px solid ${VODALUS_ALICEBLUE}`;
         el.style.color = VODALUS_ALICEBLUE;
-        el.style.borderRadius = "5px"; // clever shennanigans will be needed for this soon...
+        el.style.borderRadius = "5px";
         el.style.backgroundColor = VODALUS_BUTTON;
 
         super(el);

@@ -68,6 +68,7 @@ export class PointerOrbit {
       }`);
 
         const pOrbitRoot: HTMLDivElement = document.createElement("div");
+        pOrbitRoot.id = "pointer-orbit-root";
         pOrbitRoot.ariaHidden = "true";
         pOrbitRoot.style.position = "fixed";
         pOrbitRoot.style.inset = "0";
@@ -109,6 +110,10 @@ export class PointerOrbit {
 
         this.initOrbit(pOrbitRoot);
         this.initTrail(pOrbitRoot);
+    }
+
+    destroy(): void {
+        document.getElementById("pointer-orbit-root")?.remove();
     }
 
     initOrbit(root: HTMLElement): void {
