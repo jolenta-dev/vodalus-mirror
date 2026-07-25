@@ -3,7 +3,7 @@ import { marked } from "../../../node_modules/marked/lib/marked.esm.js";
 import { Component } from "./component.js";
 import { VODALUS_ALICEBLUE } from "../theme.js";
 
-export class Text extends Component<HTMLDivElement> {
+export class TextWrapper extends Component<HTMLDivElement> {
     constructor(id?: string) {
         const el: HTMLDivElement = document.createElement("div");
 

@@ -1,6 +1,6 @@
 // @ts-expect-error browser-resolved path to marked esm bundle
 import { marked } from "../../../node_modules/marked/lib/marked.esm.js";
-import { Text } from './text.js';
+import { TextWrapper } from './text-wrapper.js';
 import { Component } from "./component.js";
 import { VODALUS_SERIF, VODALUS_ALICEBLUE } from '../theme.js';
 
@@ -16,11 +16,11 @@ function bodyAfterFirstLine(markdown: string): string {
     return markdown.slice(newlineIndex + 1);
 }
 
-export class UpdateNotes extends Component<HTMLDivElement> {
+export class TextFromMD extends Component<HTMLDivElement> {
     constructor(filePath: string) {
         const el: HTMLDivElement = document.createElement("div");
         const title: HTMLHeadingElement = document.createElement("h1");
-        const text: Text = new Text();
+        const text: TextWrapper = new TextWrapper();
         el.appendChild(title);
         el.appendChild(text.el);
         el.style.borderRadius = "15px";

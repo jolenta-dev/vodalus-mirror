@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -30,6 +31,15 @@ app.get("/tzadkiels", (_req, res) => {
 app.get("/api/names", async (_req, res) => { // TODO: this cannot be left in.
     const response = await fetch("https://vodalus.org/api/names");
     res.json(await response.json());
+});
+
+app.get("/api/update-notes", (_req, res) => {
+    const dir = path.join(rootDir, "multimedia/markdown/update-notes");
+    const files = fs.readdirSync(dir)
+        .filter((file) => file.endsWith(".md"))
+        .sort()
+        .reverse();
+    res.json(files);
 });
 
 app.use(express.static(rootDir));

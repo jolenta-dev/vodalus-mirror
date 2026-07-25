@@ -1,6 +1,6 @@
 export { Background } from "./background.js";
 export { Button } from "./button.js";
-export { Text } from "./text.js";
+export { TextWrapper } from "./text-wrapper.js";
 export { TextInput } from "./text-input.js";
 export { SidebarButton } from "./sidebar-button.js";
 export { SidebarInfo } from "./sidebar-info.js";
@@ -9,4 +9,4 @@ export { PageTitle } from "./page-title.js";
 export { JourneyTabs } from "./journey-tabs.js";
 export { JourneyMidline } from "./journey-midline.js";
 export { JourneyList } from "./journey-list.js";
-export { UpdateNotes } from "./update-notes.js";
+export { TextFromMD } from "./update-notes.js";
