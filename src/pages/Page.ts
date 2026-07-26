@@ -11,7 +11,7 @@ export interface PageOptions {
 }
 
 export class Page {
-    PointerOrbit: PointerOrbit;
+    PointerOrbit: PointerOrbit | null = null;
 
     constructor(options: PageOptions = {}) {
         const {
@@ -22,8 +22,19 @@ export class Page {
             nowPlayingAttribution,
         } = options;
 
-        this.PointerOrbit = new PointerOrbit();
+        const isEmbed =
+            new URLSearchParams(location.search).get("embed") === "1" ||
+            document.documentElement.classList.contains("page-embed");
+        if (isEmbed) {
+            document.documentElement.classList.add("page-embed");
+        }
+
+        if (!isEmbed) {
+            this.PointerOrbit = new PointerOrbit();
+        }
         new Background(stars, sunAndLune);
-        new Sidebar(statusMessageText, nowPlayingImage, nowPlayingAttribution);
+        if (!isEmbed) {
+            new Sidebar(statusMessageText, nowPlayingImage, nowPlayingAttribution);
+        }
     }
 }

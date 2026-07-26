@@ -1,5 +1,6 @@
 export { injectKeyframeRule } from "./keyframes.js";
 export { ClockCursor } from "./clock-cursor.js";
+export { DraggableDiv } from "./draggable-div.js";
 export { PointerOrbit } from "./pointer-orbit.js";
 export { getOrCreateStarfield } from "./starfield.js";
 export { Stars } from "./stars.js";

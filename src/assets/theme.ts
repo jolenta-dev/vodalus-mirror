@@ -17,6 +17,8 @@ export const VODALUS_SANS = "'Nedar', ui-sans-serif, system-ui, sans-serif";
 // cursors
 export const VODALUS_CURSOR_LINK = "url('/multimedia/cursors/pink/link.cur'), pointer";
 export const VODALUS_CURSOR_DEFAULT = "url('/multimedia/cursors/pink/default_pink.cur'), auto";
+export const VODALUS_CURSOR_MOVE = "url('/multimedia/cursors/pink/move.cur'), move";
+export const VODALUS_CURSOR_RESIZE = "url('/multimedia/cursors/pink/dgn1.cur'), nwse-resize";
 
 // geometry
 export const VODALUS_NAV_RADIUS = "0px 4px 20% / 90% 1px";

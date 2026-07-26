@@ -2,6 +2,7 @@ import { JourneyBottom } from "../radicals.js";
 import { JourneyTop } from "../radicals.js";
 import { root } from "../assets/primitives/root.js";
 import { Page } from "./Page.js";
+import { DraggableDiv } from "../effects.js";
 
 export class Journey extends Page {
     list: HTMLUListElement;
@@ -29,6 +30,8 @@ export class Journey extends Page {
         root().appendChild(container);
 
         bottom.beginBtn.addEventListener("click", (): void => { this.incrementCounter(); this.append("clicked that button \n") }); // TODO : rm this when this gets wired up
+
+        new DraggableDiv("/journey", "super cool test", "minimized");
     }
 
     public append(str: string): void {

@@ -5,7 +5,7 @@ import { loadFonts } from "./fonts.js";
 import { VODALUS_PURPLE, VODALUS_ALICEBLUE, VODALUS_SANS, VODALUS_CURSOR_DEFAULT } from "../theme.js";
 
 export class Background extends Component<HTMLDivElement> {
-    public NUM_STARS: number = 1000;
+    public NUM_STARS: number = 300;
 
     constructor(stars?: boolean, sunAndLune?: boolean) {
         const el = ((): HTMLDivElement => {

@@ -59,7 +59,7 @@ export class Atrium extends Page {
 
         root().removeChild(this.enterBtn);
 
-        this.PointerOrbit.destroy();
+        this.PointerOrbit?.destroy();
         new ClockCursor();
 
         root().appendChild(this.title);
