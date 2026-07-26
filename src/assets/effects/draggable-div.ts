@@ -4,6 +4,8 @@ import {
     VODALUS_CURSOR_RESIZE,
     VODALUS_SANS,
     VODALUS_SERIF,
+    VODALUS_GREEN,
+    VODALUS_ALICEBLUE,
 } from "../theme.js";
 
 type PanelState = "minimized" | "maximized" | "default";
@@ -76,7 +78,7 @@ export class DraggableDiv {
             zIndex: "9",
             width: "512px",
             height: "288px",
-            backgroundColor: "#f1f1f1",
+            backgroundColor: VODALUS_ALICEBLUE,
             textAlign: "center",
             border: "1px solid #d3d3d3",
             borderRadius: "8px",
@@ -124,7 +126,8 @@ export class DraggableDiv {
             padding: "10px",
             cursor: VODALUS_CURSOR_MOVE,
             zIndex: "10",
-            backgroundColor: "#9a7cb6",
+            border: `1px solid ${VODALUS_ALICEBLUE}`,
+            backgroundColor: VODALUS_GREEN,
             color: "#fff",
             borderRadius: "8px 8px 0 0",
         });
