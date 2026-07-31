@@ -19,6 +19,7 @@ export const VODALUS_CURSOR_LINK = "url('/multimedia/cursors/pink/link.cur'), po
 export const VODALUS_CURSOR_DEFAULT = "url('/multimedia/cursors/pink/default_pink.cur'), auto";
 export const VODALUS_CURSOR_MOVE = "url('/multimedia/cursors/pink/move.cur'), move";
 export const VODALUS_CURSOR_RESIZE = "url('/multimedia/cursors/pink/dgn1.cur'), nwse-resize";
+export const VODALUS_CURSOR_GRAB = "grab";
 
 // geometry
 export const VODALUS_NAV_RADIUS = "0px 4px 20% / 90% 1px";

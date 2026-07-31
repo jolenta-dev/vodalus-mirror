@@ -13,6 +13,7 @@ export class Home extends Page {
         const container: HTMLDivElement = document.createElement("div");
 
         const main: TextFromMD = new TextFromMD("../../multimedia/markdown/home-header.md");
+        main.el.style.textAlign = "center";
 
         container.appendChild(main.el);
 

@@ -129,7 +129,6 @@ export class AdminDashboard extends Page {
         }
     }
 
-    // TODO: these need to all be defined
     private drawChatTab(): void {
         const controlsWrapper: HTMLDivElement = document.createElement("div");
         const box = this.box as HTMLDivElement;

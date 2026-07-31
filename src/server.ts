@@ -50,6 +50,26 @@ app.get("/api/update-notes", (_req, res) => {
     res.json(files);
 });
 
+app.get("/api/about", (_req, res) => {
+    const dir = path.join(rootDir, "multimedia/markdown/about");
+    const pageOrder = [
+        "what-is-this.md",
+        "what-is-that.md",
+        "who-are-you.md",
+        "anything-else-to-know-about-you.md",
+        "i-have-even-more-questions-now.md",
+        "who-made-all-this-cool-art.md",
+        "how-can-i-support-vodalus.md",
+        "what-is-vodalus-running-off-of.md",
+        "this-chat-seems-really-cool-can-i-use-it-for-my-site.md",
+        "how-do-i-contact-you.md",
+    ];
+    const present = new Set(
+        fs.readdirSync(dir).filter((file) => file.endsWith(".md"))
+    );
+    res.json(pageOrder.filter((file) => present.has(file)));
+});
+
 app.use(express.static(rootDir));
 
 app.listen(4000, () => console.log("Server running on :4000"));
