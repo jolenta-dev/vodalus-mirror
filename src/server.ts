@@ -28,6 +28,10 @@ app.get("/tzadkiels", (_req, res) => {
     res.sendFile(path.join(rootDir, "./pages/tzadkiels.html"));
 });
 
+app.get("/about", (_req, res) => {
+    res.sendFile(path.join(rootDir, "./pages/about.html"));
+});
+
 app.get("/admin", (_req, res) => {
     res.sendFile(path.join(rootDir, "./pages/admin.html"));
 });

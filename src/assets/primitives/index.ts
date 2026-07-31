@@ -2,6 +2,7 @@ export { Background } from "./background.js";
 export { Button } from "./button.js";
 export { TextWrapper } from "./text-wrapper.js";
 export { TextInput } from "./text-input.js";
+export { Select } from "./select.js";
 export { SidebarButton } from "./sidebar-button.js";
 export { SidebarInfo } from "./sidebar-info.js";
 export { Table } from "./table.js";
