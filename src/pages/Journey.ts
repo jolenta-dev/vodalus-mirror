@@ -9,11 +9,7 @@ export class Journey extends Page {
     counter: HTMLSpanElement;
 
     constructor() {
-        super({
-            statusMessageText: "status msg aha",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "White cat beats to study and relax to",
-        });
+        super();
         const container: HTMLDivElement = document.createElement("div");
         const top: JourneyTop = new JourneyTop();
         const bottom: JourneyBottom = new JourneyBottom();

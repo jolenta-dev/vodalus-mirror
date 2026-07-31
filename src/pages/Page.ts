@@ -5,9 +5,6 @@ import { Sidebar } from "../radicals.js";
 export interface PageOptions {
     stars?: boolean;
     sunAndLune?: boolean;
-    statusMessageText?: string;
-    nowPlayingImage?: string;
-    nowPlayingAttribution?: string;
 }
 
 export class Page {
@@ -17,9 +14,6 @@ export class Page {
         const {
             stars = true,
             sunAndLune = true,
-            statusMessageText,
-            nowPlayingImage,
-            nowPlayingAttribution,
         } = options;
 
         const isEmbed =
@@ -34,7 +28,7 @@ export class Page {
         }
         new Background(stars, sunAndLune);
         if (!isEmbed) {
-            new Sidebar(statusMessageText, nowPlayingImage, nowPlayingAttribution);
+            new Sidebar();
         }
     }
 }

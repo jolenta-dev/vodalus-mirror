@@ -3,11 +3,7 @@ import { Page } from "./Page.js";
 
 export class Technical extends Page {
     constructor() {
-        super({
-            statusMessageText: "for the technically inclined",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "KIDS SEE HAKU -- KIDS SEE HAKU",
-        });
+        super();
 
         void fetch("/api/technical")
             .then((response) => response.json())

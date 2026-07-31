@@ -9,11 +9,7 @@ export class Atrium extends Page {
     enterBtn: HTMLButtonElement;
 
     constructor() {
-        super({
-            statusMessageText: "Pssst... got any fih?",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "White noise 50hr spiritual healing revival chakra balancing...",
-        });
+        super();
         const title: HTMLDivElement = new PageTitle(
             "Triskele has brought you to a strange place. The hall stretches out before you, at its end you hear the voice of a young woman..."
         ).el;

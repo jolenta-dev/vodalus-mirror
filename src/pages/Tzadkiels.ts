@@ -8,11 +8,7 @@ export class Tzadkiels extends Page {
     counter: HTMLSpanElement;
 
     constructor() {
-        super({
-            statusMessageText: "status msg aha",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "HAKUCAST #4728: The disappearance of the fih toy",
-        });
+        super();
         const container: HTMLDivElement = document.createElement("div");
         const top: JourneyTop = new JourneyTop();
         const bottom: TzadkielsBottom = new TzadkielsBottom();

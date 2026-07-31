@@ -12,11 +12,7 @@ export class AdminDashboard extends Page {
     private chatAdminContent: HTMLDivElement | null;
 
     constructor() {
-        super({
-            statusMessageText: "why are you here? this is a nonsense page you don't need to know about...",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "Meow -- Haku (2022 Remaster)",
-        });
+        super();
         this.box = null;
         this.chatAdminContent = null;
 

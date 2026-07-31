@@ -3,11 +3,7 @@ import { Page } from "./Page.js";
 
 export class About extends Page {
     constructor() {
-        super({
-            statusMessageText: "i'm running out of funny things to put on these",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "Laser -- White Cat",
-        });
+        super();
 
         void fetch("/api/about")
             .then((response) => response.json())

@@ -38,11 +38,7 @@ export class BotanicGardens extends Page {
     private upgrades: (BotanicUpgradeButton | null)[] = [];
 
     constructor() {
-        super({
-            statusMessageText: "status msg aha",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "Haku sounds",
-        });
+        super();
 
         const title: HTMLDivElement = new PageTitle(
             "Father Inire's Botanic Gardens await beyond the gate. Enter a nickname to pass through."

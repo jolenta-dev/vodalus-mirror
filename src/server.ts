@@ -53,6 +53,14 @@ app.get("/api/names", async (_req, res) => { // TODO: this cannot be left in.
     res.json(await response.json());
 });
 
+
+// misc api routes ---------------------------------------------
+
+app.get("/api/lastfm", async (_req, res) => {
+    const response = await fetch("https://vodalus.org/api/lastfm");
+    res.json(await response.json());
+});
+
 // to serve the md-to-text pages -------------------------------
 
 app.get("/api/update-notes", (_req, res) => {

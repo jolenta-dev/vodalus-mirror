@@ -4,11 +4,7 @@ import { root } from "../assets/primitives/root.js";
 
 export class Home extends Page {
     constructor() {
-        super({
-            statusMessageText: "*sniff sniff*",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "haku sniffing a lot asmr (working 2026)"
-        });
+        super();
 
         const container: HTMLDivElement = document.createElement("div");
 

@@ -18,11 +18,7 @@ const jolentaRow: string[] = [
 
 export class Guestbook extends Page {
     constructor() {
-        super({
-            statusMessageText: "status msg aha",
-            nowPlayingImage: "https://vodalus.org/assets/images/haku.png",
-            nowPlayingAttribution: "Haku sounds",
-        });
+        super();
         new PageTitle("Urth's many cacogens");
         fetch("/api/names")
             .then(r => r.json())
