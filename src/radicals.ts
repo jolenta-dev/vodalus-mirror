@@ -5,3 +5,5 @@ export { JourneyTop } from "./assets/radicals/journey-top.js";
 export { TzadkielsBottom } from "./assets/radicals/tzadkiels-bottom.js";
 export { PasswordInput } from "./assets/radicals/password-input.js";
 export { AboutBlock } from "./assets/radicals/about-block.js";
+export { BotanicClickButton } from "./assets/radicals/botanic-click-button.js";
+export { BotanicUpgradeButton } from "./assets/radicals/botanic-upgrade-button.js";

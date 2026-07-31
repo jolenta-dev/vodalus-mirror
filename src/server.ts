@@ -42,6 +42,10 @@ app.get("/admin", (_req, res) => {
     res.sendFile(path.join(rootDir, "./pages/admin.html"));
 });
 
+app.get("/botanic-gardens", (_req, res) => {
+    res.sendFile(path.join(rootDir, "./pages/botanic-gardens.html"));
+});
+
 // prod linking (temporary) ------------------------------------
 
 app.get("/api/names", async (_req, res) => { // TODO: this cannot be left in.
