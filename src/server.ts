@@ -8,6 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, "..");
 
+// routes for pages --------------------------------------------
+
 app.get("/", (_req, res) => {
     res.sendFile(path.join(rootDir, "./pages/home.html"));
 });
@@ -32,14 +34,22 @@ app.get("/about", (_req, res) => {
     res.sendFile(path.join(rootDir, "./pages/about.html"));
 });
 
+app.get("/technical", (_req, res) => {
+    res.sendFile(path.join(rootDir, "./pages/technical.html"));
+});
+
 app.get("/admin", (_req, res) => {
     res.sendFile(path.join(rootDir, "./pages/admin.html"));
 });
+
+// prod linking (temporary) ------------------------------------
 
 app.get("/api/names", async (_req, res) => { // TODO: this cannot be left in.
     const response = await fetch("https://vodalus.org/api/names");
     res.json(await response.json());
 });
+
+// to serve the md-to-text pages -------------------------------
 
 app.get("/api/update-notes", (_req, res) => {
     const dir = path.join(rootDir, "multimedia/markdown/update-notes");
@@ -69,6 +79,24 @@ app.get("/api/about", (_req, res) => {
     );
     res.json(pageOrder.filter((file) => present.has(file)));
 });
+
+app.get("/api/technical", (_req, res) => {
+    const dir = path.join(rootDir, "multimedia/markdown/technical");
+    const pageOrder = [
+        "what-is-this.md",
+        "so-whats-the-stack.md",
+        "so-whats-the-backend-look-like.md",
+        "what-are-the-main-highlights.md",
+        "what-other-things-have-you-made.md",
+        "how-do-we-get-in-touch.md",
+    ];
+    const present = new Set(
+        fs.readdirSync(dir).filter((file) => file.endsWith(".md"))
+    );
+    res.json(pageOrder.filter((file) => present.has(file)));
+});
+
+// boilerplate express stuff -----------------------------------
 
 app.use(express.static(rootDir));
 

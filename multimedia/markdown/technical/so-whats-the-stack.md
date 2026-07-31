@@ -1,0 +1,3 @@
+#So, what's the stack?
+
+It's actually fairly simple. Vodalus was not (initially, at least) intended to be that complicated. Obviously, that view has changed, but the project's approach largely has not. Vodalus is still almost entirely written in bare HTML, CSS, and JS (slowly, I am refactoring pages to TS). All of this runs on a webserver I host running in my Proxmox cluster. It has 2 cores of a Xeon processer, 8GB of RAM, and a dream. I use nginx as a web server, with fail2ban protecting my home network. The server itself is running off of Node.js. You can find the (incredibly messy) source code for Vodalus <a href="https://gitlab.com/jolenta/vodalus" target="_blank">here</a>.
