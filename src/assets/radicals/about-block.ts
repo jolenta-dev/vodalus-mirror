@@ -24,7 +24,7 @@ export class AboutBlock extends Component {
         wrapper.style.borderRadius = "15px";
         wrapper.style.backgroundColor = "rgb(15, 0, 29)";
         wrapper.style.textAlign = "center";
-        wrapper.style.scrollbarWidth = "0";
+        wrapper.style.scrollbarWidth = "none";
 
         wrapper.addEventListener("mousedown", (e: MouseEvent): void => {
             this.moveBlock(e);
