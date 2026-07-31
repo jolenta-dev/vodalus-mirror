@@ -38,9 +38,12 @@ export class AboutBlock extends Component {
         const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
         const offset = Math.random() * 5 * rem;
         const dirs: [number, number][] = [
+            [-1, -1],
             [0, -1],
+            [0, 0],
             [0, 1],
             [1, 0],
+            [1, 1],
             [-1, 0],
         ];
         const [dx, dy] = dirs[Math.floor(Math.random() * dirs.length)]!;

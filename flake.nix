@@ -1,5 +1,5 @@
 {
-  description = "Vodalus";
+  description = "Vodalus.org";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -23,7 +23,7 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
-              nodejs
+              nodejs_26
               typescript
             ];
             shellHook = ''
