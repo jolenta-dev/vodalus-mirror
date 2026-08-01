@@ -1,3 +1,3 @@
 #How do I contact you?
 
-DMs are really the main way as of now. I tried to set up SMTP for this domain and Comcast blocked me from sending/receiving emails and I refuse to pay for email hosting, so no email right now.
+For general interest/questions, you can DM me (@jolenta) or email <a href="mailto:chloe@vodalus.org">chloe@vodalus.org</a>. For issues/technical inquiries or where appropriate you can message the admin account (mostly unmonitored) or (preferred) email <a href="mailto:admin@vodalus.org">admin@vodalus.org</a>.
