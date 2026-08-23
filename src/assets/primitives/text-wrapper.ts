@@ -12,6 +12,7 @@ export class TextWrapper extends Component<HTMLDivElement> {
         el.style.backgroundColor = "rgba(15, 0, 29, 0.3)";
         el.style.padding = "1em";
         el.style.margin = "1em";
+        el.style.scrollbarWidth = "none";
 
         if (id) {
             el.id = id;
