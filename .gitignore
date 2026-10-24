@@ -3,3 +3,4 @@ dist
 public
 /assets/html/jolentas_status.html
 .env
+.svelte-kit

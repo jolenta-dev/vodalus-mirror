@@ -1,8 +1,9 @@
 {
+  "extends": "$app/tsconfig",
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "lib": ["ESNext", "DOM"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -18,7 +19,5 @@
     "skipLibCheck": true,
     "noEmit": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "public"]
+  }
 }
